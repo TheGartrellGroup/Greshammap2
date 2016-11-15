@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=7,IE=9" />
+<meta name="viewport" content="initial-scale=1.0, width=device-width, maximum-scale=1.0, user-scalable=no"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>METRO Report</title>
+<style type="text/css">
+	body{
+		font-family:"Trebuchet MS";
+	}
+	table{
+		width:100%;
+	}
+	tr:nth-child(odd) {
+	  background-color: #d8d8d8;
+	}
+	.footer{
+		font-size:10px;
+		margin:0px;
+		padding:5px;
+	}
+</style>
+
+</head>
+<body onload='init()'>	
+<div id="parcelInfo"></div>
+<div id="footer1" class="footer"></div>
+<script src="//gis.oregonmetro.gov/rlisapi2/js/?token=hrM8eXsyG8hewIBgNh0CfLbBXPuItcBLoJ-tm2YU_r0." type="text/javascript"></script>
+<script type="text/javascript">
+var ID;
+function gup(name) {
+    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+    var regexS = "[\\?&]" + name + "=([^&#]*)";
+    var regex = new RegExp(regexS);
+    var results = regex.exec(window.location.href);
+    if (results == null)
+        return "";
+    else
+        return results[1];
+}
+
+function init() {
+    ID = gup('ID');
+    ID = ID.replace(/%2520/g, " ");
+    ID = ID.replace(/%20/g, " ");
+
+    RLIS.QueryAddress(ID, function(result, error) {
+        if (error) {
+            console.log("Error: " + result);
+            return;
+        }
+        var j = JSON.stringify(result[0], null, ' ');
+        var obj = JSON.parse(j);
+        var infoContent = "";
+
+        document.getElementById("parcelInfo").innerHTML = "";
+
+        //check parcel number, owner, and address
+        var content = "<table>"
+            + "<tr><td><span class='listItem'>Metro Council District: </span></td><td>" + obj.metroCouncilDistrict + "<tr><td><span class='listItem'>Metro Councilor: </span></td><td>" + obj.metroCouncilor + "<tr><td><span class='listItem'>House: </span></td><td>" + obj.house + "<tr><td><span class='listItem'>House District: </span></td><td>" + obj.houseDistrict + "<tr><td><span class='listItem'>Senate District: </span></td><td>" + obj.senateDistrict + "<tr><td><span class='listItem'>Congressional District: </span></td><td>" + obj.congressionalDistrict + "<tr><td><span class='listItem'>Voter Precinct: </span></td><td>" + obj.voterPrecinct + "<tr><td><span class='listItem'>OR Education District: </span></td><td>" + obj.ORDeptEducationDistrict + "<tr><td><span class='listItem'>School District: </span></td><td>" + obj.schoolDistrict
+            + "<tr><td><span class='listItem'>UGB: </span></td><td>" + obj.UGB + "<tr><td><span class='listItem'>Basin: </span></td><td>" + obj.basin + "<tr><td><span class='listItem'>Water District: </span></td><td>" + obj.waterDistrict + "<tr><td><span class='listItem'>Watershed: </span></td><td>" + obj.watershed + "<tr><td><span class='listItem'>Sub Basin: </span></td><td>" + obj.subBasin + "<tr><td><span class='listItem'>Sub Watershed: </span></td><td>" + obj.subWatershed + "<tr><td><span class='listItem'>Residential Hauler: </span></td><td>" + obj.residentialHauler + "<tr><td><span class='listItem'>Fire Management Zone: </span></td><td>" + obj.fireManagementZone + "<tr><td><span class='listItem'>FEMA: </span></td><td>" + obj.FEMA + "<tr><td><span class='listItem'>Census BlockGroup: </span></td><td>" + obj.censusBlockGroup + "<tr><td><span class='listItem'>Census Tract: </span></td><td>" + obj.censusTract + "</td></tr></table>";
+        infoContent += content;
+
+        document.getElementById("parcelInfo").innerHTML = infoContent;
+    });
+    document.getElementById("footer1").innerHTML = "<a href='http://gis.oregonmetro.gov/metromap/?q=" + ID + "' target='_blank' alt='Metro Map'>Oregon METRO Map</a>";
+}
+</script>
+</body>
+</html>

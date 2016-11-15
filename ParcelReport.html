@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=7,IE=9" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width, maximum-scale=1.0, user-scalable=no"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Multnomah County Parcel Report</title>
+    <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/arcgis/3.5"></script>
+	<style type="text/css">
+		body{
+			font-family:"Trebuchet MS";
+		}
+		table{
+			width:100%;
+		}
+        tr:nth-child(odd) {
+          background-color: #d8d8d8;
+        }
+		.footer{
+			font-size:10px;
+			margin:0px;
+			padding:5px;
+		}
+	</style>
+</head>
+<body>
+	<div id="parcelInfo"></div>
+	<div id="footer" class="footer"></div>
+	
+<script>
+var ID;
+var propID;
+
+function gup(name) {
+  name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+  var regexS = "[\\?&]" + name + "=([^&#]*)";
+  var regex = new RegExp(regexS);
+  var results = regex.exec(window.location.href);
+  if (results == null)
+	  return "";
+  else
+	  return results[1];
+}
+
+require([
+  "esri/tasks/query", "esri/tasks/QueryTask",
+  "dojo/dom", "dojo/on", "dojo/domReady!"
+], function(Query, QueryTask, dom, on) {
+
+  var queryTask = new QueryTask("http://www3.multco.us/arcgispublic/rest/services/BaseMap/Streetmap/MapServer/0");
+
+  var query = new Query();
+  query.returnGeometry = false;
+  query.outFields = ["*"];
+
+  query.where = "ALTACCTNUM like '" + gup('ID') + "%'";
+  queryTask.execute(query, showResults);
+
+  function showResults(results) {
+	  var infoContent = "";
+	  if (results.features.length < 1) {
+		  infoContent = "no matching record found";
+		  dojo.byId("parcelInfo").innerHTML = infoContent;
+	  } else if (results.features.length > 1) {
+		  infoContent = "more than two records found";
+		  dojo.byId("parcelInfo").innerHTML = infoContent;
+	  } else {
+		  dojo.byId("parcelInfo").innerHTML = "";
+		  //alert("yes");
+		  var graphic = results.features[0];
+		  var attr = graphic.attributes;
+		  var owner2 = "",
+			  addr1 = "",
+			  sizeSqft = "",
+			  sizeAcres = "",
+			  buildingSqft = "";
+		  //document.getElementById("subTitle").innerHTML = "Parcel ID (RNO): " + attr.ALTACCTNUM;
+		  if (attr.PROPID) propID = attr.PROPID
+		  if (attr.OWNER2) owner2 = attr.OWNER2;
+		  if (attr.ADDR1) addr1 = attr.ADDR1;
+		  if (attr.SIZESQFT) {
+			  var acres = attr.SIZESQFT / 43560;
+			  sizeAcres = "</td></tr><tr><td><span class='listItem'>Acres: </span></td><td>" + acres.toFixed(2);
+		  }
+		  if (attr.MAINAREA) buildingSqft = "</td></tr><tr><td><span class='listItem'>Building SqFt: </span></td><td>" + attr.MAINAREA;
+		  var NAME = "",
+			  ADDR2 = "",
+			  CITY = "",
+			  STATE = "",
+			  ZIP = "",
+			  LEGA = "",
+			  IMP_TYPE = "",
+			  ACTYEARBUILT = "",
+			  TRACTLOT = "",
+			  ROLLYEAR = "",
+			  ROLLIMP = "",
+			  SALE_PRICE = "",
+			  SALE_DATE = "",
+			  ROLLLAND = "";
+		  if (attr.NAME) NAME = attr.NAME;
+		  if (attr.ADDR2) ADDR2 = attr.ADDR2;
+		  if (attr.CITY) CITY = attr.CITY;
+		  if (attr.STATE) STATE = attr.STATE;
+		  if (attr.ZIP) ZIP = attr.ZIP;
+		  if (attr.LEGAL) LEGAL = attr.LEGAL;
+		  if (attr.IMP_TYPE) IMP_TYPE = attr.IMP_TYPE;
+		  if (attr.ACTYEARBUILT) ACTYEARBUILT = attr.ACTYEARBUILT;
+		  if (attr.TRACTLOT) TRACTLOT = attr.TRACTLOT;
+		  if (attr.ROLLLAND) ROLLLAND = attr.ROLLLAND;
+		  if (attr.ROLLYEAR) ROLLYEAR = attr.ROLLYEAR;
+		  if (attr.ROLLIMP) ROLLIMP = attr.ROLLIMP;
+		  if (attr.SALE_PRICE) SALE_PRICE = attr.SALE_PRICE;
+		  if (attr.SALE_DATE) SALE_DATE = attr.SALE_DATE;
+
+		  //check parcel number, owner, and address
+		  var content = "<span style='font-size:9px;'>This information is from Multnomah County directly and updated more frequently than the data in the TAXLOT and SunGard/HTE Information Tabs.</span><table>" + "<tr><td><span class='listItem'>Owner Name: </span></td><td>" + NAME + " " + owner2 //Owner Name Info
+			  + "</td></tr><tr><td><span class='listItem'>Owner Address: </span></td><td>" + ADDR2 + " " + addr1 + "</td></tr><tr><td><span class='listItem'>Owner City/Zip: </span></td><td>" + CITY + ", " + STATE + " " + ZIP + "</td></tr><tr><td><span class='listItem'>Legal: </span></td><td>" + LEGAL + sizeAcres + buildingSqft + "</td></tr><tr><td><span class='listItem'>IMP TYPE: </span></td><td>" + IMP_TYPE + "</td></tr><tr><td><span class='listItem'>Year Built: </span></td><td>" + ACTYEARBUILT + "</td></tr><tr><td><span class='listItem'>Lot NO.: </span></td><td>" + TRACTLOT + "</td></tr><tr><td><span class='listItem'>Tax Year: </span></td><td>" + ROLLYEAR + "</td></tr><tr><td><span class='listItem'>Land Value: </span></td><td>" + ROLLLAND + "</td></tr><tr><td><span class='listItem'>Building Value: </span></td><td>" + ROLLIMP + "</td></tr><tr><td><span class='listItem'>Sale Price: </span></td><td>" + SALE_PRICE + "</td></tr><tr><td><span class='listItem'>Sale Date: </span></td><td>" + SALE_DATE + "</td></tr></table>";
+		  infoContent += content;
+
+		  dojo.byId("parcelInfo").innerHTML = infoContent;
+		  dojo.byId("footer").innerHTML = "<a href='http://www.multcoproptax.org/property.asp?PropertyID=" + propID + "' target='_blank'>Multnomah County Property Tax Records (CatBird)</a><br/><a href='https://www.portlandmaps.com/detail/property/" + propID + "_did/' target='_blank'>PortlandMap Link</a><br/><a href='http://www3.multco.us/H5V/?Viewer=SAIL' target='_blank'>Multnomah County Survey and Assessor Image Locator (SAIL)</a><br/><a href='https://mcsopropertysales.wordpress.com/' target='_blank'>MCSO Property Sales</a>";
+	  }
+  }
+});
+</script>
+</body>
+</html>

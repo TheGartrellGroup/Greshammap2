@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=7,IE=9" />
+    <meta name="viewport" content="initial-scale=1.0, width=device-width, maximum-scale=1.0, user-scalable=no"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Gresham Parcel Report</title>
+    <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/arcgis/3.5"></script>	
+	<script src="//gis.oregonmetro.gov/rlisapi2/js/?token=hrM8eXsyG8hewIBgNh0CfLbBXPuItcBLoJ-tm2YU_r0." type="text/javascript"></script>
+<style type="text/css">
+body {
+    font-family: "Trebuchet MS";
+    width: 1000px;
+    float: left;
+}
+#wrapper {
+    width: 700px;
+    margin: 20px;
+}
+table {
+    width: 100%;
+}
+tr:nth-child(odd) {
+    background-color: #d8d8d8;
+}
+tr {
+    padding: 2px;
+}
+ul {
+    font-size: 16px;
+    margin: 5px;
+    padding: 7px;
+    background-color: #518771;
+}
+li {
+    font-size: 12px;
+    margin: 0px;
+    padding: 3px;
+    list-style-type: none;
+    background-color: #d2e9dc;
+}
+li .listItem {
+    font-size: 14px;
+    font-weight: bold;
+    width: 300px;
+}
+ul img {
+    width: 30px;
+    height: 20px;
+}
+#title {
+    font-family: Arial;
+    color: #004C1A;
+    text-align: left;
+    font-size: 30px;
+    align: left;
+    margin-left: 10px;
+}
+#parcelTitle {
+    font-size: 22px;
+    margin: 10px;
+    padding: 10px;
+}
+.titleItem {
+    font-size: 1.2em;
+    color: green;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+	<div id="wrapper">
+		<div id="title"><img src="images/COGsmall.jpg" alt="City of Gresham" style="height:30px;"/>&nbsp;&nbsp;GIS Parcel Report</div>
+		<div id="parcelTitle"></div>	
+		<div id="parcelInfo"></div><br />
+		<div id="districtInfo"></div>
+		<div id="footer"></div>
+	</div>
+	
+<script>
+var ID, IDMetro;
+
+function gup(name) {
+  name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+  var regexS = "[\\?&]" + name + "=([^&#]*)";
+  var regex = new RegExp(regexS);
+  var results = regex.exec(window.location.href);
+  if (results == null)
+	  return "";
+  else
+	  return results[1];
+}
+
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+require([
+  "esri/tasks/query", "esri/tasks/QueryTask",
+  "dojo/dom", "dojo/on", "dojo/domReady!"
+], function(Query, QueryTask, dom, on) {
+
+  var queryTask = new QueryTask("http://leia/arcgis/rest/services/Parcel/EastCountyParcels/MapServer/0");
+
+  var query = new Query();
+  query.returnGeometry = false;
+  query.outFields = ["*"];
+  var dirty = (new Date()).getTime();
+  query.where = "RNO like '" + gup('ID') + "%'" + " AND " + dirty + "=" + dirty;
+  queryTask.execute(query, showResults);
+
+  function showResults(results) {
+	  var infoContent = "";
+	  if (results.features.length < 1) {
+		  infoContent = "no matching record found";
+		  dojo.byId("parcelInfo").innerHTML = infoContent;
+	  } else if (results.features.length > 1) {
+		  infoContent = "more than two records found";
+		  dojo.byId("parcelInfo").innerHTML = infoContent;
+	  } else {
+		  dojo.byId("parcelTitle").innerHTML = "";
+		  dojo.byId("parcelInfo").innerHTML = "";
+
+		  var graphic = results.features[0];
+		  var attr = graphic.attributes;
+		  var owner2 = "",
+			  owner3 = "",
+			  sizeAcres = "",
+			  buildingSqft = "";
+		  if (attr.OWNER2) owner2 = attr.OWNER2;
+		  if (attr.OWNER3) owner3 = attr.OWNER3;
+		  if (attr.GIS_ACRES) {
+			  var acres = attr.GIS_ACRES;
+			  sizeAcres = "</td></tr><tr><td><span class='listItem'>Acres: </span></td><td>" + acres.toFixed(2);
+		  }
+		  if (attr.BLDGSQFT) buildingSqft = "</td></tr><tr><td><span class='listItem'>Building SqFt: </span></td><td>" + attr.BLDGSQFT;
+		  //check parcel number, owner, and address
+		  var content = "<div><span class='titleItem'>Parcel information</span></div><table>" + "<tr><td><span class='listItem'>State ID: </span></td><td>" + attr.STATEID + "</td></tr><tr><td><span class='listItem'>RNO: </span></td><td>" + attr.RNO + "</td></tr><tr><td><span class='listItem'>Prop ID: </span></td><td>" + attr.RNO6 + "</td></tr><tr><td><span class='listItem'>Owner Name: </span></td><td>" + attr.OWNER1 + " " + owner2 + " " + owner3 //Owner Name Info
+			  + "</td></tr><tr><td><span class='listItem'>Owner Address: </span></td><td>" + attr.OWNERADDR + "</td></tr><tr><td><span class='listItem'>Owner City/Zip: </span></td><td>" + attr.OWNERCITY + ", " + attr.OWNERSTATE + " " + attr.OWNERZIP + "</td></tr><tr><td><span class='listItem'>Site Address: </span></td><td>" + attr.SITEADDR + "</td></tr><tr><td><span class='listItem'>Site City/Zip: </span></td><td>" + attr.SITECITY + ", OR " + attr.SITEZIP + "</td></tr><tr><td><span class='listItem'>Legal: </span></td><td>" + attr.LEGAL + "</td></tr><tr><td><span class='listItem'>Zoning: </span></td><td>" + attr.ZONE + sizeAcres + buildingSqft + "</td></tr><tr><td><span class='listItem'>Landuse: </span></td><td>" + attr.LANDUSE + "</td></tr><tr><td><span class='listItem'>Land Value: </span></td><td> $" + numberWithCommas(parseFloat(attr.LANDVAL)) + "</td></tr><tr><td><span class='listItem'>Building Value: </span></td><td> $" + numberWithCommas(parseFloat(attr.BLDGVAL)) + "</td></tr><tr><td><span class='listItem'>Total Value: </span></td><td> $" + numberWithCommas(parseFloat(attr.TOTALVAL)) + "</td></tr><tr><td><span class='listItem'>Sale Price: </span></td><td> $" + numberWithCommas(parseFloat(attr.SALEPRICE)) + "</td></tr><tr><td><span class='listItem'>Sale Date: </span></td><td>" + attr.SALEDATE + "</td></tr>";
+		  infoContent += content;
+
+		  dojo.byId("parcelInfo").innerHTML = infoContent;
+
+		  //parcel title
+		  var contentTitle = attr.RNO + "<br />" + attr.SITEADDR + "<br />" + attr.SITECITY + ", OR " + attr.SITEZIP;
+		  dojo.byId("parcelTitle").innerHTML = contentTitle;
+
+		  //query task METRO			
+		  IDMetro = attr.SITEADDR;
+		  IDMetro = IDMetro.replace(/%2520/g, " ");
+		  IDMetro = IDMetro.replace(/%20/g, " ");
+
+		  RLIS.QueryAddress(IDMetro, function(result, error) {
+			  if (error) {
+				  console.log("Error: " + result);
+				  return;
+			  }
+			  // http://www.json.org/js.html
+			  var j = JSON.stringify(result[0], null, ' ');
+			  //alert(j);
+			  var obj = JSON.parse(j);
+			  var infoContent = "";
+
+			  dojo.byId("districtInfo").innerHTML = "";
+
+			  //check parcel number, owner, and address
+			  var contentM = "<div><span class='titleItem'>District Information</span></div>" + "<table><tr><td><span class='listItem'>Metro Council District: </span></td><td>" + obj.metroCouncilDistrict + "</td></tr><tr><td><span class='listItem'>Metro Councilor: </span></td><td>" + obj.metroCouncilor + "</td></tr><tr><td><span class='listItem'>House: </span></td><td>" + obj.house + "</td></tr><tr><td><span class='listItem'>House District: </span></td><td>" + obj.houseDistrict + "</td></tr><tr><td><span class='listItem'>Senate District: </span></td><td>" + obj.senateDistrict + "</td></tr><tr><td><span class='listItem'>Congressional District: </span></td><td>" + obj.congressionalDistrict + "</td></tr><tr><td><span class='listItem'>Voter Precinct: </span></td><td>" + obj.voterPrecinct + "</td></tr><tr><td><span class='listItem'>OR Education District: </span></td><td>" + obj.ORDeptEducationDistrict + "</td></tr><tr><td><span class='listItem'>School District: </span></td><td>" + obj.schoolDistrict + "</td></tr><tr><td><span class='listItem'>Transit District: </span></td><td>" + obj.transitDistrict + "</td></tr><tr><td><span class='listItem'>UGB: </span></td><td>" + obj.UGB + "</td></tr><tr><td><span class='listItem'>Basin: </span></td><td>" + obj.basin + "</td></tr><tr><td><span class='listItem'>Water District: </span></td><td>" + obj.waterDistrict + "</td></tr><tr><td><span class='listItem'>Watershed: </span></td><td>" + obj.watershed + "</td></tr><tr><td><span class='listItem'>Sub Basin: </span></td><td>" + obj.subBasin + "</td></tr><tr><td><span class='listItem'>Sub Watershed: </span></td><td>" + obj.subWatershed
+				  //+ "</td></tr><tr><td><span class='listItem'>Sewer District: </span></td><td>" + obj.sewerDistrict
+				  + "</td></tr><tr><td><span class='listItem'>Residential Hauler: </span></td><td>" + obj.residentialHauler
+				  /*
+				+ "</td></tr><tr><td><span class='listItem'>Commercial Hauler: </span></td><td>" + obj.commercialHauler
+				+ "</td></tr><tr><td><span class='listItem'>Neighborhood: </span></td><td>" + obj.neighborhood
+				+ "</td></tr><tr><td><span class='listItem'>Park District: </span></td><td>" + obj.parkDistrict
+				+ "</td></tr><tr><td><span class='listItem'>Fire District: </span></td><td>" + obj.fireDistrict
+				*/
+				  + "</td></tr><tr><td><span class='listItem'>Fire Management Zone: </span></td><td>" + obj.fireManagementZone + "</td></tr><tr><td><span class='listItem'>FEMA: </span></td><td>" + obj.FEMA + "</td></tr><tr><td><span class='listItem'>Census BlockGroup: </span></td><td>" + obj.censusBlockGroup + "</td></tr><tr><td><span class='listItem'>Census Tract: </span></td><td>" + obj.censusTract + "</td></tr></table>";
+
+			  document.getElementById("districtInfo").innerHTML = contentM;
+
+		  });
+	  }
+  }
+});
+</script>
+</body>
+</html>
