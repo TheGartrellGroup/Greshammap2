@@ -47,7 +47,7 @@ var legend;
 var featureLayer;
 var gsvClick, infowiClick, idfClick;
 var geoGraphic;
-var parcelResults, xID, symbolIdentifyPoint, symbolIdentifyPolyline, symbolIdentifyPolygon, identifyTask, identifyParameters, identifyParams, identifyValue, identifyText, searchCategorySelected, selectedParcelGeometry, measurement;
+var parcelResults, xID, symbolIdentifyPoint, symbolIdentifyPolyline, symbolIdentifyPolygon, identifyTask, identifyParameters, identifyParams, identifyValue, identifyText, searchCategorySelected, selectedParcelGeometry, measurement, showQueryResultsInt;
 var app = {};
 var selectionToolbar;
 var streetMap, parcelLines, cityStreetParcel, aerialMap2015, aerialMap2014, aerialMap2013, aerialMap2012, aerialMap2007, aerialMap2002, aerialMap;
@@ -95,16 +95,15 @@ require(["esri/map",
 
     parseOnLoad = "false";
 
-    app.printUrl = "http://leia/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task";
+    //app.printUrl = "http://leia/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task";
 
-    esriConfig.defaults.io.proxyUrl = "http://localhost/proxy/proxy.ashx";
-    esriConfig.defaults.io.alwaysUseProxy = true;
-    esriConfig.defaults.geometryService = new GeometryService("http://leia/ArcGIS/rest/services/Utilities/Geometry/GeometryServer");
-	
+    //esriConfig.defaults.io.proxyUrl = "http://localhost/proxy/proxy.ashx";
+    //esriConfig.defaults.io.alwaysUseProxy = true;
+    esriConfig.defaults.geometryService = new GeometryService("http://www.gartrellgroup.net/arcgis/rest/services/Utilities/Geometry/GeometryServer");
 	
     var map, usaLayer, dynamicLayerInfos;
     var infos = {};
-
+/*
     var layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater, visibleLayerIds, visibleLayerIdsServices, visibleLayerIdsIncentives, visibleLayerIdsQuick = [];
 
     function parseLayerOptions(obj) {
@@ -199,12 +198,12 @@ require(["esri/map",
 
         initMap(options);
     }
-
-
-
+*/
+initMap();
     function initMap(options) {
 
         options = options || {};
+        /*
         options.layerBaseData = options.layerBaseData || [];
         options.layerBoundaries = options.layerBoundaries || [];
         options.layerPlace = options.layerPlace || [];
@@ -213,11 +212,12 @@ require(["esri/map",
         options.layerTransportation = options.layerTransportation || [];
         options.layerWastewater = options.layerWastewater || [];
         options.layerWater = options.layerWater || [];
+        */
 
         var map_options = {
             autoResize: false
         }
-
+        /*
         if (options.c !== undefined) {
             map_options.center = new Point(options.c, new SpatialReference({
                 wkid: 2913
@@ -232,7 +232,7 @@ require(["esri/map",
             map_options.center = new Point(7708641.208200004, 677288.6098999954, new SpatialReference({
                 wkid: 2913
             }));
-        } else {
+        } else { */
             map_options.extent = new Extent({
                 xmin: 7682478.588,
                 ymin: 652441.696,
@@ -242,8 +242,7 @@ require(["esri/map",
                     wkid: 2913
                 }
             })
-        }
-
+        //}
 
         app.map = new Map('map',
             map_options
@@ -261,154 +260,160 @@ require(["esri/map",
         });
 
 
-        streetMap = new ArcGISTiledMapServiceLayer("http://leia/arcgis/rest/services/gview/BaseMap/MapServer");
-        parcelLines = new esri.layers.ArcGISTiledMapServiceLayer("http://leia/arcgis/rest/services/gview/ParcelLines/MapServer");
-        cityStreetParcel = new esri.layers.ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview/CityStreetParcel/MapServer");
-        aerialMap2015 = new esri.layers.ArcGISTiledMapServiceLayer("http://maps.greshamoregon.gov/arcgis/rest/services/gview/AerialCacheNew/MapServer");
-        aerialMap2014 = new esri.layers.ArcGISTiledMapServiceLayer("http://leia/arcgis/rest/services/gview/AerialCache/MapServer");
-        aerialMap2013 = new esri.layers.ArcGISTiledMapServiceLayer("http://maps.greshamoregon.gov/arcgis/rest/services/gview/AerialCacheOld/MapServer");
-        aerialMap2012 = new esri.layers.ArcGISTiledMapServiceLayer("http://maps.greshamoregon.gov/arcgis/rest/services/gview/AerialCache12/MapServer");
-        aerialMap2007 = new esri.layers.ArcGISImageServiceLayer("http://www3.multco.us/arcgispublic/rest/services/Imagery/Urban_2007/ImageServer");
-        aerialMap2002 = new esri.layers.ArcGISImageServiceLayer("http://www3.multco.us/arcgispublic/rest/services/Imagery/Urban_2002/ImageServer");
+        // streetMap = new ArcGISTiledMapServiceLayer("http://leia/arcgis/rest/services/gview/BaseMap/MapServer");
+        streetMap = new esri.layers.ArcGISTiledMapServiceLayer('http://maps.greshamoregon.gov/arcgis/rest/services/gview/BaseMap/MapServer')
+        // parcelLines = new esri.layers.ArcGISTiledMapServiceLayer("http://leia/arcgis/rest/services/gview/ParcelLines/MapServer");
+        // cityStreetParcel = new esri.layers.ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview/CityStreetParcel/MapServer");
+        //aerialMap2015 = new esri.layers.ArcGISTiledMapServiceLayer("http://maps.greshamoregon.gov/arcgis/rest/services/gview/AerialCacheNew/MapServer");
+        // aerialMap2014 = new esri.layers.ArcGISTiledMapServiceLayer("http://leia/arcgis/rest/services/gview/AerialCache/MapServer");
+        // aerialMap2013 = new esri.layers.ArcGISTiledMapServiceLayer("http://maps.greshamoregon.gov/arcgis/rest/services/gview/AerialCacheOld/MapServer");
+        // aerialMap2012 = new esri.layers.ArcGISTiledMapServiceLayer("http://maps.greshamoregon.gov/arcgis/rest/services/gview/AerialCache12/MapServer");
+        // aerialMap2007 = new esri.layers.ArcGISImageServiceLayer("http://www3.multco.us/arcgispublic/rest/services/Imagery/Urban_2007/ImageServer");
+        // aerialMap2002 = new esri.layers.ArcGISImageServiceLayer("http://www3.multco.us/arcgispublic/rest/services/Imagery/Urban_2002/ImageServer");
 
-        if (options.aerial) {
-            app.map.removeAllLayers();
-            var aerialYear;
-            switch (parseInt(options.aerial[0])) {
-                case 2015:
-                    aerialYear = aerialMap2015;
-                    break;
-                case 2014:
-                    aerialYear = aerialMap2014;
-                    break;
-                case 2013:
-                    aerialYear = aerialMap2013;
-                    break;
-                case 2012:
-                    aerialYear = aerialMap2012;
-                    break;
-                case 2007:
-                    aerialYear = aerialMap2007;
-                    break;
-                case 2002:
-                    aerialYear = aerialMap2002;
-                    break;
-            }
-            var selectedRadioID = "#" + "aerialR" + options.aerial[0];
-            $(selectedRadioID).prop("checked", true);
-            var aerialOpacity = options.aerial[1];
-            app.map.addLayers([streetMap, aerialYear, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
-            aerialYear.setOpacity(aerialOpacity);
-            $('#slider-aerial').val(aerialOpacity).slider("refresh");
-        } else aerialMap2015.setOpacity(0);
+        // if (options.aerial) {
+            
+        //     app.map.removeAllLayers();
+        //     var aerialYear;
+        //     switch (parseInt(options.aerial[0])) {
+        //         case 2015:
+        //             aerialYear = aerialMap2015;
+        //             break;
+        //         case 2014:
+        //             aerialYear = aerialMap2014;
+        //             break;
+        //         case 2013:
+        //             aerialYear = aerialMap2013;
+        //             break;
+        //         case 2012:
+        //             aerialYear = aerialMap2012;
+        //             break;
+        //         case 2007:
+        //             aerialYear = aerialMap2007;
+        //             break;
+        //         case 2002:
+        //             aerialYear = aerialMap2002;
+        //             break;
+        //     }
+        //     var selectedRadioID = "#" + "aerialR" + options.aerial[0];
+        //     $(selectedRadioID).prop("checked", true);
+        //     var aerialOpacity = options.aerial[1];
+        //     // app.map.addLayers([streetMap, aerialYear, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
+       app.map.addLayers([streetMap]);
+        //     aerialYear.setOpacity(aerialOpacity);
+        //     $('#slider-aerial').val(aerialOpacity).slider("refresh");
+        // } else {
+        //     aerialMap2015.setOpacity(0);
+        // }
 		
         //for infowindow only shows up on the right panel
         app.map.infoWindow.set("popupWindow", false);
 
-        var imageParametersBaseData = new ImageParameters();
-        imageParametersBaseData.layerIds = [];
-        imageParametersBaseData.layerOption = imageParametersBaseData.LAYER_OPTION_SHOW;
-        layerBaseData = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/BaseData/MapServer", {
-            "imageParameters": imageParametersBaseData,
-            "opacity": 0.8,
-            "id": "layerBaseData"
-        });
+        // var imageParametersBaseData = new ImageParameters();
+        // imageParametersBaseData.layerIds = [];
+        // imageParametersBaseData.layerOption = imageParametersBaseData.LAYER_OPTION_SHOW;
+        // layerBaseData = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/BaseData/MapServer", {
+        //     "imageParameters": imageParametersBaseData,
+        //     "opacity": 0.8,
+        //     "id": "layerBaseData"
+        // });
 
-        //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.
-        var imageParametersBoundaries = new ImageParameters();
-        imageParametersBoundaries.layerIds = [];
-        imageParametersBoundaries.layerOption = imageParametersBoundaries.LAYER_OPTION_SHOW;
-        layerBoundaries = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/Boundaries/MapServer", {
-            "imageParameters": imageParametersBoundaries,
-            "opacity": 0.8,
-            "id": "layerBoundaries"
-        });
+        // //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.
+        // var imageParametersBoundaries = new ImageParameters();
+        // imageParametersBoundaries.layerIds = [];
+        // imageParametersBoundaries.layerOption = imageParametersBoundaries.LAYER_OPTION_SHOW;
+        // layerBoundaries = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/Boundaries/MapServer", {
+        //     "imageParameters": imageParametersBoundaries,
+        //     "opacity": 0.8,
+        //     "id": "layerBoundaries"
+        // });
 
-        //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.
-        var imageParametersEnvironmental = new ImageParameters();
-        imageParametersEnvironmental.layerIds = [];
-        imageParametersEnvironmental.layerOption = imageParametersEnvironmental.LAYER_OPTION_SHOW;
-        layerEnvironmental = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/Environmental/MapServer", {
-            "imageParameters": imageParametersEnvironmental,
-            "opacity": 0.8,
-            "id": "layerEnvironmental"
-        });
+        // //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.
+        // var imageParametersEnvironmental = new ImageParameters();
+        // imageParametersEnvironmental.layerIds = [];
+        // imageParametersEnvironmental.layerOption = imageParametersEnvironmental.LAYER_OPTION_SHOW;
+        // layerEnvironmental = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/Environmental/MapServer", {
+        //     "imageParameters": imageParametersEnvironmental,
+        //     "opacity": 0.8,
+        //     "id": "layerEnvironmental"
+        // });
 
-        //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.
-        var imageParametersPlace = new ImageParameters();
-        imageParametersPlace.layerIds = [];
-        imageParametersPlace.layerOption = imageParametersPlace.LAYER_OPTION_SHOW;
-        layerPlace = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/Place/MapServer", {
-            "imageParameters": imageParametersPlace,
-            "opacity": 0.8,
-            "id": "layerPlace"
-        });
+        // //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.
+        // var imageParametersPlace = new ImageParameters();
+        // imageParametersPlace.layerIds = [];
+        // imageParametersPlace.layerOption = imageParametersPlace.LAYER_OPTION_SHOW;
+        // layerPlace = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/Place/MapServer", {
+        //     "imageParameters": imageParametersPlace,
+        //     "opacity": 0.8,
+        //     "id": "layerPlace"
+        // });
 
-        //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.         
-        var imageParametersStormwater = new ImageParameters();
-        imageParametersStormwater.layerIds = [];
-        imageParametersStormwater.layerOption = imageParametersStormwater.LAYER_OPTION_SHOW;
-        layerStormwater = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/StormWater/MapServer", {
-            "imageParameters": imageParametersStormwater,
-            "opacity": 0.8,
-            "id": "layerStormwater"
-        });
+        // //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.         
+        // var imageParametersStormwater = new ImageParameters();
+        // imageParametersStormwater.layerIds = [];
+        // imageParametersStormwater.layerOption = imageParametersStormwater.LAYER_OPTION_SHOW;
+        // layerStormwater = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/StormWater/MapServer", {
+        //     "imageParameters": imageParametersStormwater,
+        //     "opacity": 0.8,
+        //     "id": "layerStormwater"
+        // });
 
-        //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.
-        var imageParametersTransportation = new ImageParameters();
-        imageParametersTransportation.layerIds = [];
-        imageParametersTransportation.layerOption = imageParametersTransportation.LAYER_OPTION_SHOW;
-        layerTransportation = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/Transportation/MapServer", {
-            "imageParameters": imageParametersTransportation,
-            "opacity": 0.8,
-            "id": "layerTransportation"
-        });
+        // //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.
+        // var imageParametersTransportation = new ImageParameters();
+        // imageParametersTransportation.layerIds = [];
+        // imageParametersTransportation.layerOption = imageParametersTransportation.LAYER_OPTION_SHOW;
+        // layerTransportation = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/Transportation/MapServer", {
+        //     "imageParameters": imageParametersTransportation,
+        //     "opacity": 0.8,
+        //     "id": "layerTransportation"
+        // });
 
-        //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.
-        var imageParametersWastewater = new ImageParameters();
-        imageParametersWastewater.layerIds = [];
-        imageParametersWastewater.layerOption = imageParametersWastewater.LAYER_OPTION_SHOW;
-        layerWastewater = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/WasteWater/MapServer", {
-            "imageParameters": imageParametersWastewater,
-            "opacity": 0.8,
-            "id": "layerWastewater"
-        });
+        // //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.
+        // var imageParametersWastewater = new ImageParameters();
+        // imageParametersWastewater.layerIds = [];
+        // imageParametersWastewater.layerOption = imageParametersWastewater.LAYER_OPTION_SHOW;
+        // layerWastewater = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/WasteWater/MapServer", {
+        //     "imageParameters": imageParametersWastewater,
+        //     "opacity": 0.8,
+        //     "id": "layerWastewater"
+        // });
 
-        //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.
-        var imageParametersWater = new ImageParameters();
-        imageParametersWater.layerIds = [];
-        imageParametersWater.layerOption = imageParametersWater.LAYER_OPTION_SHOW;
-        layerWater = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/Water/MapServer", {
-            "imageParameters": imageParametersWater,
-            "opacity": 0.8,
-            "id": "layerWater"
-        });
+        // //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.
+        // var imageParametersWater = new ImageParameters();
+        // imageParametersWater.layerIds = [];
+        // imageParametersWater.layerOption = imageParametersWater.LAYER_OPTION_SHOW;
+        // layerWater = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/Water/MapServer", {
+        //     "imageParameters": imageParametersWater,
+        //     "opacity": 0.8,
+        //     "id": "layerWater"
+        // });
 
-        app.map.addLayers([streetMap, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
+        //app.map.addLayers([streetMap, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
 
         //Legend
-        legend = new Legend({
-            map: app.map,
-            respectCurrentMapScale: true,
-            layerInfos: [{
-                layer: layerBaseData
-            }, {
-                layer: layerBoundaries
-            }, {
-                layer: layerEnvironmental
-            }, {
-                layer: layerPlace
-            }, {
-                layer: layerStormwater
-            }, {
-                layer: layerTransportation
-            }, {
-                layer: layerWastewater
-            }, {
-                layer: layerWater
-            }]
-        }, "legendDiv");
+        // legend = new Legend({
+        //     map: app.map,
+        //     respectCurrentMapScale: true,
+        //     layerInfos: [{
+        //         layer: layerBaseData
+        //     }, {
+        //         layer: layerBoundaries
+        //     }, {
+        //         layer: layerEnvironmental
+        //     }, {
+        //         layer: layerPlace
+        //     }, {
+        //         layer: layerStormwater
+        //     }, {
+        //         layer: layerTransportation
+        //     }, {
+        //         layer: layerWastewater
+        //     }, {
+        //         layer: layerWater
+        //     }]
+        // }, "legendDiv");
 		
+        /*
         var newOpBaseData = Number(options.layerBaseData.splice(options.layerBaseData.length - 1, 1)[0]);
         if (newOpBaseData) {
             layerBaseData.setOpacity(newOpBaseData);
@@ -498,7 +503,7 @@ require(["esri/map",
         $('#rightPanel .tab-content').css('height', heightLegend);
         //End to set max-height of right panel
 
-		/*
+		
         legend.refresh([{
             layer: layerBaseData
         }, {
@@ -518,20 +523,20 @@ require(["esri/map",
         }]);
 		*/
 		
-		legend.refresh([{
-            layer: layerBaseData
-        }]);
+		// legend.refresh([{
+  //           layer: layerBaseData
+  //       }]);
 		
         //End of Legend
 
         //Define Queries
-        queryTaskPa = new esri.tasks.QueryTask("http://leia/arcgis/rest/services/Parcel/EastCountyParcels/MapServer/0");
+        queryTaskPa = new esri.tasks.QueryTask("http://maps.greshamoregon.gov/arcgis/rest/services/Parcel/EastCountyParcels/MapServer/0");
         queryPa = new esri.tasks.Query();
         queryPa.returnGeometry = true;
         queryPa.outFields = ["*"];
 
-        //define queries
-        queryTaskA = new esri.tasks.QueryTask("http://leia/arcgis/rest/services/Parcel/AddressPts/MapServer/1");
+        // //define queries
+        queryTaskA = new esri.tasks.QueryTask("http://maps.greshamoregon.gov/arcgis/rest/services/Parcel/AddressPts/MapServer/1");
         queryA = new esri.tasks.Query();
         queryA.returnGeometry = true;
         queryA.outFields = ["*"];
@@ -576,7 +581,7 @@ require(["esri/map",
 
                 gsvClick = dojo.connect(app.map, 'onClick', function(evt) {
 
-                    var gs = new esri.tasks.GeometryService("http://leia/arcgis/rest/services/Utilities/Geometry/GeometryServer");
+                    var gs = new esri.tasks.GeometryService("http://www.gartrellgroup.net/arcgis/rest/services/Utilities/Geometry/GeometryServer");
                     var outSR = new SpatialReference(4326);
 
                     var symbol = new esri.symbol.SimpleMarkerSymbol(esri.symbol.SimpleMarkerSymbol.STYLE_CIRCLE, 12,
@@ -596,7 +601,6 @@ require(["esri/map",
                 });
             }
         });
-
 
         $("#streetViewLink").click(function() {
             if ($('#btnGoogle').is(':visible')) {
@@ -675,41 +679,41 @@ require(["esri/map",
                 if (identifyValue) xID = identifyValue;
                 else xID = 16;
 
-                idfClick = dojo.connect(app.map, 'onClick', function(evt) {
+                // idfClick = dojo.connect(app.map, 'onClick', function(evt) {
 
-                    identifyTask = new IdentifyTask("http://leia/arcgis/rest/services/gview2/GVII/MapServer");
+                //     identifyTask = new IdentifyTask("http://leia/arcgis/rest/services/gview2/GVII/MapServer");
 
-                    identifyParams = new IdentifyParameters();
-                    identifyParams.tolerance = 3;
-                    identifyParams.returnGeometry = true;
-                    identifyParams.layerIds = [xID];
-                    identifyParams.layerOption = IdentifyParameters.LAYER_OPTION_ALL;
-                    identifyParams.width = app.map.width;
-                    identifyParams.height = app.map.height;
+                //     identifyParams = new IdentifyParameters();
+                //     identifyParams.tolerance = 3;
+                //     identifyParams.returnGeometry = true;
+                //     identifyParams.layerIds = [xID];
+                //     identifyParams.layerOption = IdentifyParameters.LAYER_OPTION_ALL;
+                //     identifyParams.width = app.map.width;
+                //     identifyParams.height = app.map.height;
 
-                    app.map.graphics.clear();
-                    identifyParams.geometry = evt.mapPoint; 
-                    identifyParams.mapExtent = app.map.extent;
-                    identifyTask.execute(identifyParams, function(idResults) {
-                        addToMap(idResults, evt);
-                    });
+                //     app.map.graphics.clear();
+                //     identifyParams.geometry = evt.mapPoint; 
+                //     identifyParams.mapExtent = app.map.extent;
+                //     identifyTask.execute(identifyParams, function(idResults) {
+                //         addToMap(idResults, evt);
+                //     });
 
-                    symbolIdentifyPoint = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_DIAMOND, 20,
-                        new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
-                            new Color([255, 0, 0]), 2),
-                        new Color([0, 255, 0, 0.75])
-                    );
-                    symbolIdentifyPolyline = new SimpleLineSymbol(
-                        SimpleLineSymbol.STYLE_SOLID,
-                        new Color([255, 0, 0]),
-                        7
-                    );
-                    symbolIdentifyPolygon = new SimpleFillSymbol(
-                        SimpleFillSymbol.STYLE_SOLID,
-                        new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([255, 0, 0]), 2),
-                        new Color([255, 255, 0, 0.25])
-                    );
-                });
+                //     symbolIdentifyPoint = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_DIAMOND, 20,
+                //         new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+                //             new Color([255, 0, 0]), 2),
+                //         new Color([0, 255, 0, 0.75])
+                //     );
+                //     symbolIdentifyPolyline = new SimpleLineSymbol(
+                //         SimpleLineSymbol.STYLE_SOLID,
+                //         new Color([255, 0, 0]),
+                //         7
+                //     );
+                //     symbolIdentifyPolygon = new SimpleFillSymbol(
+                //         SimpleFillSymbol.STYLE_SOLID,
+                //         new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([255, 0, 0]), 2),
+                //         new Color([255, 255, 0, 0.25])
+                //     );
+                // });
 
 
 
@@ -825,7 +829,6 @@ require(["esri/map",
             $("#btnIdentify").trigger("click");
         });
 
-
         $("#identifyLink").click(function() {
             if ($('#myText').is(':visible')) {
                 $('#myText').hide("fast", "swing");
@@ -858,6 +861,7 @@ require(["esri/map",
         //End of Identify Task
 
         //Measurement 
+        /*
         measurement = new Measurement({
             map: app.map,
             defaultLengthUnit: "esriFeet",
@@ -914,6 +918,7 @@ require(["esri/map",
 				  $('#btnGoogle').hide();
             }
         });
+        */
 
         //End of Measurement
 
@@ -1479,6 +1484,7 @@ require(["esri/map",
         //Geocode Search 
         var geocoder;
         var locatorUrl = "http://leia/arcgis/rest/services/Tools/StreetAddressLocator/GeocodeServer";
+        locatorUrl = 'http://maps.greshamoregon.gov/arcgis/rest/services/Tools/COG_Address_SingleHouseType/GeocodeServer';
 
         // add a graphics layer for geocoding results
         app.map.addLayer(new esri.layers.GraphicsLayer({
@@ -1543,7 +1549,7 @@ require(["esri/map",
 
                         //End of Census info
 
-                        queryTaskP = new esri.tasks.QueryTask("http://leia/arcgis/rest/services/Parcel/EastCountyParcels/MapServer/0");
+                        queryTaskP = new esri.tasks.QueryTask("http://maps.greshamoregon.gov/arcgis/rest/services/Parcel/EastCountyParcels/MapServer/0");
                         queryP = new esri.tasks.Query();
                         queryP.returnGeometry = true;
                         queryP.outFields = ["*"];
@@ -1601,13 +1607,13 @@ require(["esri/map",
 
         //Print
         // get print templates from the export web map task
-        var printInfo = esriRequest({
-            "url": app.printUrl,
-            "content": {
-                "f": "json"
-            }
-        });
-        printInfo.then(handlePrintInfo, handleError);
+        // var printInfo = esriRequest({
+        //     "url": app.printUrl,
+        //     "content": {
+        //         "f": "json"
+        //     }
+        // });
+        // printInfo.then(handlePrintInfo, handleError);
 
         function handlePrintInfo(resp) {
             var layoutTemplate, templateNames, mapOnlyIndex, templates;
@@ -1674,6 +1680,14 @@ require(["esri/map",
             }
             //End of Print   
 
+        /*
+        ____ ____ ____ ____ ____ _  _ 
+        [__  |___ |__| |__/ |    |__| 
+        ___] |___ |  | |  \ |___ |  | 
+                              
+        */
+        //Search
+
         //Search Dropdown menu change
         searchCategorySelected = "Search by Address";
         $("#searchByDropDown li a").click(function() {
@@ -1695,7 +1709,9 @@ require(["esri/map",
                 $("#iptType").attr("placeholder", "type a business or tenant name");
             } else if (searchCategorySelected === "Search by Manhole") {
                 $("#iptType").attr("placeholder", "type a manhole ID");
-            } else {
+            } else if (searchCategorySelected === "Search by Intersection") {
+                $("#iptType").attr("placeholder", "type a cross street...");
+            }else {
                 console.log(searchCategorySelected.toString());
             }
             var caretInsert = document.createElement("span");
@@ -1704,8 +1720,8 @@ require(["esri/map",
         });
         //End of Search Dropdown menu change
 
+     
 
-        //Search
         //apply different search functions based on browsers.  
         var userAgent = navigator.userAgent.toString().toLowerCase();
         //IE11 does not recognize userAgent so use rv variable to identify IE11.
@@ -1723,363 +1739,185 @@ require(["esri/map",
             return string.slice(0, prefix.length) == prefix;
         }
 
-        //search functions for IE
-        if (rv == 11 || userAgent.indexOf('ie') != -1) {
-            //console.log("ie!");
-            //search address
-            $("input[name=searchTypeField]").keydown(function(e) {
-                //console.log(e.keyCode);
-                if (e.keyCode == 13) { // Checks for the enter key
-                    e.preventDefault(); // Stops IE from triggering the button to be clicked
-                    searchInput = $("input[id=iptType]").val();
-                    var dirty = (new Date()).getTime();
-                    if (searchInput) {
-                        //search by address
-                        if (searchCategorySelected == "Search by Address") {
-                            if (searchInput.indexOf(",") > -1) {
-                                var newSearchInput = searchInput.split(",");
-                                queryA.where = "STREET_NUM like '" + newSearchInput[0] + "%'" + " AND " + "STREET_NAME like '" + newSearchInput[1].trim().toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
+        function handleSearch(){
+
+            searchInput = $("input[id=iptType]").val();
+            var dirty = (new Date()).getTime();
+            if (searchInput) {
+                if (searchCategorySelected == "Search by Address") {
+
+                    if (searchInput.indexOf(",") > -1) {
+                        var newSearchInput = searchInput.split(",");
+                        queryA.where = "STREET_NUM like '" + newSearchInput[0] + "%'" + " AND " + "STREET_NAME like '" + newSearchInput[1].trim().toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
+                        queryTaskA.execute(queryA, function(results) {
+                            showQueryResultsA(results);
+                        });
+                    }
+                    //search for intersection query
+                    else if (searchInput.indexOf(" & ") > -1 || searchInput.toUpperCase().includes(" AND ")) {
+
+                        //Todo -- ESRI-fy this query, but for the moment we're going to jQuery it....
+
+                        $.getJSON('http://maps.greshamoregon.gov/arcgis/rest/services/Tools/COG_Street_DualRangesType/GeocodeServer/findAddressCandidates?Single+Line+Input='+searchInput+'+%2C+GRSM&f=pjson').then(function(results){
+                            showQueryResultsInt(results);
+                        });
+                    } else {
+                        //search only for street name
+                        var newSearchInput = searchInput.split(" ");
+                        if (isInt(newSearchInput[0])) {
+
+                            if (newSearchInput[1]) var fInput = newSearchInput[1].toUpperCase();
+                            else var fInput = "nothing";
+                            //check if address input has direction with address number
+                            if (fInput === "E" || fInput === "N" || fInput === "NE" || fInput === "NW" || fInput === "S" || fInput === "SE" || fInput === "SW" || fInput === "W" || fInput === "nothing") {
+                                queryA.where = "FULLADDR like '" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
                                 queryTaskA.execute(queryA, function(results) {
                                     showQueryResultsA(results);
                                 });
                             }
-                            //search for intersection query
-                            else if (searchInput.indexOf("&") > -1) {} else {
-                                //search only for street name
-                                var newSearchInput = searchInput.split(" ");
-                                if (isInt(newSearchInput[0])) {
-
-                                    if (newSearchInput[1]) var fInput = newSearchInput[1].toUpperCase();
-                                    else var fInput = "nothing";
-                                    //check if address input has direction with address number
-                                    if (fInput === "E" || fInput === "N" || fInput === "NE" || fInput === "NW" || fInput === "S" || fInput === "SE" || fInput === "SW" || fInput === "W" || fInput === "nothing") {
-                                        queryA.where = "FULLADDR like '" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                                        queryTaskA.execute(queryA, function(results) {
-                                            showQueryResultsA(results);
-                                        });
-                                    }
-                                    //when address input does not have a direction
-                                    else {
-                                        if (newSearchInput[2]) var streetTypeInout = newSearchInput[2];
-                                        else var streetTypeInout = "";
-                                        queryA.where = "STREET_NUM like '" + newSearchInput[0].trim() + "'" + " AND " + "STREET_NAME like '" + fInput.trim().toUpperCase() + "%'" + " AND STREET_TYPE like '" + streetTypeInout.trim().toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                                        queryTaskA.execute(queryA, function(results) {
-                                            showQueryResultsA(results);
-                                        });
-                                    }
-                                }
-                                //first entry is not a number
-                                else {
-                                    var fInput = newSearchInput[0].toUpperCase();
-                                    if (fInput === "E" || fInput === "N" || fInput === "NE" || fInput === "NW" || fInput === "S" || fInput === "SE" || fInput === "SW" || fInput === "W") {
-                                        if (newSearchInput[2]) var streetTypeInout = newSearchInput[2];
-                                        else var streetTypeInout = "";
-                                        queryA.where = "STREET_DIR like '" + fInput + "'" + " AND " + "STREET_NAME like '" + newSearchInput[1].trim().toUpperCase() + "%'" + " AND STREET_TYPE like '" + streetTypeInout.trim().toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                                        queryTaskA.execute(queryA, function(results) {
-                                            showQueryResultsA(results);
-                                        });
-                                    } else if (stringStartsWith(fInput, "1N") || stringStartsWith(fInput, "1S")) {
-                                        queryA.where = "FULLADDR like '" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                                        queryTaskA.execute(queryA, function(results) {
-                                            showQueryResultsA(results);
-                                        });
-                                    } else {
-                                        if (newSearchInput[1]) var streetTypeInout = newSearchInput[1];
-                                        else var streetTypeInout = "";
-                                        queryA.where = "STREET_NAME like '" + newSearchInput[0].trim().toUpperCase() + "%'" + " AND STREET_TYPE like '" + streetTypeInout.trim().toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                                        queryTaskA.execute(queryA, function(results) {
-                                            showQueryResultsA(results);
-                                        });
-                                    }
-                                }
-                            }
-                        }
-                        //search by RNO
-                        else if (searchCategorySelected == "Search by RNO") {
-                            if (searchInput.substring(0, 1).toUpperCase() === "R") {
-                                queryPa.where = "RNO like '" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                                queryTaskPa.execute(queryPa, function(results) {
-                                    showQueryResults(results);
-                                });
-                            } else {
-                                queryPa.where = "RNO like 'R" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                                queryTaskPa.execute(queryPa, function(results) {
-                                    showQueryResults(results);
-                                });
-                            }
-                        } else if (searchCategorySelected == "Search by RNO6") {
-                            if (searchInput.substring(0, 1).toUpperCase() === "R") {
-                                queryPa.where = "RNO6 like '" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                                queryTaskPa.execute(queryPa, function(results) {
-                                    showQueryResults(results);
-                                });
-                            } else {
-                                queryPa.where = "RNO6 like 'R" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                                queryTaskPa.execute(queryPa, function(results) {
-                                    showQueryResults(results);
-                                });
-                            }
-                        } else if (searchCategorySelected == "Search by Name") {
-                            queryPa.where = "OWNER1 like '" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                            queryTaskPa.execute(queryPa, function(results) {
-                                showQueryResults(results);
-                            });
-                        } else if (searchCategorySelected == "Search by State ID") {
-                            var sIDInput = searchInput.toUpperCase();
-                            if (sIDInput.indexOf("-") > -1) {
-                                var sIDInputArray = sIDInput.split("-");
-                                if (sIDInputArray[1].length == 4) var sIDInputNew = "0" + sIDInputArray[1];
-                                else if (sIDInputArray[1].length == 3) var sIDInputNew = "00" + sIDInputArray[1];
-                                else if (sIDInputArray[1].length == 2) var sIDInputNew = "000" + sIDInputArray[1];
-                                else if (sIDInputArray[1].length == 1) var sIDInputNew = "0000" + sIDInputArray[1];
-                                else var sIDInputNew = sIDInputArray[1];
-                                var sIDInputNew0 = sIDInputArray[0].split(/[ ]+/)[0].trim();
-                                if (sIDInputNew0.length == 7) sIDInputNew0 = sIDInput.substr(0, 7) + " ";
-                                else if (sIDInputNew0.length == 6) sIDInputNew0 = sIDInput.substr(0, 6) + "  ";
-                                sIDInput = sIDInputNew0 + "  -" + sIDInputNew;
-                            } else {
-                                if (sIDInput.indexOf(" ") > -1) {
-                                    var sIDInputArray = sIDInput.split(/[ ]+/);
-                                    if (sIDInputArray[1].length == 4) var sIDInputNew = "0" + sIDInputArray[1];
-                                    else if (sIDInputArray[1].length == 3) var sIDInputNew = "00" + sIDInputArray[1];
-                                    else if (sIDInputArray[1].length == 2) var sIDInputNew = "000" + sIDInputArray[1];
-                                    else if (sIDInputArray[1].length == 1) var sIDInputNew = "0000" + sIDInputArray[1];
-                                    else var sIDInputNew = sIDInputArray[1];
-
-                                    if (sIDInputArray[0].length == 7) sIDInputNew0 = sIDInputArray[0] + " ";
-                                    else if (sIDInputArray[0].length == 6) sIDInputNew0 = sIDInputArray[0] + "  ";
-                                    else var sIDInputNew0 = sIDInput.substr(0, 8);
-                                    sIDInput = sIDInputNew0 + "  -" + sIDInputNew;
-                                }
-                            }
-                            queryPa.where = "STATEID like '" + sIDInput + "%'" + " AND " + dirty + "=" + dirty;
-                            queryTaskPa.execute(queryPa, function(results) {
-                                showQueryResults(results);
-                            });
-                        }
-
-                        else if (searchCategorySelected == "Search by Subdivision") {
-                            //define queries
-                            queryTaskSD = new esri.tasks.QueryTask("http://leia/arcgis/rest/services/gview2/GVII/MapServer/26");
-                            querySD = new esri.tasks.Query();
-                            querySD.returnGeometry = true;
-                            querySD.outFields = ["*"];
-
-                            querySD.where = "LEGAL like '%" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                            queryTaskSD.execute(querySD, function(results) {
-                                showQueryResultsSD(results);
-                            });
-                        } else if (searchCategorySelected == "Search by Business") {
-                            //define queries
-                            queryTaskBu = new esri.tasks.QueryTask("http://leia/arcgis/rest/services/gview/ShortList/MapServer/1");
-                            queryBu = new esri.tasks.Query();
-                            queryBu.returnGeometry = true;
-                            queryBu.outFields = ["*"];
-
-                            queryBu.where = "BUSNAME like '%" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                            queryTaskBu.execute(queryBu, function(results) {
-                                showQueryResultsBu(results);
-                            });
-                        } else if (searchCategorySelected == "Search by Manhole") {
-                            //define queries
-                            queryTaskMH = new esri.tasks.QueryTask("http://leia/arcgis/rest/services/gview2/WasteWater/MapServer/0");
-                            queryMH = new esri.tasks.Query();
-                            queryMH.returnGeometry = true;
-                            queryMH.outFields = ["*"];
-
-                            queryMH.where = "ID like '%" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                            queryTaskMH.execute(queryMH, function(results) {
-                                showQueryResultsMH(results);
-                            });
-                        }
-
-                    }
-                }
-            }); //  });
-        }
-
-        //firefox, chrome and other browsers
-        else {
-            //console.log("ff or others");
-            //search address
-            $("input[name=searchTypeField]").change(function() {
-                searchInput = $("input[id=iptType]").val();
-                var dirty = (new Date()).getTime();
-                if (searchInput) {
-                    //console.log(searchInput);
-                    if (searchCategorySelected == "Search by Address") {
-                        if (searchInput.indexOf(",") > -1) {
-                            var newSearchInput = searchInput.split(",");
-                            queryA.where = "STREET_NUM like '" + newSearchInput[0] + "%'" + " AND " + "STREET_NAME like '" + newSearchInput[1].trim().toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                            queryTaskA.execute(queryA, function(results) {
-                                showQueryResultsA(results);
-                            });
-                        }
-                        //search for intersection query
-                        else if (searchInput.indexOf("&") > -1) {
-                            $("#iptTypeGeo").html = searchInput;
-
-                            var e = jQuery.Event("keydown");
-                            e.which = 50;
-                            e.keyCode = 50;
-                            $("input").trigger(e);
-
-                            geocoder.startup();
-                            geocoder.on("iptTypeGeo", showLocation);
-                            //showLocation();
-                        } else {
-                            //search only for street name
-                            var newSearchInput = searchInput.split(" ");
-                            if (isInt(newSearchInput[0])) {
-
-                                if (newSearchInput[1]) var fInput = newSearchInput[1].toUpperCase();
-                                else var fInput = "nothing";
-                                //check if address input has direction with address number
-                                if (fInput === "E" || fInput === "N" || fInput === "NE" || fInput === "NW" || fInput === "S" || fInput === "SE" || fInput === "SW" || fInput === "W" || fInput === "nothing") {
-                                    queryA.where = "FULLADDR like '" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                                    queryTaskA.execute(queryA, function(results) {
-                                        showQueryResultsA(results);
-                                    });
-                                }
-                                //when address input does not have a direction
-                                else {
-                                    if (newSearchInput[2]) var streetTypeInout = newSearchInput[2];
-                                    else var streetTypeInout = "";
-                                    queryA.where = "STREET_NUM like '" + newSearchInput[0].trim() + "'" + " AND " + "STREET_NAME like '" + fInput.trim().toUpperCase() + "%'" + " AND STREET_TYPE like '" + streetTypeInout.trim().toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                                    queryTaskA.execute(queryA, function(results) {
-                                        showQueryResultsA(results);
-                                    });
-                                }
-                            }
-
-                            //first entry is not a number
+                            //when address input does not have a direction
                             else {
-                                var fInput = newSearchInput[0].toUpperCase();
-                                if (fInput === "E" || fInput === "N" || fInput === "NE" || fInput === "NW" || fInput === "S" || fInput === "SE" || fInput === "SW" || fInput === "W") {
-                                    if (newSearchInput[2]) var streetTypeInout = newSearchInput[2];
-                                    else var streetTypeInout = "";
-                                    queryA.where = "STREET_DIR like '" + fInput + "'" + " AND " + "STREET_NAME like '" + newSearchInput[1].trim().toUpperCase() + "%'" + " AND STREET_TYPE like '" + streetTypeInout.trim().toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                                    queryTaskA.execute(queryA, function(results) {
-                                        showQueryResultsA(results);
-                                    });
-                                } else if (stringStartsWith(fInput, "1N") || stringStartsWith(fInput, "1S")) {
-                                    queryA.where = "FULLADDR like '" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                                    queryTaskA.execute(queryA, function(results) {
-                                        showQueryResultsA(results);
-                                    });
-                                } else {
-                                    if (newSearchInput[1]) var streetTypeInout = newSearchInput[1];
-                                    else var streetTypeInout = "";
-                                    queryA.where = "STREET_NAME like '" + newSearchInput[0].trim().toUpperCase() + "%'" + " AND STREET_TYPE like '" + streetTypeInout.trim().toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                                    queryTaskA.execute(queryA, function(results) {
-                                        showQueryResultsA(results);
-                                    });
-                                }
+                                if (newSearchInput[2]) var streetTypeInout = newSearchInput[2];
+                                else var streetTypeInout = "";
+                                queryA.where = "STREET_NUM like '" + newSearchInput[0].trim() + "'" + " AND " + "STREET_NAME like '" + fInput.trim().toUpperCase() + "%'" + " AND STREET_TYPE like '" + streetTypeInout.trim().toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
+                                queryTaskA.execute(queryA, function(results) {
+                                    showQueryResultsA(results);
+                                });
+                            }
+                        } else {
+                            var fInput = newSearchInput[0].toUpperCase();
+                            if (fInput === "E" || fInput === "N" || fInput === "NE" || fInput === "NW" || fInput === "S" || fInput === "SE" || fInput === "SW" || fInput === "W") {
+                                if (newSearchInput[2]) var streetTypeInout = newSearchInput[2];
+                                else var streetTypeInout = "";
+                                queryA.where = "STREET_DIR like '" + fInput + "'" + " AND " + "STREET_NAME like '" + newSearchInput[1].trim().toUpperCase() + "%'" + " AND STREET_TYPE like '" + streetTypeInout.trim().toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
+                                queryTaskA.execute(queryA, function(results) {
+                                    showQueryResultsA(results);
+                                });
+                            } else if (stringStartsWith(fInput, "1N") || stringStartsWith(fInput, "1S")) {
+                                queryA.where = "FULLADDR like '" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
+                                queryTaskA.execute(queryA, function(results) {
+                                    showQueryResultsA(results);
+                                });
+                            } else {
+                                if (newSearchInput[1]) var streetTypeInout = newSearchInput[1];
+                                else var streetTypeInout = "";
+                                queryA.where = "STREET_NAME like '" + newSearchInput[0].trim().toUpperCase() + "%'" + " AND STREET_TYPE like '" + streetTypeInout.trim().toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
+                                queryTaskA.execute(queryA, function(results) {
+                                    showQueryResultsA(results);
+                                });
                             }
                         }
-                    } else if (searchCategorySelected == "Search by RNO") {
-                        if (searchInput.substring(0, 1).toUpperCase() === "R") {
-                            var dirty = (new Date()).getTime();
-                            queryPa.where = "RNO like '" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                            queryTaskPa.execute(queryPa, function(results) {
-                                showQueryResults(results);
-                            });
-                        } else {
-                            var dirty = (new Date()).getTime();
-                            queryPa.where = "RNO like 'R" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                            queryTaskPa.execute(queryPa, function(results) {
-                                showQueryResults(results);
-                            });
-                        }
-                    } else if (searchCategorySelected == "Search by RNO6") {
-                        if (searchInput.substring(0, 1).toUpperCase() === "R") {
-                            var dirty = (new Date()).getTime();
-                            queryPa.where = "RNO6 like '" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                            queryTaskPa.execute(queryPa, function(results) {
-                                showQueryResults(results);
-                            });
-                        } else {
-                            var dirty = (new Date()).getTime();
-                            queryPa.where = "RNO6 like 'R" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                            queryTaskPa.execute(queryPa, function(results) {
-                                showQueryResults(results);
-                            });
-                        }
-                    } else if (searchCategorySelected == "Search by Name") {
-                        queryPa.where = "OWNER1 like '" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
+                    }
+                } else if (searchCategorySelected == "Search by RNO") {
+                    if (searchInput.substring(0, 1).toUpperCase() === "R") {
+                        queryPa.where = "RNO like '" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
                         queryTaskPa.execute(queryPa, function(results) {
                             showQueryResults(results);
                         });
-                    } else if (searchCategorySelected == "Search by State ID") {
-                        var sIDInput = searchInput.toUpperCase();
-                        if (sIDInput.indexOf("-") > -1) {
-                            var sIDInputArray = sIDInput.split("-");
+                    } else {
+                        queryPa.where = "RNO like 'R" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
+                        queryTaskPa.execute(queryPa, function(results) {
+                            showQueryResults(results);
+                        });
+                    }
+                } else if (searchCategorySelected == "Search by RNO6") {
+                    if (searchInput.substring(0, 1).toUpperCase() === "R") {
+                        queryPa.where = "RNO6 like '" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
+                        queryTaskPa.execute(queryPa, function(results) {
+                            showQueryResults(results);
+                        });
+                    } else {
+                        queryPa.where = "RNO6 like 'R" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
+                        queryTaskPa.execute(queryPa, function(results) {
+                            showQueryResults(results);
+                        });
+                    }
+                } else if (searchCategorySelected == "Search by Name") {
+                    queryPa.where = "OWNER1 like '" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
+                    queryTaskPa.execute(queryPa, function(results) {
+                        showQueryResults(results);
+                    });
+                } else if (searchCategorySelected == "Search by State ID") {
+                    var sIDInput = searchInput.toUpperCase();
+                    if (sIDInput.indexOf("-") > -1) {
+                        var sIDInputArray = sIDInput.split("-");
+                        if (sIDInputArray[1].length == 4) var sIDInputNew = "0" + sIDInputArray[1];
+                        else if (sIDInputArray[1].length == 3) var sIDInputNew = "00" + sIDInputArray[1];
+                        else if (sIDInputArray[1].length == 2) var sIDInputNew = "000" + sIDInputArray[1];
+                        else if (sIDInputArray[1].length == 1) var sIDInputNew = "0000" + sIDInputArray[1];
+                        else var sIDInputNew = sIDInputArray[1];
+                        var sIDInputNew0 = sIDInputArray[0].split(/[ ]+/)[0].trim();
+                        if (sIDInputNew0.length == 7) sIDInputNew0 = sIDInput.substr(0, 7) + " ";
+                        else if (sIDInputNew0.length == 6) sIDInputNew0 = sIDInput.substr(0, 6) + "  ";
+                        sIDInput = sIDInputNew0 + "  -" + sIDInputNew;
+                    } else {
+                        if (sIDInput.indexOf(" ") > -1) {
+                            var sIDInputArray = sIDInput.split(/[ ]+/);
                             if (sIDInputArray[1].length == 4) var sIDInputNew = "0" + sIDInputArray[1];
                             else if (sIDInputArray[1].length == 3) var sIDInputNew = "00" + sIDInputArray[1];
                             else if (sIDInputArray[1].length == 2) var sIDInputNew = "000" + sIDInputArray[1];
                             else if (sIDInputArray[1].length == 1) var sIDInputNew = "0000" + sIDInputArray[1];
                             else var sIDInputNew = sIDInputArray[1];
-                            var sIDInputNew0 = sIDInputArray[0].split(/[ ]+/)[0].trim();
-                            if (sIDInputNew0.length == 7) sIDInputNew0 = sIDInput.substr(0, 7) + " ";
-                            else if (sIDInputNew0.length == 6) sIDInputNew0 = sIDInput.substr(0, 6) + "  ";
-                            //var sIDInputNew0 = sIDInput.substr(0,8);
+
+                            if (sIDInputArray[0].length == 7) sIDInputNew0 = sIDInputArray[0] + " ";
+                            else if (sIDInputArray[0].length == 6) sIDInputNew0 = sIDInputArray[0] + "  ";
+                            else var sIDInputNew0 = sIDInput.substr(0, 8);
                             sIDInput = sIDInputNew0 + "  -" + sIDInputNew;
-                        } else {
-                            if (sIDInput.indexOf(" ") > -1) {
-                                var sIDInputArray = sIDInput.split(/[ ]+/);
-                                if (sIDInputArray[1].length == 4) var sIDInputNew = "0" + sIDInputArray[1];
-                                else if (sIDInputArray[1].length == 3) var sIDInputNew = "00" + sIDInputArray[1];
-                                else if (sIDInputArray[1].length == 2) var sIDInputNew = "000" + sIDInputArray[1];
-                                else if (sIDInputArray[1].length == 1) var sIDInputNew = "0000" + sIDInputArray[1];
-                                else var sIDInputNew = sIDInputArray[1];
-
-                                if (sIDInputArray[0].length == 7) sIDInputNew0 = sIDInputArray[0] + " ";
-                                else if (sIDInputArray[0].length == 6) sIDInputNew0 = sIDInputArray[0] + "  ";
-                                else var sIDInputNew0 = sIDInput.substr(0, 8);
-                                sIDInput = sIDInputNew0 + "  -" + sIDInputNew;
-                            }
                         }
-                        queryPa.where = "STATEID like '" + sIDInput + "%'" + " AND " + dirty + "=" + dirty;
-                        queryTaskPa.execute(queryPa, function(results) {
-                            showQueryResults(results);
-                        });
                     }
-                    else if (searchCategorySelected == "Search by Subdivision") {
-                        //define queries
-                        queryTaskSD = new esri.tasks.QueryTask("http://leia/arcgis/rest/services/gview2/GVII/MapServer/26");
-                        querySD = new esri.tasks.Query();
-                        querySD.returnGeometry = true;
-                        querySD.outFields = ["*"];
+                    queryPa.where = "STATEID like '" + sIDInput + "%'" + " AND " + dirty + "=" + dirty;
+                    queryTaskPa.execute(queryPa, function(results) {
+                        showQueryResults(results);
+                    });
+                } else if (searchCategorySelected == "Search by Subdivision") {
+                    //define queries
+                    queryTaskSD = new esri.tasks.QueryTask("http://leia/arcgis/rest/services/gview2/GVII/MapServer/26");
+                    querySD = new esri.tasks.Query();
+                    querySD.returnGeometry = true;
+                    querySD.outFields = ["*"];
 
-                        querySD.where = "LEGAL like '%" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                        queryTaskSD.execute(querySD, function(results) {
-                            showQueryResultsSD(results);
-                        });
-                    } else if (searchCategorySelected == "Search by Business") {
-                        //define queries
-                        queryTaskBu = new esri.tasks.QueryTask("http://leia/arcgis/rest/services/gview/ShortList/MapServer/1");
-                        queryBu = new esri.tasks.Query();
-                        queryBu.returnGeometry = true;
-                        queryBu.outFields = ["*"];
+                    querySD.where = "LEGAL like '%" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
+                    queryTaskSD.execute(querySD, function(results) {
+                        showQueryResultsSD(results);
+                    });
+                } else if (searchCategorySelected == "Search by Business") {
+                    //define queries
+                    queryTaskBu = new esri.tasks.QueryTask("http://leia/arcgis/rest/services/gview/ShortList/MapServer/1");
+                    queryBu = new esri.tasks.Query();
+                    queryBu.returnGeometry = true;
+                    queryBu.outFields = ["*"];
 
-                        queryBu.where = "BUSNAME like '%" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                        queryTaskBu.execute(queryBu, function(results) {
-                            showQueryResultsBu(results);
-                        });
+                    queryBu.where = "BUSNAME like '%" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
+                    queryTaskBu.execute(queryBu, function(results) {
+                        showQueryResultsBu(results);
+                    });
+                } else if (searchCategorySelected == "Search by Manhole") {
+                    //define queries
+                    queryTaskMH = new esri.tasks.QueryTask("http://leia/arcgis/rest/services/gview2/WasteWater/MapServer/0");
+                    queryMH = new esri.tasks.Query();
+                    queryMH.returnGeometry = true;
+                    queryMH.outFields = ["*"];
 
-                    } else if (searchCategorySelected == "Search by Manhole") {
-                        //define queries
-                        queryTaskMH = new esri.tasks.QueryTask("http://leia/arcgis/rest/services/gview2/WasteWater/MapServer/0");
-                        queryMH = new esri.tasks.Query();
-                        queryMH.returnGeometry = true;
-                        queryMH.outFields = ["*"];
+                    queryMH.where = "ID like '%" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
+                    queryTaskMH.execute(queryMH, function(results) {
+                        showQueryResultsMH(results);
+                    });
+                } else if (searchCategorySelected == "Search by intersection"){
 
-                        queryMH.where = "ID like '%" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                        queryTaskMH.execute(queryMH, function(results) {
-                            showQueryResultsMH(results);
-                        });
-                    }
                 }
+            }
+        }
+
+        if (rv == 11 || userAgent.indexOf('ie') != -1) {
+            $("input[name=searchTypeField]").keydown(function(e) {
+                if (e.keyCode == 13) { // Checks for the enter key
+                    e.preventDefault(); // Stops IE from triggering the button to be clicked
+                    handleSearch();
+                }
+            }); 
+        } else {   //firefox, chrome and other browsers
+            $("input[name=searchTypeField]").change(function() {
+                handleSearch()
             });
         }
 
@@ -2225,7 +2063,6 @@ require(["esri/map",
                 });
             }
         }
-
 
         function showQueryResultsBu(results) {
             //set search results polygon symbol
@@ -2426,7 +2263,6 @@ require(["esri/map",
             } // end of else - one search results     
         }
 
-
         function showQueryResultsMH(results) { 
                 var symbolQueryMH = new esri.symbol.SimpleMarkerSymbol(esri.symbol.SimpleMarkerSymbol.STYLE_CIRCLE, 12,
                     new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID,
@@ -2482,8 +2318,7 @@ require(["esri/map",
                     openRightPanelSTab();
 
                 }
-            } // end of Manhole search
-
+        } // end of Manhole search
 
         function showQueryResultsSD(results) {
                 var symbolQuerySD = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_NULL, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SHORTDASH, new dojo.Color([255, 0, 0]), 3), new dojo.Color([255, 255, 0]));
@@ -2627,6 +2462,75 @@ require(["esri/map",
             }
         }
 
+        var showQueryResultsInt = function(results){
+
+            var symbolPts = new esri.symbol.SimpleMarkerSymbol(esri.symbol.SimpleMarkerSymbol.STYLE_CIRCLE, 12,
+                new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID,
+                    new dojo.Color([210, 105, 30, 0.5]), 8),
+                new dojo.Color([210, 105, 30, 0.9])
+            );
+            app.map.graphics.clear();
+            var infoContent = "";
+            var addrContent = "";
+
+            if(results.candidates.length == 0){
+                infoContent = "<br />No matching intersection was found...";
+                dom.byId("featureCount").innerHTML = "";
+                dom.byId("leftPane").innerHTML = infoContent;
+                openRightPanelSTab();
+            } else if (results.candidates.length ==1){
+
+                var candidate = results.candidates[0];
+
+                dojo.byId("featureCount").innerHTML = "";
+                dom.byId("leftPane").innerHTML = '<b>Intersection: </b>'+candidate.address +'<br/>Score: '+candidate.score ;
+                var markerSymbol = new SimpleMarkerSymbol();
+                markerSymbol.setPath("M16,4.938c-7.732,0-14,4.701-14,10.5c0,1.981,0.741,3.833,2.016,5.414L2,25.272l5.613-1.44c2.339,1.316,5.237,2.106,8.387,2.106c7.732,0,14-4.701,14-10.5S23.732,4.938,16,4.938zM16.868,21.375h-1.969v-1.889h1.969V21.375zM16.772,18.094h-1.777l-0.176-8.083h2.113L16.772,18.094z");
+                markerSymbol.setColor(new Color("#00FFFF"));
+
+                var graphic = new Graphic(new Point(candidate.location,app.map.spatialReference), symbolPts);
+
+                app.map.graphics.add(graphic);
+            
+                app.map.centerAndZoom(candidate.location, 6);
+
+            } else if (results.candidates.length > 1){
+                dojo.byId("leftPane").innerHTML = "";
+                intrsContent = '<ul id="asc">';
+                results.candidates.forEach(function(cand){
+                    var content1 = "<li><a class='intersection-candidate' href='#' data-coords='"+JSON.stringify(cand.location)+"'>" + cand.address + "<br/><i>"+cand.score+"</i></a></li>";
+                    intrsContent += content1;
+                })
+                
+                intrsContent += '</ul>';
+                var intrsCount = "<div>" + "We found " + results.candidates.length.toString() + " matches.<br /></div>";
+
+                dom.byId("featureCount").innerHTML = "";
+
+                dom.byId("leftPane").innerHTML = intrsCount + intrsContent;
+                openRightPanelSTab();
+
+                 $('.intersection-candidate').on('click', function(){
+
+                    app.map.graphics.clear();
+
+                    var coords = JSON.parse($(this).attr('data-coords'));
+
+                    var markerSymbol = new SimpleMarkerSymbol();
+                    markerSymbol.setPath("M16,4.938c-7.732,0-14,4.701-14,10.5c0,1.981,0.741,3.833,2.016,5.414L2,25.272l5.613-1.44c2.339,1.316,5.237,2.106,8.387,2.106c7.732,0,14-4.701,14-10.5S23.732,4.938,16,4.938zM16.868,21.375h-1.969v-1.889h1.969V21.375zM16.772,18.094h-1.777l-0.176-8.083h2.113L16.772,18.094z");
+                    markerSymbol.setColor(new Color("#00FFFF"));
+
+                    var graphic = new Graphic(new Point(coords,app.map.spatialReference), symbolPts);
+
+                    app.map.graphics.add(graphic);
+                
+                    app.map.centerAndZoom(coords, 6);
+
+                })
+
+            }
+        }       
+
         //End of Query Functions
 
         //Resize window
@@ -2644,7 +2548,7 @@ require(["esri/map",
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
-
+/*
 function aerialChange(value) {
     app.map.removeAllLayers();
     aerialMap = "aerialMap" + value;
@@ -2674,7 +2578,7 @@ function aerialChange(value) {
         else aerialMap2002.setOpacity(0);
     }
 }
-
+*/
 //Open search results panel and tab 
 function openRightPanelSTab() {
         if ($("#rightC").hasClass("hidden")) {
@@ -2693,23 +2597,23 @@ function openRightPanelSTab() {
 //Right Panel Toggle Button Function          
 $("#btnRightPanel").on('click', function() {
 
-        if ($("#rightC").hasClass("hidden")) {
-            $("#middleC").toggleClass("col-md-12 col-md-8");
-            $("#rightC").toggleClass("hidden show");
-            $("#rightC").addClass("col-md-4");
-            if ($(window).width() < 992) {
-                $('#map').height($(window).height() - $('#navbarHeader').height() - 300);
-                app.map.resize();
-            }
-        } else {
-            $("#middleC").toggleClass("col-md-8 col-md-12");
-            $("#rightC").removeClass("col-md-4");
-            $("#rightC").toggleClass("show hidden");
-            $('#map').height($(window).height() - $('#navbarHeader').height());
+    if ($("#rightC").hasClass("hidden")) {
+        $("#middleC").toggleClass("col-md-12 col-md-8");
+        $("#rightC").toggleClass("hidden show");
+        $("#rightC").addClass("col-md-4");
+        if ($(window).width() < 992) {
+            $('#map').height($(window).height() - $('#navbarHeader').height() - 300);
             app.map.resize();
         }
-    })
-    //End of Right Panel Toggle Button Function          
+    } else {
+        $("#middleC").toggleClass("col-md-8 col-md-12");
+        $("#rightC").removeClass("col-md-4");
+        $("#rightC").toggleClass("show hidden");
+        $('#map').height($(window).height() - $('#navbarHeader').height());
+        app.map.resize();
+    }
+})
+//End of Right Panel Toggle Button Function          
 
 //Right Panel Tab functions
 $('#layers a').click(function(e) {
@@ -2717,7 +2621,6 @@ $('#layers a').click(function(e) {
     $(this).tab('show');
 })
 $('#searchResults a').click(function(e) {
-    //console.log("tab search press");
     e.preventDefault();
     $(this).tab('show');
 })
@@ -2730,7 +2633,7 @@ $('#legends a').click(function(e) {
 
 //GeoLocation
 function initFunc() {
-    gsvc = new esri.tasks.GeometryService("http://leia/ArcGIS/rest/services/Utilities/Geometry/GeometryServer");
+    gsvc = new esri.tasks.GeometryService("http://www.gartrellgroup.net/arcgis/rest/services/Utilities/Geometry/GeometryServer");
     dojo.connect(window, 'resize', app.map, app.map.resize);
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(zoomToLocation, locationError);
@@ -3047,9 +2950,6 @@ function findRNO3(n) {
         });
     });
 }
-
-
-
 
 function showQueryResultsBu1(results, k) {
     var symbolPts = new esri.symbol.SimpleMarkerSymbol(esri.symbol.SimpleMarkerSymbol.STYLE_CIRCLE, 12,
