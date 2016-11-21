@@ -1761,6 +1761,7 @@ initMap();
                         $.getJSON('http://maps.greshamoregon.gov/arcgis/rest/services/Tools/COG_Street_DualRangesType/GeocodeServer/findAddressCandidates?Single+Line+Input='+searchInput+'+%2C+GRSM&f=pjson').then(function(results){
                             showQueryResultsInt(results);
                         });
+
                     } else {
                         //search only for street name
                         var newSearchInput = searchInput.split(" ");
@@ -2493,8 +2494,9 @@ initMap();
                 app.map.graphics.add(graphic);
             
                 app.map.centerAndZoom(candidate.location, 6);
-
+                openRightPanelSTab();
             } else if (results.candidates.length > 1){
+                
                 dojo.byId("leftPane").innerHTML = "";
                 intrsContent = '<ul id="asc">';
                 results.candidates.forEach(function(cand){
