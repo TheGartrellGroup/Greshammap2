@@ -64,6 +64,7 @@ require(["esri/map",
     "esri/layers/ArcGISTiledMapServiceLayer",
     "esri/layers/ArcGISDynamicMapServiceLayer",
     "esri/layers/ArcGISImageServiceLayer",
+    "esri/layers/GraphicsLayer",
     "esri/layers/FeatureLayer",
     "esri/layers/ImageParameters",
 
@@ -77,7 +78,10 @@ require(["esri/map",
     "esri/geometry/Point", "esri/geometry", "esri/request", "esri/config",
     "esri/dijit/Print", "esri/tasks/PrintTemplate", "esri/tasks/LegendLayer",
     "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol", "esri/tasks/IdentifyTask", "esri/tasks/IdentifyParameters", "esri/Color",
+     "esri/symbols/Font",
+  "esri/symbols/TextSymbol", 
     "esri/SnappingManager", "esri/dijit/Measurement", "esri/dijit/Scalebar", "esri/toolbars/draw",
+    "esri/geometry/Polyline","esri/geometry/geometryEngine",
 
     "dojo/dom", "dojo/dom-construct", "dojo/dom-style",
     "dojo/query", "dojo/on",
@@ -85,17 +89,17 @@ require(["esri/map",
     "dijit/form/Button",
 
     "dojo/domReady!"
-], function(Map, ArcGISTiledMapServiceLayer, ArcGISDynamicMapServiceLayer, ArcGISImageServiceLayer, FeatureLayer, ImageParameters, DynamicLayerInfo, LayerDataSource,
+], function(Map, ArcGISTiledMapServiceLayer, ArcGISDynamicMapServiceLayer, ArcGISImageServiceLayer, GraphicsLayer, FeatureLayer, ImageParameters, DynamicLayerInfo, LayerDataSource,
     LayerDrawingOptions, TableDataSource, Legend, Popup, Geocoder, HomeButton, LocateButton, Extent,
     Locator, Graphic, InfoTemplate, SimpleMarkerSymbol, GeometryService, SpatialReference, Point, Geometry, esriRequest, esriConfig, Print, PrintTemplate, LegendLayer,
-    SimpleFillSymbol, SimpleLineSymbol, IdentifyTask, IdentifyParameters, Color, SnappingManager, Measurement, Scalebar, Draw,
+    SimpleFillSymbol, SimpleLineSymbol, IdentifyTask, IdentifyParameters, Color, Font, TextSymbol, SnappingManager, Measurement, Scalebar, Draw, Polyline, GeometryEngine,
     dom, domConstruct, domStyle, query, on, parser, arrayUtils, Source, registry, connect) {
 
     parser.parse();
 
     parseOnLoad = "false";
 
-    //app.printUrl = "http://leia/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task";
+    app.printUrl = "http://leia/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task";
 
     //esriConfig.defaults.io.proxyUrl = "http://localhost/proxy/proxy.ashx";
     //esriConfig.defaults.io.alwaysUseProxy = true;
@@ -103,48 +107,52 @@ require(["esri/map",
 	
     var map, usaLayer, dynamicLayerInfos;
     var infos = {};
-/*
+
+    $.get('views/parcelTemplate.htm').then(function(template){
+        app.parcelTemplate = UnderscoreTemplate(template);
+    })
+
     var layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater, visibleLayerIds, visibleLayerIdsServices, visibleLayerIdsIncentives, visibleLayerIdsQuick = [];
 
     function parseLayerOptions(obj) {
         var layerOptions = {};
 
-        if (obj.layerBaseData !== undefined) {
+        if (obj.layerBaseData) {
             layerOptions.layerBaseData = obj.layerBaseData.split(',')
         }
 
-        if (obj.layerBoundaries !== undefined) {
+        if (obj.layerBoundaries) {
             layerOptions.layerBoundaries = obj.layerBoundaries.split(',')
         }
 
-        if (obj.layerEnvironmental !== undefined) {
+        if (obj.layerEnvironmental) {
             layerOptions.layerEnvironmental = obj.layerEnvironmental.split(',')
         }
 
-        if (obj.layerPlace !== undefined) {
+        if (obj.layerPlace) {
             layerOptions.layerPlace = obj.layerPlace.split(',')
         }
 
-        if (obj.layerStormwater !== undefined) {
+        if (obj.layerStormwater) {
             layerOptions.layerStormwater = obj.layerStormwater.split(',')
         }
 
-        if (obj.layerTransportation !== undefined) {
+        if (obj.layerTransportation) {
             layerOptions.layerTransportation = obj.layerTransportation.split(',')
         }
 
-        if (obj.layerWater !== undefined) {
+        if (obj.layerWater) {
             layerOptions.layerWater = obj.layerWater.split(',')
         }
 
-        if (obj.layerWastewater !== undefined) {
+        if (obj.layerWastewater) {
             layerOptions.layerWastewater = obj.layerWastewater.split(',')
         }
 
         return layerOptions;
     }
+
     if (QueryString.map !== undefined) {
-        console.log("defined");
 
         var layersRequest = esriRequest({
             url: './config/' + QueryString.map + '.js',
@@ -198,12 +206,11 @@ require(["esri/map",
 
         initMap(options);
     }
-*/
-initMap();
+
     function initMap(options) {
 
         options = options || {};
-        /*
+        
         options.layerBaseData = options.layerBaseData || [];
         options.layerBoundaries = options.layerBoundaries || [];
         options.layerPlace = options.layerPlace || [];
@@ -212,12 +219,11 @@ initMap();
         options.layerTransportation = options.layerTransportation || [];
         options.layerWastewater = options.layerWastewater || [];
         options.layerWater = options.layerWater || [];
-        */
-
+        
         var map_options = {
             autoResize: false
         }
-        /*
+        
         if (options.c !== undefined) {
             map_options.center = new Point(options.c, new SpatialReference({
                 wkid: 2913
@@ -232,7 +238,7 @@ initMap();
             map_options.center = new Point(7708641.208200004, 677288.6098999954, new SpatialReference({
                 wkid: 2913
             }));
-        } else { */
+        } else { 
             map_options.extent = new Extent({
                 xmin: 7682478.588,
                 ymin: 652441.696,
@@ -242,7 +248,7 @@ initMap();
                     wkid: 2913
                 }
             })
-        //}
+        }
 
         app.map = new Map('map',
             map_options
@@ -259,243 +265,127 @@ initMap();
             scalebarUnit: "dual"
         });
 
-
         // streetMap = new ArcGISTiledMapServiceLayer("http://leia/arcgis/rest/services/gview/BaseMap/MapServer");
         streetMap = new esri.layers.ArcGISTiledMapServiceLayer('http://maps.greshamoregon.gov/arcgis/rest/services/gview/BaseMap/MapServer')
         // parcelLines = new esri.layers.ArcGISTiledMapServiceLayer("http://leia/arcgis/rest/services/gview/ParcelLines/MapServer");
         // cityStreetParcel = new esri.layers.ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview/CityStreetParcel/MapServer");
-        //aerialMap2015 = new esri.layers.ArcGISTiledMapServiceLayer("http://maps.greshamoregon.gov/arcgis/rest/services/gview/AerialCacheNew/MapServer");
+        aerialMap2015 = new esri.layers.ArcGISTiledMapServiceLayer("http://maps.greshamoregon.gov/arcgis/rest/services/gview/AerialCacheNew/MapServer");
         // aerialMap2014 = new esri.layers.ArcGISTiledMapServiceLayer("http://leia/arcgis/rest/services/gview/AerialCache/MapServer");
-        // aerialMap2013 = new esri.layers.ArcGISTiledMapServiceLayer("http://maps.greshamoregon.gov/arcgis/rest/services/gview/AerialCacheOld/MapServer");
-        // aerialMap2012 = new esri.layers.ArcGISTiledMapServiceLayer("http://maps.greshamoregon.gov/arcgis/rest/services/gview/AerialCache12/MapServer");
-        // aerialMap2007 = new esri.layers.ArcGISImageServiceLayer("http://www3.multco.us/arcgispublic/rest/services/Imagery/Urban_2007/ImageServer");
-        // aerialMap2002 = new esri.layers.ArcGISImageServiceLayer("http://www3.multco.us/arcgispublic/rest/services/Imagery/Urban_2002/ImageServer");
+        aerialMap2013 = new esri.layers.ArcGISTiledMapServiceLayer("http://maps.greshamoregon.gov/arcgis/rest/services/gview/AerialCacheOld/MapServer");
+        aerialMap2012 = new esri.layers.ArcGISTiledMapServiceLayer("http://maps.greshamoregon.gov/arcgis/rest/services/gview/AerialCache12/MapServer");
+        aerialMap2007 = new esri.layers.ArcGISImageServiceLayer("http://www3.multco.us/arcgispublic/rest/services/Imagery/Urban_2007/ImageServer");
+        aerialMap2002 = new esri.layers.ArcGISImageServiceLayer("http://www3.multco.us/arcgispublic/rest/services/Imagery/Urban_2002/ImageServer");
 
-        // if (options.aerial) {
+        if (options.aerial) {
             
-        //     app.map.removeAllLayers();
-        //     var aerialYear;
-        //     switch (parseInt(options.aerial[0])) {
-        //         case 2015:
-        //             aerialYear = aerialMap2015;
-        //             break;
-        //         case 2014:
-        //             aerialYear = aerialMap2014;
-        //             break;
-        //         case 2013:
-        //             aerialYear = aerialMap2013;
-        //             break;
-        //         case 2012:
-        //             aerialYear = aerialMap2012;
-        //             break;
-        //         case 2007:
-        //             aerialYear = aerialMap2007;
-        //             break;
-        //         case 2002:
-        //             aerialYear = aerialMap2002;
-        //             break;
-        //     }
-        //     var selectedRadioID = "#" + "aerialR" + options.aerial[0];
-        //     $(selectedRadioID).prop("checked", true);
-        //     var aerialOpacity = options.aerial[1];
-        //     // app.map.addLayers([streetMap, aerialYear, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
-       app.map.addLayers([streetMap]);
-        //     aerialYear.setOpacity(aerialOpacity);
-        //     $('#slider-aerial').val(aerialOpacity).slider("refresh");
-        // } else {
-        //     aerialMap2015.setOpacity(0);
-        // }
+            app.map.removeAllLayers();
+            var aerialYear;
+            switch (parseInt(options.aerial[0])) {
+                case 2015:
+                    aerialYear = aerialMap2015;
+                    break;
+                case 2014:
+                    aerialYear = aerialMap2014;
+                    break;
+                case 2013:
+                    aerialYear = aerialMap2013;
+                    break;
+                case 2012:
+                    aerialYear = aerialMap2012;
+                    break;
+                case 2007:
+                    aerialYear = aerialMap2007;
+                    break;
+                case 2002:
+                    aerialYear = aerialMap2002;
+                    break;
+            }
+            var selectedRadioID = "#" + "aerialR" + options.aerial[0];
+            $(selectedRadioID).prop("checked", true);
+            var aerialOpacity = options.aerial[1];
+            // app.map.addLayers([streetMap, aerialYear, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
+            app.map.addLayers([streetMap]);
+            aerialYear.setOpacity(aerialOpacity);
+            $('#slider-aerial').val(aerialOpacity).slider("refresh");
+        } else {
+            aerialMap2015.setOpacity(0);
+        }
 		
         //for infowindow only shows up on the right panel
         app.map.infoWindow.set("popupWindow", false);
 
-        // var imageParametersBaseData = new ImageParameters();
-        // imageParametersBaseData.layerIds = [];
-        // imageParametersBaseData.layerOption = imageParametersBaseData.LAYER_OPTION_SHOW;
-        // layerBaseData = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/BaseData/MapServer", {
-        //     "imageParameters": imageParametersBaseData,
-        //     "opacity": 0.8,
-        //     "id": "layerBaseData"
-        // });
+        //for whatever reason the map doesn't work correctly when we pass any layer options into the constructor
+        //so we have to come back after the fact and adjust the legend... e.g Line 370-450
 
-        // //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.
-        // var imageParametersBoundaries = new ImageParameters();
-        // imageParametersBoundaries.layerIds = [];
-        // imageParametersBoundaries.layerOption = imageParametersBoundaries.LAYER_OPTION_SHOW;
-        // layerBoundaries = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/Boundaries/MapServer", {
-        //     "imageParameters": imageParametersBoundaries,
-        //     "opacity": 0.8,
-        //     "id": "layerBoundaries"
-        // });
+        function createImageParams(layer, url, id){
+            var imageParameters = new ImageParameters();
+            imageParameters.layerIds = [];
+            imageParameters.layerOption = imageParameters.LAYER_OPTION_SHOW;
 
-        // //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.
-        // var imageParametersEnvironmental = new ImageParameters();
-        // imageParametersEnvironmental.layerIds = [];
-        // imageParametersEnvironmental.layerOption = imageParametersEnvironmental.LAYER_OPTION_SHOW;
-        // layerEnvironmental = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/Environmental/MapServer", {
-        //     "imageParameters": imageParametersEnvironmental,
-        //     "opacity": 0.8,
-        //     "id": "layerEnvironmental"
-        // });
+            layer = new ArcGISDynamicMapServiceLayer(url, {
+                "imageParameters": imageParameters,
+                "opacity": 0.8,
+                "id": id
+            })
+        }
 
-        // //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.
-        // var imageParametersPlace = new ImageParameters();
-        // imageParametersPlace.layerIds = [];
-        // imageParametersPlace.layerOption = imageParametersPlace.LAYER_OPTION_SHOW;
-        // layerPlace = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/Place/MapServer", {
-        //     "imageParameters": imageParametersPlace,
-        //     "opacity": 0.8,
-        //     "id": "layerPlace"
-        // });
+        createImageParams(layerBaseData, "http://leia/arcgis/rest/services/gview2/BaseData/MapServer", 'layerBaseData');
+        createImageParams(layerBoundaries, "http://leia/arcgis/rest/services/gview2/Boundaries/MapServer", 'layerBoundaries');
+        createImageParams(layerEnvironmental, "http://leia/arcgis/rest/services/gview2/Environmental/MapServer", 'layerEnvironmental');
+        createImageParams(layerPlace, "http://leia/arcgis/rest/services/gview2/Place/MapServer", 'layerPlace');
+        createImageParams(layerStormwater, "http://leia/arcgis/rest/services/gview2/StormWater/MapServer", 'layerStormwater');
+        createImageParams(layerTransportation, "http://leia/arcgis/rest/services/gview2/Transportation/MapServer", 'layerTransportation');
+        createImageParams(layerWastewater, "http://leia/arcgis/rest/services/gview2/WasteWater/MapServer", 'layerWastewater');
+        createImageParams(layerWater, "http://leia/arcgis/rest/services/gview2/Water/MapServer", 'layerWater');
 
-        // //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.         
-        // var imageParametersStormwater = new ImageParameters();
-        // imageParametersStormwater.layerIds = [];
-        // imageParametersStormwater.layerOption = imageParametersStormwater.LAYER_OPTION_SHOW;
-        // layerStormwater = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/StormWater/MapServer", {
-        //     "imageParameters": imageParametersStormwater,
-        //     "opacity": 0.8,
-        //     "id": "layerStormwater"
-        // });
-
-        // //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.
-        // var imageParametersTransportation = new ImageParameters();
-        // imageParametersTransportation.layerIds = [];
-        // imageParametersTransportation.layerOption = imageParametersTransportation.LAYER_OPTION_SHOW;
-        // layerTransportation = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/Transportation/MapServer", {
-        //     "imageParameters": imageParametersTransportation,
-        //     "opacity": 0.8,
-        //     "id": "layerTransportation"
-        // });
-
-        // //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.
-        // var imageParametersWastewater = new ImageParameters();
-        // imageParametersWastewater.layerIds = [];
-        // imageParametersWastewater.layerOption = imageParametersWastewater.LAYER_OPTION_SHOW;
-        // layerWastewater = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/WasteWater/MapServer", {
-        //     "imageParameters": imageParametersWastewater,
-        //     "opacity": 0.8,
-        //     "id": "layerWastewater"
-        // });
-
-        // //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.
-        // var imageParametersWater = new ImageParameters();
-        // imageParametersWater.layerIds = [];
-        // imageParametersWater.layerOption = imageParametersWater.LAYER_OPTION_SHOW;
-        // layerWater = new ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview2/Water/MapServer", {
-        //     "imageParameters": imageParametersWater,
-        //     "opacity": 0.8,
-        //     "id": "layerWater"
-        // });
-
-        //app.map.addLayers([streetMap, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
+        app.map.addLayers([streetMap, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
 
         //Legend
-        // legend = new Legend({
-        //     map: app.map,
-        //     respectCurrentMapScale: true,
-        //     layerInfos: [{
-        //         layer: layerBaseData
-        //     }, {
-        //         layer: layerBoundaries
-        //     }, {
-        //         layer: layerEnvironmental
-        //     }, {
-        //         layer: layerPlace
-        //     }, {
-        //         layer: layerStormwater
-        //     }, {
-        //         layer: layerTransportation
-        //     }, {
-        //         layer: layerWastewater
-        //     }, {
-        //         layer: layerWater
-        //     }]
-        // }, "legendDiv");
+        legend = new Legend({
+            map: app.map,
+            respectCurrentMapScale: true,
+            layerInfos: [{
+                layer: layerBaseData
+            }, {
+                layer: layerBoundaries
+            }, {
+                layer: layerEnvironmental
+            }, {
+                layer: layerPlace
+            }, {
+                layer: layerStormwater
+            }, {
+                layer: layerTransportation
+            }, {
+                layer: layerWastewater
+            }, {
+                layer: layerWater
+            }]
+        }, "legendDiv");
 		
-        /*
-        var newOpBaseData = Number(options.layerBaseData.splice(options.layerBaseData.length - 1, 1)[0]);
-        if (newOpBaseData) {
-            layerBaseData.setOpacity(newOpBaseData);
-            $("#slider-1").val(newOpBaseData).slider("refresh");
-			layerBaseData.setVisibleLayers(options.layerBaseData);
+        function handleLayerOptions(layer,options, sliderNumber, selector){
+
+            var opt = Number(options.splice(options.length - 1, 1)[0])
+
+            if(opt){
+                layer.setOpacity(opt);
+                $("#slider-"+sliderNumber).val(opt).slider('refresh');
+                layer.setVisibleLayers(options);
+            }
+
+            options.forEach(function(v){
+                $('#'+selector+v+'CheckBox').prop('checked', true).attr('data-cacheval', false).prev().removeClass('ui-checkbox-off').addClass('ui-checkbox-on');
+            });
         }
 
-        
-        options.layerBaseData.forEach(function(v) {
-            $('#basedata' + v + 'CheckBox').prop('checked', true).attr('data-cacheval', false).prev().removeClass('ui-checkbox-off').addClass('ui-checkbox-on');
-        });
-
-        var newOpBoundaries = Number(options.layerBoundaries.splice(options.layerBoundaries.length - 1, 1)[0]);
-        if (newOpBoundaries) {
-            layerBoundaries.setOpacity(newOpBoundaries);
-            $("#slider-2").val(newOpBoundaries).slider("refresh");
-			layerBoundaries.setVisibleLayers(options.layerBoundaries);
-			options.layerBoundaries.forEach(function(v) {
-				$('#boundaries' + v + 'CheckBox').prop('checked', true).attr('data-cacheval', false).prev().removeClass('ui-checkbox-off').addClass('ui-checkbox-on');
-			});
-        }
-
-        var newOpEnvironmental = Number(options.layerEnvironmental.splice(options.layerEnvironmental.length - 1, 1)[0]);
-        if (newOpEnvironmental) {
-            layerEnvironmental.setOpacity(newOpEnvironmental);
-            $("#slider-3").val(newOpEnvironmental).slider("refresh");
-			layerEnvironmental.setVisibleLayers(options.layerEnvironmental);
-			options.layerEnvironmental.forEach(function(v) {
-				$('#environmental' + v + 'CheckBox').prop('checked', true).attr('data-cacheval', false).prev().removeClass('ui-checkbox-off').addClass('ui-checkbox-on');
-			});
-        }
-
-        var newOpPlace = Number(options.layerPlace.splice(options.layerPlace.length - 1, 1)[0]);
-        if (newOpPlace) {
-            layerPlace.setOpacity(newOpPlace);
-            $("#slider-4").val(newOpPlace).slider("refresh");
-			layerPlace.setVisibleLayers(options.layerPlace);
-			options.layerPlace.forEach(function(v) {
-				$('#place' + v + 'CheckBox').prop('checked', true).attr('data-cacheval', false).prev().removeClass('ui-checkbox-off').addClass('ui-checkbox-on');
-			});
-        }
-
-        var newOpStormwater = Number(options.layerStormwater.splice(options.layerStormwater.length - 1, 1)[0]);
-        if (newOpStormwater) {
-            layerStormwater.setOpacity(newOpStormwater);
-            $("#slider-5").val(newOpStormwater).slider("refresh");
-			layerStormwater.setVisibleLayers(options.layerStormwater);
-			options.layerStormwater.forEach(function(v) {
-				$('#stormWater' + v + 'CheckBox').prop('checked', true).attr('data-cacheval', false).prev().removeClass('ui-checkbox-off').addClass('ui-checkbox-on');
-			});
-        }
-
-        var newOpTransportation = Number(options.layerTransportation.splice(options.layerTransportation.length - 1, 1)[0]);
-        if (newOpTransportation) {
-            layerTransportation.setOpacity(newOpTransportation);
-            $("#slider-6").val(newOpTransportation).slider("refresh");
-			layerTransportation.setVisibleLayers(options.layerTransportation);
-			options.layerTransportation.forEach(function(v) {
-				$('#transportation' + v + 'CheckBox').prop('checked', true).attr('data-cacheval', false).prev().removeClass('ui-checkbox-off').addClass('ui-checkbox-on');
-			});
-        }
-
-        var newOpWastewater = Number(options.layerWastewater.splice(options.layerWastewater.length - 1, 1)[0]);
-        if (newOpWastewater) {
-            layerWastewater.setOpacity(newOpWastewater);
-            $("#slider-7").val(newOpWastewater).slider("refresh");
-			layerWastewater.setVisibleLayers(options.layerWastewater);
-
-			options.layerWastewater.forEach(function(v) {
-				$('#wasteWater' + v + 'CheckBox').prop('checked', true).attr('data-cacheval', false).prev().removeClass('ui-checkbox-off').addClass('ui-checkbox-on');
-			});
-        }
-
-        var newOpWater = Number(options.layerWater.splice(options.layerWater.length - 1, 1)[0]);
-        if (newOpWater) {
-            layerWater.setOpacity(newOpWater);
-            $("#slider-8").val(newOpWater).slider("refresh");
-			layerWater.setVisibleLayers(options.layerWater);
-			options.layerWater.forEach(function(v) {
-				$('#water' + v + 'CheckBox').prop('checked', true).attr('data-cacheval', false).prev().removeClass('ui-checkbox-off').addClass('ui-checkbox-on');
-			});
-        }
+        handleLayerOptions(layerBaseData, options.layerBaseData, 1, 'basedata');
+        handleLayerOptions(layerBoundaries, options.layerBoundaries, 1, 'boundaries');
+        handleLayerOptions(layerEnvironmental, options.layerEnvironmental, 1, 'environmental');
+        handleLayerOptions(layerPlace, options.layerPlace, 1, 'place');
+        handleLayerOptions(layerStormwater, options.layerStormwater, 1, 'stormwater');
+        handleLayerOptions(layerTransportation, options.layerTransportation, 1, 'transportation');
+        handleLayerOptions(layerWastewater, options.layerWastewater, 1, 'wasteWater');
+        handleLayerOptions(layerWater, options.layerWater, 1, 'water');
 
         //To set max-height of right panel
         var heightLegend = parseInt($(window).height()) - 50 - 43;
@@ -503,43 +393,20 @@ initMap();
         $('#rightPanel .tab-content').css('height', heightLegend);
         //End to set max-height of right panel
 
-		
-        legend.refresh([{
+		legend.refresh([{
             layer: layerBaseData
-        }, {
-            layer: layerBoundaries
-        }, {
-            layer: layerEnvironmental
-        }, {
-            layer: layerPlace
-        }, {
-            layer: layerStormwater
-        }, {
-            layer: layerTransportation
-        }, {
-            layer: layerWastewater
-        }, {
-            layer: layerWater
         }]);
-		*/
-		
-		// legend.refresh([{
-  //           layer: layerBaseData
-  //       }]);
 		
         //End of Legend
 
         //Define Queries
         queryTaskPa = new esri.tasks.QueryTask("http://maps.greshamoregon.gov/arcgis/rest/services/Parcel/EastCountyParcels/MapServer/0");
-        queryPa = new esri.tasks.Query();
-        queryPa.returnGeometry = true;
-        queryPa.outFields = ["*"];
+        queryPa = new esri.tasks.Query({returnGeometry:true, outFields:['*']});
 
         // //define queries
         queryTaskA = new esri.tasks.QueryTask("http://maps.greshamoregon.gov/arcgis/rest/services/Parcel/AddressPts/MapServer/1");
-        queryA = new esri.tasks.Query();
-        queryA.returnGeometry = true;
-        queryA.outFields = ["*"];
+        queryA = new esri.tasks.Query({returnGeometry:true, outFields:['*']});
+
         //End of Define Queries
 
         //Info Window
@@ -547,7 +414,12 @@ initMap();
             showLocation(evt);
         });
 
-        //Google Street View 
+        /*
+        ____ ____ ____ ____ _    ____    ____ ___ ____ ____ ____ ___    _  _ _ ____ _ _ _ 
+        | __ |  | |  | | __ |    |___    [__   |  |__/ |___ |___  |     |  | | |___ | | | 
+        |__] |__| |__| |__] |___ |___    ___]  |  |  \ |___ |___  |      \/  | |___ |_|_|
+        */
+                                                                                  
         var target = dojo.byId("btnGoogle");
         on(target, "click", function(evt) {
             if (dojo.byId("map_layers").style.cursor != "default") {
@@ -625,8 +497,7 @@ initMap();
                 dojo.disconnect(mapClickEvent);
             }
         });
-        //End of Google Street View
-
+       
         function initSelectToolbar(event) {
             selectionToolbar = new Draw(event.app.map);
             on(selectionToolbar, "DrawEnd", function(geometry) {
@@ -635,7 +506,13 @@ initMap();
             })
         }
 
-        //Identify Task
+        /*
+        _ ___  ____ _  _ ___ _ ____ _   _ 
+        | |  \ |___ |\ |  |  | |___  \_/  
+        | |__/ |___ | \|  |  | |      |   
+                                  
+        */
+
         var target = dojo.byId("btnIdentify");
         on(target, "click", function(evt) {
             if (dojo.byId("map_layers").style.cursor == "help" && identifyValue == xID) {
@@ -857,11 +734,14 @@ initMap();
                 dojo.removeClass("btnIdentifyS", "btn-info");
             }
         });
-
-        //End of Identify Task
-
-        //Measurement 
+    
         /*
+        _  _ ____ ____ ____ _  _ ____ ____ _  _ ____ _  _ ___ 
+        |\/| |___ |__| [__  |  | |__/ |___ |\/| |___ |\ |  |  
+        |  | |___ |  | ___] |__| |  \ |___ |  | |___ | \|  |  
+                                                      
+        */
+
         measurement = new Measurement({
             map: app.map,
             defaultLengthUnit: "esriFeet",
@@ -869,8 +749,17 @@ initMap();
         }, dom.byId("measurementDiv"));
         measurement.startup();
 
+        var mapMeasureEvent, lastPoint;
+        var textSymbols = [];
+
         measurement.on("measure-start", function(evt) {
             //disable identify click
+            if(textSymbols.length>0){
+                textSymbols.forEach(function(g){
+                    app.map.graphics.remove(g);
+                })
+                textSymbols = [];
+            }
             dojo.byId("btnIdentify").innerHTML = "Identify: none";
             dojo.addClass("btnIdentify", "btn-default");
             dojo.removeClass("btnIdentify", "btn-info");
@@ -883,15 +772,64 @@ initMap();
             dojo.disconnect(gsvClick);
             mapClickEvent.remove();
             dojo.disconnect(mapClickEvent);
+            dojo.disconnect(mapMeasureEvent);
+            var point = measurement._currentStartPt;
+
+            lastPoint = point;
+            mapMeasureEvent = on(app.map, "mouse-move", function(evt){
+
+                var line = new Polyline(app.map.spatialReference);
+                
+                line.addPath([point,evt.mapPoint]);
+                var unit = measurement.getUnit();
+                length = GeometryEngine.planarLength(line, unit.toLowerCase());
+                $('#dijit_layout_ContentPane_3').html((length).toFixed(2) + ' ' + unit.toLowerCase())
+            });
         });
 
+        measurement.on('measure-end', function(evt){
+            dojo.disconnect(mapMeasureEvent);
+            $('#floatingMeasurePanel').hide();
+        })
+
         measurement.on("measure", function(evt) {
+
             dojo.disconnect(idfClick);
             dojo.disconnect(gsvClick);
             mapClickEvent.remove();
             dojo.disconnect(mapClickEvent);
-        });
+            dojo.disconnect(mapMeasureEvent);
+            var point = evt.geometry;
+            curLength = evt.values;
+            var unit = measurement.getUnit();
 
+            mapMeasureEvent = on(app.map, "mouse-move", function(evt){
+                var line = new Polyline(app.map.spatialReference);
+                line.addPath([point,evt.mapPoint]);
+                
+                length = GeometryEngine.planarLength(line, unit.toLowerCase());
+                $('#dijit_layout_ContentPane_3').html((curLength+length).toFixed(2) + ' ' + unit.toLowerCase())
+                $('#floatingMeasurePanel').css({'top':evt.clientY-30, 'left':evt.clientX+20}).html((curLength+length).toFixed(2) + ' ' + unit.toLowerCase());
+            });
+
+            var line = new Polyline(app.map.spatialReference);
+            line.addPath([point,lastPoint]);
+            lastPoint = point;
+                
+            length = GeometryEngine.planarLength(line, unit.toLowerCase());
+
+            var font = new Font("16px", Font.STYLE_NORMAL, Font.VARIANT_NORMAL, Font.WEIGHT_BOLDER, 'Arial, sans-serif');
+            var t = new TextSymbol((length).toFixed(2) + ' ' + unit.toLowerCase(), font, new Color([0, 0, 0]));
+
+            t.setOffset(20, 30);
+            //console.log(t)
+            var g2 = new Graphic(point, t);
+            textSymbols.push(g2);
+            app.map.graphics.add(g2);
+            $('#floatingMeasurePanel').css({'top':evt.clientY-30, 'left':evt.clientX+20})
+            $('#floatingMeasurePanel').show();
+
+        });
 
         $("#measureLink").click(function() {
             if ($('#measurementDiv').is(':visible')) {
@@ -918,528 +856,149 @@ initMap();
 				  $('#btnGoogle').hide();
             }
         });
+
+        /*
+        _    ____ ____ ____ _  _ ___  
+        |    |___ | __ |___ |\ | |  \ 
+        |___ |___ |__] |___ | \| |__/ 
+
         */
+                              
+        function refreshLegend(){
+            legend.refresh([{
+                layer: layerBaseData
+            }, {
+                layer: layerBoundaries
+            }, {
+                layer: layerEnvironmental
+            }, {
+                layer: layerPlace
+            }, {
+                layer: layerStormwater
+            }, {
+                layer: layerTransportation
+            }, {
+                layer: layerWastewater
+            }, {
+                layer: layerWater
+            }]);
+        }
 
-        //End of Measurement
+        //layer opacity handler
+        $(".layer-slider").on("change", function() {
+            
+            var opacity = $(this).val();
 
-        //BaseData Dynamic Layer
+            switch($(this).attr('id')) {
+
+                case 'slider-1':
+                    layerTransportation.setOpacity(opacity);
+                    break;
+                case 'slider-2':
+                    layerBoundaries.setOpacity(opacity);
+                    break;
+                case 'slider-3':
+                    layerEnvironmental.setOpacity(opacity);
+                    break;
+                case 'slider-4':
+                    layerPlace.setOpacity(opacity);
+                    break;
+                case 'slider-5':
+                    layerStormwater.setOpacity(opacity);
+                    break;
+                case 'slider-6':
+                    layerTransportation.setOpacity(opacity);
+                    break;
+                case 'slider-7':
+                    layerWastewater.setOpacity(opacity);
+                    break;
+                case 'slider-8':
+                    layerWater.setOpacity(opacity);
+                    break;
+            }
+
+            refreshLegend();
+        });
+
+        //Aerial opacity handler
+        $("#slider-aerial").on("change", function() {
+            opacityA = $("#slider-aerial").val();
+            var aerialSelection = $('input[name="aerialSelect"]:checked').val();
+            if (aerialSelection === '2014') aerialMap2014.setOpacity(opacityA);
+            else if (aerialSelection === '2013') aerialMap2013.setOpacity(opacityA);
+            else if (aerialSelection === '2012') aerialMap2012.setOpacity(opacityA);
+            else if (aerialSelection === '2015') aerialMap2015.setOpacity(opacityA);
+            else if (aerialSelection === '2007') aerialMap2007.setOpacity(opacityA);
+            else if (aerialSelection === '2002') aerialMap2002.setOpacity(opacityA);
+        });
+
         //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.
-        $(".list_item1").click(function() {
-            var inputs = query(".list_item1");
-            var inputCount = inputs.length;
-            visibleLayerIdsBaseData = [];
 
-            for (var i = 0; i < inputCount; i++) {
-                if (inputs[i].checked) {
-                    visibleLayerIdsBaseData.push(inputs[i].value);
-                }
-            }
+        $('.toc-item').on('click', function(){
 
-            if (visibleLayerIdsBaseData.length === 0) {
-                visibleLayerIdsBaseData.push(-1);
-            }
+            var list_number = $(this).attr('class').replace('toc-item','').trim();
 
-            var opacity1 = $("#slider-1").val();
-            layerBaseData.setOpacity(opacity1);
+            visibleLayerIds = [];
 
-            layerBaseData.setVisibleLayers(visibleLayerIdsBaseData);
-            app.map.addLayer(layerBaseData);
-            legend.refresh([{
-                layer: layerBaseData
-            }, {
-                layer: layerBoundaries
-            }, {
-                layer: layerEnvironmental
-            }, {
-                layer: layerPlace
-            }, {
-                layer: layerStormwater
-            }, {
-                layer: layerTransportation
-            }, {
-                layer: layerWastewater
-            }, {
-                layer: layerWater
-            }]);
-        });
+            query(list_number).forEach(function(layer){
+                if(layer.checked){
 
-        $("#slider-1").bind("change", function() {
-            var opacity1 = $("#slider-1").val();
-            layerBaseData.setOpacity(opacity1);
-            legend.refresh([{
-                layer: layerBaseData
-            }, {
-                layer: layerBoundaries
-            }, {
-                layer: layerEnvironmental
-            }, {
-                layer: layerPlace
-            }, {
-                layer: layerStormwater
-            }, {
-                layer: layerTransportation
-            }, {
-                layer: layerWastewater
-            }, {
-                layer: layerWater
-            }]);
-        });
-        //End of BaseData Dynamic Layer
-
-        //Boundaries Dynamic Layer
-        $(".list_item2").click(function() {
-            var inputs = query(".list_item2");
-            var inputCount = inputs.length;
-            visibleLayerIdsBoundaries = [];
-
-            for (var i = 0; i < inputCount; i++) {
-                if (inputs[i].checked) {
-                    visibleLayerIdsBoundaries.push(inputs[i].value);
-                }
-            }
-
-            if (visibleLayerIdsBoundaries.length === 0) {
-                visibleLayerIdsBoundaries.push(-1);
-            }
-
-            var opacity2 = $("#slider-2").val();
-            layerBoundaries.setOpacity(opacity2);
-
-            layerBoundaries.setVisibleLayers(visibleLayerIdsBoundaries);
-            app.map.addLayer(layerBoundaries);
-            legend.refresh([{
-                layer: layerBaseData
-            }, {
-                layer: layerBoundaries
-            }, {
-                layer: layerEnvironmental
-            }, {
-                layer: layerPlace
-            }, {
-                layer: layerStormwater
-            }, {
-                layer: layerTransportation
-            }, {
-                layer: layerWastewater
-            }, {
-                layer: layerWater
-            }]);
-        });
-
-        $("#slider-2").bind("change", function() {
-            var opacity2 = $("#slider-2").val();
-            layerBoundaries.setOpacity(opacity2);
-            legend.refresh([{
-                layer: layerBaseData
-            }, {
-                layer: layerBoundaries
-            }, {
-                layer: layerEnvironmental
-            }, {
-                layer: layerPlace
-            }, {
-                layer: layerStormwater
-            }, {
-                layer: layerTransportation
-            }, {
-                layer: layerWastewater
-            }, {
-                layer: layerWater
-            }]);
-        });
-        //End of Boundaries Dynamic Layer
-
-        //Environmental Dynamic Layer
-        $(".list_item3").click(function() {
-            var inputs = query(".list_item3");
-            var inputCount = inputs.length;
-            visibleLayerIdsEnvironmental = [];
-
-            for (var i = 0; i < inputCount; i++) {
-                if (inputs[i].checked) {
-                    if (inputs[i].value === '9,10,11') {
-                        visibleLayerIdsEnvironmental.push(9);
-                        visibleLayerIdsEnvironmental.push(10);
-                        visibleLayerIdsEnvironmental.push(11);
+                    //special handling for environmnental layer
+                    if (layer.value === '9,10,11') {
+                        visibleLayerIds.push(9);
+                        visibleLayerIds.push(10);
+                        visibleLayerIds.push(11);
                     } else {
-                        visibleLayerIdsEnvironmental.push(inputs[i].value);
+                        visibleLayerIds.push(layer.value);
                     }
                 }
+            })
+
+            if (visibleLayerIds.length === 0) {
+                visibleLayerIds.push(-1);
             }
 
-            if (visibleLayerIdsEnvironmental.length === 0) {
-                visibleLayerIdsEnvironmental.push(-1);
+            var layer;
+
+            switch(list_number){
+
+                case 'list_item1':
+                    layer = layerBaseData;
+                    break;
+                case 'list_item2':
+                    layer = layerBoundaries;
+                    break;
+                case 'list_item3':
+                    layer = layerEnvironmental;
+                    break;
+                case 'list_item4':
+                    layer = layerPlace;
+                    break;
+                case 'list_item5':
+                    layer = layerStormwater;
+                    break;
+                case 'list_item6':
+                    layer = layerTransportation;
+                    break;
+                case 'list_item7':
+                    layer = layerWastewater;
+                    break;
+                case 'list_item8':
+                    layer = layerWater
+                    break;
             }
 
-            var opacity3 = $("#slider-3").val();
-            layerEnvironmental.setOpacity(opacity3);
+            var opacityIndex = list_number.replace('list_item','');
+            var opacity = $("#slider-"+opacityIndex).val();
 
-            layerEnvironmental.setVisibleLayers(visibleLayerIdsEnvironmental);
-            app.map.addLayer(layerEnvironmental);
-            legend.refresh([{
-                layer: layerBaseData
-            }, {
-                layer: layerBoundaries
-            }, {
-                layer: layerEnvironmental
-            }, {
-                layer: layerPlace
-            }, {
-                layer: layerStormwater
-            }, {
-                layer: layerTransportation
-            }, {
-                layer: layerWastewater
-            }, {
-                layer: layerWater
-            }]);
-        });
-
-        $("#slider-3").bind("change", function() {
-            var opacity3 = $("#slider-3").val();
-            layerEnvironmental.setOpacity(opacity3);
-            legend.refresh([{
-                layer: layerBaseData
-            }, {
-                layer: layerBoundaries
-            }, {
-                layer: layerEnvironmental
-            }, {
-                layer: layerPlace
-            }, {
-                layer: layerStormwater
-            }, {
-                layer: layerTransportation
-            }, {
-                layer: layerWastewater
-            }, {
-                layer: layerWater
-            }]);
-        });
-        //End of Environmental Dynamic Layer
-
-        //Place Dynamic Layer
-        $(".list_item4").click(function() {
-            var inputs = query(".list_item4");
-            var inputCount = inputs.length;
-            visibleLayerIdsPlace = [];
-
-            for (var i = 0; i < inputCount; i++) {
-                if (inputs[i].checked) {
-                    visibleLayerIdsPlace.push(inputs[i].value);
-                }
-            }
-
-            if (visibleLayerIdsPlace.length === 0) {
-                visibleLayerIdsPlace.push(-1);
-            }
-
-            var opacity4 = $("#slider-4").val();
-            layerPlace.setOpacity(opacity4);
-
-            layerPlace.setVisibleLayers(visibleLayerIdsPlace);
-            app.map.addLayer(layerPlace);
-            legend.refresh([{
-                layer: layerBaseData
-            }, {
-                layer: layerBoundaries
-            }, {
-                layer: layerEnvironmental
-            }, {
-                layer: layerPlace
-            }, {
-                layer: layerStormwater
-            }, {
-                layer: layerTransportation
-            }, {
-                layer: layerWastewater
-            }, {
-                layer: layerWater
-            }]);
-        });
-        $("#slider-4").bind("change", function() {
-            var opacity4 = $("#slider-4").val();
-            layerPlace.setOpacity(opacity4);
-            legend.refresh([{
-                layer: layerBaseData
-            }, {
-                layer: layerBoundaries
-            }, {
-                layer: layerEnvironmental
-            }, {
-                layer: layerPlace
-            }, {
-                layer: layerStormwater
-            }, {
-                layer: layerTransportation
-            }, {
-                layer: layerWastewater
-            }, {
-                layer: layerWater
-            }]);
-        });
-        //End of Place Dynamic Layer
-
-        //Stormwater Dynamic Layer
-        $(".list_item5").click(function() {
-            var inputs = query(".list_item5");
-            var inputCount = inputs.length;
-            visibleLayerIdsStormwater = [];
-
-            for (var i = 0; i < inputCount; i++) {
-                if (inputs[i].checked) {
-                    visibleLayerIdsStormwater.push(inputs[i].value);
-                }
-            }
-
-            if (visibleLayerIdsStormwater.length === 0) {
-                visibleLayerIdsStormwater.push(-1);
-            }
-
-            var opacity5 = $("#slider-5").val();
-            layerStormwater.setOpacity(opacity5);
-
-            layerStormwater.setVisibleLayers(visibleLayerIdsStormwater);
-            app.map.addLayer(layerStormwater);
-            legend.refresh([{
-                layer: layerBaseData
-            }, {
-                layer: layerBoundaries
-            }, {
-                layer: layerEnvironmental
-            }, {
-                layer: layerPlace
-            }, {
-                layer: layerStormwater
-            }, {
-                layer: layerTransportation
-            }, {
-                layer: layerWastewater
-            }, {
-                layer: layerWater
-            }]);
-        });
-
-        $("#slider-5").bind("change", function() {
-            var opacity5 = $("#slider-5").val();
-            layerStormwater.setOpacity(opacity5);
-            legend.refresh([{
-                layer: layerBaseData
-            }, {
-                layer: layerBoundaries
-            }, {
-                layer: layerEnvironmental
-            }, {
-                layer: layerPlace
-            }, {
-                layer: layerStormwater
-            }, {
-                layer: layerTransportation
-            }, {
-                layer: layerWastewater
-            }, {
-                layer: layerWater
-            }]);
-        });
-        //End of Stormwater Dynamic Layer
-
-        //Transportation Dynamic Layer
-        $(".list_item6").click(function() {
-            var inputs = query(".list_item6");
-            var inputCount = inputs.length;
-            visibleLayerIdsTransportation = [];
-
-            for (var i = 0; i < inputCount; i++) {
-                if (inputs[i].checked) {
-                    visibleLayerIdsTransportation.push(inputs[i].value);
-                }
-            }
-
-            if (visibleLayerIdsTransportation.length === 0) {
-                visibleLayerIdsTransportation.push(-1);
-            }
-
-            var opacity6 = $("#slider-6").val();
-            layerTransportation.setOpacity(opacity6);
-
-            layerTransportation.setVisibleLayers(visibleLayerIdsTransportation);
-            app.map.addLayer(layerTransportation);
-            legend.refresh([{
-                layer: layerBaseData
-            }, {
-                layer: layerBoundaries
-            }, {
-                layer: layerEnvironmental
-            }, {
-                layer: layerPlace
-            }, {
-                layer: layerStormwater
-            }, {
-                layer: layerTransportation
-            }, {
-                layer: layerWastewater
-            }, {
-                layer: layerWater
-            }]);
-        });
-
-        $("#slider-6").bind("change", function() {
-            var opacity6 = $("#slider-6").val();
-            layerTransportation.setOpacity(opacity6);
-            legend.refresh([{
-                layer: layerBaseData
-            }, {
-                layer: layerBoundaries
-            }, {
-                layer: layerEnvironmental
-            }, {
-                layer: layerPlace
-            }, {
-                layer: layerStormwater
-            }, {
-                layer: layerTransportation
-            }, {
-                layer: layerWastewater
-            }, {
-                layer: layerWater
-            }]);
-        });
-        //End of Transportation Dynamic Layer
-
-        //Wastewater Dynamic Layer
-        $(".list_item7").click(function() {
-            var inputs = query(".list_item7");
-            var inputCount = inputs.length;
-            visibleLayerIdsWastewater = [];
-
-            for (var i = 0; i < inputCount; i++) {
-                if (inputs[i].checked) {
-                    visibleLayerIdsWastewater.push(inputs[i].value);
-                }
-            }
-
-            if (visibleLayerIdsWastewater.length === 0) {
-                visibleLayerIdsWastewater.push(-1);
-            }
-
-            var opacity7 = $("#slider-7").val();
-            layerWastewater.setOpacity(opacity7);
-
-            layerWastewater.setVisibleLayers(visibleLayerIdsWastewater);
-            app.map.addLayer(layerWastewater);
-            legend.refresh([{
-                layer: layerBaseData
-            }, {
-                layer: layerBoundaries
-            }, {
-                layer: layerEnvironmental
-            }, {
-                layer: layerPlace
-            }, {
-                layer: layerStormwater
-            }, {
-                layer: layerTransportation
-            }, {
-                layer: layerWastewater
-            }, {
-                layer: layerWater
-            }]);
-        });
-        $("#slider-7").bind("change", function() {
-            var opacity7 = $("#slider-7").val();
-            layerWastewater.setOpacity(opacity7);
-            legend.refresh([{
-                layer: layerBaseData
-            }, {
-                layer: layerBoundaries
-            }, {
-                layer: layerEnvironmental
-            }, {
-                layer: layerPlace
-            }, {
-                layer: layerStormwater
-            }, {
-                layer: layerTransportation
-            }, {
-                layer: layerWastewater
-            }, {
-                layer: layerWater
-            }]);
-        });
-        //End of Wastewater Dynamic Layer
-
-        //Water Dynamic Layer
-        $(".list_item8").click(function() {
-            var inputs = query(".list_item8");
-            var inputCount = inputs.length;
-            visibleLayerIdsWater = [];
-
-            for (var i = 0; i < inputCount; i++) {
-                if (inputs[i].checked) {
-                    visibleLayerIdsWater.push(inputs[i].value);
-                }
-            }
-
-            if (visibleLayerIdsWater.length === 0) {
-                visibleLayerIdsWater.push(-1);
-            }
-
-            var opacity8 = $("#slider-8").val();
-            layerWater.setOpacity(opacity8);
-
-            layerWater.setVisibleLayers(visibleLayerIdsWater);
-            app.map.addLayer(layerWater);
-            legend.refresh([{
-                layer: layerBaseData
-            }, {
-                layer: layerBoundaries
-            }, {
-                layer: layerEnvironmental
-            }, {
-                layer: layerPlace
-            }, {
-                layer: layerStormwater
-            }, {
-                layer: layerTransportation
-            }, {
-                layer: layerWastewater
-            }, {
-                layer: layerWater
-            }]);
-        });
-        $("#slider-8").bind("change", function() {
-            var opacity8 = $("#slider-8").val();
-            layerWater.setOpacity(opacity8);
-            legend.refresh([{
-                layer: layerBaseData
-            }, {
-                layer: layerBoundaries
-            }, {
-                layer: layerEnvironmental
-            }, {
-                layer: layerPlace
-            }, {
-                layer: layerStormwater
-            }, {
-                layer: layerTransportation
-            }, {
-                layer: layerWastewater
-            }, {
-                layer: layerWater
-            }]);
-        });
-        //End of Water Dynamic Layer
+            layer.setVisibleLayers(visibleLayerIds);
+            app.map.addLayer(layer);
+            refreshLegend();
+        })
 
         //Delete all layers function
         $("#btnDeleteAll").on("click", function() {
-            visibleLayerIdsBaseData = [];
-            visibleLayerIdsBoundaries = [];
-            visibleLayerIdsEnvironmental = [];
-            visibleLayerIdsPlace = [];
-            visibleLayerIdsStormwater = [];
-            visibleLayerIdsTransportation = [];
-            visibleLayerIdsWastewater = [];
-            visibleLayerIdsWater = [];
+            
             layerBaseData.setVisibleLayers([]);
             layerBoundaries.setVisibleLayers([]);
             layerEnvironmental.setVisibleLayers([]);
@@ -1448,23 +1007,9 @@ initMap();
             layerTransportation.setVisibleLayers([]);
             layerWastewater.setVisibleLayers([]);
             layerWater.setVisibleLayers([]);
-            legend.refresh([{
-                layer: layerBaseData
-            }, {
-                layer: layerBoundaries
-            }, {
-                layer: layerEnvironmental
-            }, {
-                layer: layerPlace
-            }, {
-                layer: layerStormwater
-            }, {
-                layer: layerTransportation
-            }, {
-                layer: layerWastewater
-            }, {
-                layer: layerWater
-            }]);
+
+            refreshLegend();
+
             $('div.panel-body input[type="checkbox"]').removeAttr("checked");
             if ($("div.ui-checkbox label.ui-btn-icon-left").hasClass("ui-checkbox-on")) {
                 $("div.ui-checkbox label.ui-btn-icon-left").removeClass("ui-checkbox-on");
@@ -1481,6 +1026,13 @@ initMap();
             app.map.graphics.clear();
         });
 
+        /*
+        ____ ____ ____ ____ ____ ___  ____ 
+        | __ |___ |  | |    |  | |  \ |___ 
+        |__] |___ |__| |___ |__| |__/ |___ 
+
+        */
+                                   
         //Geocode Search 
         var geocoder;
         var locatorUrl = "http://leia/arcgis/rest/services/Tools/StreetAddressLocator/GeocodeServer";
@@ -1496,6 +1048,7 @@ initMap();
             singleLineFieldName: "Single Line Input",
             placeholder: "Type an address or a Parcel ID (RNO or PropID)"
         }];
+
         geocoder = new Geocoder({
             map: app.map,
             autoComplete: false,
@@ -1509,6 +1062,7 @@ initMap();
                 new dojo.Color([210, 105, 30, 0.5]), 8),
             new dojo.Color([210, 105, 30, 0.9])
         );
+
         var highlightSymbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_NULL, new SimpleLineSymbol(SimpleLineSymbol.STYLE_DASH, new Color([255, 0, 0]), 3), new Color([255, 255, 0]));
 
 
@@ -1520,100 +1074,92 @@ initMap();
         }
 
         function showLocation(evt) {
+
+            if(!evt.ctrlKey){
                 app.map.graphics.clear();
-                if (evt.result) {
-                    var point = evt.result.feature.geometry;
-                } else {
-                    var point = evt.mapPoint;
-                }
-                var graphic = new Graphic(point, symbol);
-                app.map.graphics.add(graphic);
-                pointAnimate();
-
-                //create a new query and querytask to populate Search Results tab
-                var infoContentRC = "";
-
-                //Census info
-                var censusTractNo;
-                queryTaskC = new esri.tasks.QueryTask("http://maps.greshamoregon.gov/arcgis/rest/services/Parcel/Census/MapServer/0");
-                queryC = new esri.tasks.Query();
-                queryC.returnGeometry = true;
-                queryC.outFields = ["*"];
-                queryC.geometry = point;
-                queryC.spatialRelationship = esri.tasks.Query.SPATIAL_REL_INTERSECTS;
-                queryTaskC.execute(queryC, function(resultsC) {
-                    if (resultsC.features.length === 1) {
-                        var graphicC = resultsC.features[0];
-                        var attrC = graphicC.attributes;
-                        censusTractNo = attrC.TRACT;
-
-                        //End of Census info
-
-                        queryTaskP = new esri.tasks.QueryTask("http://maps.greshamoregon.gov/arcgis/rest/services/Parcel/EastCountyParcels/MapServer/0");
-                        queryP = new esri.tasks.Query();
-                        queryP.returnGeometry = true;
-                        queryP.outFields = ["*"];
-
-                        queryP.geometry = point;
-                        queryP.spatialRelationship = esri.tasks.Query.SPATIAL_REL_INTERSECTS;
-                        queryTaskP.execute(queryP, function(resultsP) {
-                            if (resultsP.features.length < 1) {
-                                infoContentRC = "<b>No records found.</b>";
-                            } else if (resultsP.features.length > 1) {
-                                infoContentRC = "<b>More than two records found.</b>";
-                            } else {
-                                for (var i = 0; i < resultsP.features.length; i++) {
-                                    var graphic = resultsP.features[i];
-
-                                    var graphicSymbol = new Graphic(graphic.geometry, highlightSymbol);
-                                    app.map.graphics.add(graphicSymbol);
-                                    var attr = graphic.attributes;
-                                    var stateIDfirst = attr.STATEID.split(" ")[0];
-                                    var newState_ID = "<a href='http://www4.multco.us/surveyimages/dist/assr/out/" + stateIDfirst + ".pdf' onclick='window.open(this.href," + '"' + "window" + '"' + ',' + '"' + 'resizable,scrollbars,titlebar=no' + '"' + ");return false;'>Link</a>";
-                                    var newRNO = attr.RNO.replace("R", "");
-                                    var contentRC = '<div class="tab-pane" id="searchResultsInfoW"><div class="panel-group" id="accordionSearch"><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapseOneSearch">TAXLOT Information</a><a href="parcelreportprint.html?ID=' + attr.RNO + '" target="_blank"><span class="glyphicon glyphicon-print" style="float:right"></span></a></h4></div><div id="collapseOneSearch" class="panel-collapse collapse in"><div class="panel-body"><table id="pi"><tr><td>StateID</td><td>' + attr.STATEID + '</td></tr><tr><td>RNO</td><td>' + attr.RNO + '</td></tr><tr><td>PropID</td><td>' + attr.RNO6 + '</td></tr><tr><td>Address</td><td>' + attr.SITEADDR + '</td></tr><tr><td>City/Zip</td><td>' + attr.SITECITY + '&nbsp;OR&nbsp;' + attr.SITEZIP + '</td></tr><tr><td>Legal</td><td>' + attr.LEGAL + '</td></tr><tr><td>Zone</td><td><a href="https://greshamoregon.gov/Land-Use-District-Definitions/" target="_blank">' + attr.ZONE + '</a></td></tr><tr><td>Acres:</td><td>' + numberWithCommas(parseFloat(attr.GIS_ACRES).toFixed(2)) //attr.GIS_ACRES
-                                        + '</a></td></tr><tr><td>SquareFeet:</td><td>' + numberWithCommas(parseFloat(attr.Shape_Area).toFixed(0)) //attr.GIS_ACRES
-                                        + '</td></tr><tr><td>Primary Use</td><td>' + attr.LANDUSE + '</td></tr><tr><td>Building Sqft</td><td>' + numberWithCommas(parseFloat(attr.BLDGSQFT)) + '</td></tr><tr><td>Year Built</td><td>' + attr.YEARBUILT + '</td></tr><tr><td>Land Value</td><td>' + "$" + numberWithCommas(parseFloat(attr.LANDVAL)) + '</td></tr><tr><td>Building Value</td><td>' + "$" + numberWithCommas(parseFloat(attr.BLDGVAL)) + '</td></tr><tr><td>Tax Code</td><td>' + attr.TAXCODE + '</td></tr><tr><td>Owner</td><td>' + attr.OWNER1 + " " + attr.OWNER2 + " " + attr.OWNER3 + '</td></tr><tr><td>Owner Address</td><td>' + attr.OWNERADDR + '</td></tr><tr><td>Owner City/Zip</td><td>' + attr.OWNERCITY + '&nbsp;' + attr.OWNERSTATE + '&nbsp;' + attr.OWNERZIP + '</td></tr><tr><td>Tax Plat</td><td>' + newState_ID + '</td></tr></table></div></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapseTwoSearch">SunGard/HTE Information</a></h4></div><div id="collapseTwoSearch" class="panel-collapse collapse"><div class="panel-body"><iframe class="embed-responsive-item" src="http://leia/asp/greshamgis/arcims_process_edit3.asp?IDValue=' + newRNO + '" frameborder="0" width="100%" height="500px"></iframe></div></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapseFiveSearch">Notes</a><a href="notereportprint.html?ID=' + attr.RNO + '" target="_blank"><span class="glyphicon glyphicon-print" style="float:right"></span></a></h4></div><div id="collapseFiveSearch" class="panel-collapse collapse"><div class="panel-body"><iframe class="embed-responsive-item" src="http://leia/asp/greshamgis/parcel_view.asp?rno=' + newRNO + '" frameborder="0" width="100%" height="500px"></iframe></div></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapseThreeSearch">PITS</a></h4></div><div id="collapseThreeSearch" class="panel-collapse collapse"><div class="panel-body"><iframe src="http://pits.greshamoregon.gov/gm2_callback?address=' + attr.SITEADDR + '" frameborder="0" width="100%" height="600px"></iframe></div></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapseThreeSearch">District Information from METRO</a></h4></div><div id="collapseThreeSearch" class="panel-collapse collapse"><div class="panel-body"><iframe src="metroreport.html?ID=' + attr.SITEADDR + '" frameborder="0" width="100%" height="600px"></iframe></div></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapsefourSearch">More information from County</a></h4></div><div id="collapsefourSearch" class="panel-collapse collapse"><div class="panel-body"><iframe class="embed-responsive-item" src="parcelreport.html?ID=' + attr.RNO + '" frameborder="0" width="100%" height="480px"></iframe></div></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapsefiveSearch">Census Information</a></h4></div><div id="collapsefiveSearch" class="panel-collapse collapse"><div class="panel-body"><iframe class="embed-responsive-item" src="censusreport.html?TRACT=' + censusTractNo + '"  frameborder="0" width="100%" height="520px"></iframe></div></div></div></div></div>';
-                                    infoContentRC += contentRC;
-                                }
-                            }
-                            dom.byId("featureCount").innerHTML = "";
-                            dom.byId("leftPane").innerHTML = infoContentRC;
-                        });
-                    }
-                });
-                if (app.map.getZoom() < 7) {
-                    app.map.centerAndZoom(point, 7);
-                } else {
-                    app.map.centerAt(point);
-                }
-                openRightPanelSTab();
             }
-            //End of Geocode Search
 
-        //Base Map Toogle
-        $("#slider-aerial").bind("change", function() {
-            opacityA = $("#slider-aerial").val();
-            aerialMap2014.setOpacity(opacityA);
-            var aerialSelection = $('input[name="aerialSelect"]:checked').val();
-            if (aerialSelection === '2014') aerialMap2014.setOpacity(opacityA);
-            else if (aerialSelection === '2013') aerialMap2013.setOpacity(opacityA);
-            else if (aerialSelection === '2012') aerialMap2012.setOpacity(opacityA);
-            else if (aerialSelection === '2015') aerialMap2015.setOpacity(opacityA);
-            else if (aerialSelection === '2007') aerialMap2007.setOpacity(opacityA);
-            else if (aerialSelection === '2002') aerialMap2002.setOpacity(opacityA);
-        });
-        //End of Base Map Toogle
+            if (evt.result) {
+                var point = evt.result.feature.geometry;
+            } else {
+                var point = evt.mapPoint;
+            }
+
+            var graphic = new Graphic(point, symbol);
+            app.map.graphics.add(graphic);
+            pointAnimate();
+
+            //create a new query and querytask to populate Search Results tab
+            var infoContentRC = "";
+
+            //Census info
+            var censusTractNo;
+            queryTaskC = new esri.tasks.QueryTask("http://maps.greshamoregon.gov/arcgis/rest/services/Parcel/Census/MapServer/0");
+            queryC = new esri.tasks.Query()
+            queryC.returnGeometry = true;
+            queryC.outFields = ["*"];
+            queryC.geometry = point;
+            queryC.spatialRelationship = esri.tasks.Query.SPATIAL_REL_INTERSECTS;
+            queryTaskC.execute(queryC, function(resultsC) {
+                if (resultsC.features.length === 1) {
+                    var graphicC = resultsC.features[0];
+                    var attrC = graphicC.attributes;
+                    censusTractNo = attrC.TRACT;
+
+                    //End of Census info
+
+                    queryTaskP = new esri.tasks.QueryTask("http://maps.greshamoregon.gov/arcgis/rest/services/Parcel/EastCountyParcels/MapServer/0");
+                    queryP = new esri.tasks.Query();
+                    queryP.returnGeometry = true;
+                    queryP.outFields = ["*"];
+
+                    queryP.geometry = point;
+                    queryP.spatialRelationship = esri.tasks.Query.SPATIAL_REL_INTERSECTS;
+                    queryTaskP.execute(queryP, function(resultsP) {
+                        if (resultsP.features.length < 1) {
+                            infoContentRC = "<b>No records found.</b>";
+                        } else if (resultsP.features.length > 1) {
+                            infoContentRC = "<b>More than two records found.</b>";
+                        } else {
+                            for (var i = 0; i < resultsP.features.length; i++) {
+                                var graphic = resultsP.features[i];
+
+                                var graphicSymbol = new Graphic(graphic.geometry, highlightSymbol);
+                                app.map.graphics.add(graphicSymbol);
+                                var attr = graphic.attributes;
+                                var stateIDfirst = attr.STATEID.split(" ")[0];
+                                attr.newState_ID = "<a href='http://www4.multco.us/surveyimages/dist/assr/out/" + stateIDfirst + ".pdf' onclick='window.open(this.href," + '"' + "window" + '"' + ',' + '"' + 'resizable,scrollbars,titlebar=no' + '"' + ");return false;'>Link</a>";
+                                attr.censusTractNo=censusTractNo;
+                                attr.newRNO = attr.RNO.replace("R", "");
+                                var contentRC = app.parcelTemplate({attr:attr});
+                                
+                                infoContentRC += contentRC;
+                            }
+                        }
+                        dom.byId("featureCount").innerHTML = "";
+                        dom.byId("leftPane").innerHTML = infoContentRC;
+                    });
+                }
+            });
+            if (app.map.getZoom() < 7) {
+                app.map.centerAndZoom(point, 7);
+            } else {
+                app.map.centerAt(point);
+            }
+            openRightPanelSTab();
+        }
+        //End of Geocode Search
+
 
         //Print
-        // get print templates from the export web map task
-        // var printInfo = esriRequest({
-        //     "url": app.printUrl,
-        //     "content": {
-        //         "f": "json"
-        //     }
-        // });
-        // printInfo.then(handlePrintInfo, handleError);
+        //get print templates from the export web map task
+        var printInfo = esriRequest({
+            "url": app.printUrl,
+            "content": {
+                "f": "json"
+            }
+        });
+        printInfo.then(handlePrintInfo, handleError);
 
         function handlePrintInfo(resp) {
             var layoutTemplate, templateNames, mapOnlyIndex, templates;
@@ -1678,7 +1224,7 @@ initMap();
         function handleError(err) {
                 console.log("Something broke: ", err);
             }
-            //End of Print   
+        //End of Print   
 
         /*
         ____ ____ ____ ____ ____ _  _ 
@@ -1720,8 +1266,6 @@ initMap();
         });
         //End of Search Dropdown menu change
 
-     
-
         //apply different search functions based on browsers.  
         var userAgent = navigator.userAgent.toString().toLowerCase();
         //IE11 does not recognize userAgent so use rv variable to identify IE11.
@@ -1758,7 +1302,7 @@ initMap();
 
                         //Todo -- ESRI-fy this query, but for the moment we're going to jQuery it....
 
-                        $.getJSON('http://maps.greshamoregon.gov/arcgis/rest/services/Tools/COG_Street_DualRangesType/GeocodeServer/findAddressCandidates?Single+Line+Input='+searchInput+'+%2C+GRSM&f=pjson').then(function(results){
+                        $.getJSON('http://maps.greshamoregon.gov/arcgis/rest/services/Tools/COG_Street_DualRangesType/GeocodeServer/findAddressCandidates?Single+Line+Input='+searchInput.replace(/\&/,' AND ')+'+%2C+GRSM&f=pjson').then(function(results){
                             showQueryResultsInt(results);
                         });
 
@@ -2034,19 +1578,21 @@ initMap();
                 queryTaskC.execute(queryC, function(resultsC) {
                     if (resultsC.features.length === 1) {
                         var graphicC = resultsC.features[0];
-                        var attrC = graphicC.attributes;
-                        censusTractNo = attrC.TRACT;
-
+                        
                         dojo.byId("featureCount").innerHTML = "";
                         var graphic = results.features[0];
                         graphic.setSymbol(symbolQuery);
 						
                         var attr = graphic.attributes;
+
+                        var attrC = graphicC.attributes;
+                        attr.censusTractNo = attrC.TRACT;
+
                         var stateIDfirst = attr.STATEID.split(" ")[0];
-                        var newState_ID = "<a href='http://www4.multco.us/surveyimages/dist/assr/out/" + stateIDfirst + ".pdf' onclick='window.open(this.href," + '"' + "window" + '"' + ',' + '"' + 'resizable,scrollbars,titlebar=no' + '"' + ");return false;'>Link</a>";
-                        var newRNO = attr.RNO.replace("R", "");
-                        //check parcel number, owner, and address
-                        var content = '<div class="tab-pane active" id="searchResultsInfoW"><div class="panel-group" id="accordionSearch"><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapseOneSearch">TAXLOT Information</a><a href="parcelreportprint.html?ID=' + attr.RNO + '" target="_blank"><span class="glyphicon glyphicon-print" style="float:right"></span></a></h4></div><div id="collapseOneSearch" class="panel-collapse collapse in"><div class="panel-body"><table id="pi"><tr><td>StateID</td><td>' + attr.STATEID + '</td></tr><tr><td>RNO</td><td>' + attr.RNO + '</td></tr><tr><td>PropID</td><td>' + attr.RNO6 + '</td></tr><tr><td>Address</td><td>' + attr.SITEADDR + '</td></tr><tr><td>City/Zip</td><td>' + attr.SITECITY + '&nbsp;OR&nbsp;' + attr.SITEZIP + '</td></tr><tr><td>Legal</td><td>' + attr.LEGAL + '</td></tr><tr><td>Zone</td><td><a href="https://greshamoregon.gov/Land-Use-District-Definitions/" target="_blank">' + attr.ZONE + '</a></td></tr><tr><td>Acres:</td><td>' + numberWithCommas(parseFloat(attr.GIS_ACRES).toFixed(2)) + '</td></tr><tr><td>SquareFeet:</td><td>' + numberWithCommas(parseFloat(attr.Shape_Area).toFixed(0)) + '</td></tr><tr><td>Primary Use</td><td>' + attr.LANDUSE + '</td></tr><tr><td>Bldg Sqft</td><td>' + numberWithCommas(parseFloat(attr.BLDGSQFT)) + '</td></tr><tr><td>Year Built</td><td>' + attr.YEARBUILT + '</td></tr><tr><td>Land Val</td><td>' + '$' + numberWithCommas(parseFloat(attr.LANDVAL)) + '</td></tr><tr><td>Bldg Val</td><td>' + numberWithCommas(parseFloat(attr.BLDGVAL)) + '</td></tr><tr><td>Tax Code</td><td>' + attr.TAXCODE + '</td></tr><tr><td>Owner</td><td>' + attr.OWNER1 + " " + attr.OWNER2 + " " + attr.OWNER3 + '</td></tr><tr><td>Owner Address</td><td>' + attr.OWNERADDR + '</td></tr><tr><td>Owner City/Zip</td><td>' + attr.OWNERCITY + '&nbsp;' + attr.OWNERSTATE + '&nbsp;' + attr.OWNERZIP + '</td></tr><tr><td>Tax Plat</td><td>' + newState_ID + '</td></tr></table></div></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapseTwoSearch">SunGard/HTE Information</a></h4></div><div id="collapseTwoSearch" class="panel-collapse collapse"><div class="panel-body"><iframe class="embed-responsive-item" src="http://leia/asp/greshamgis/arcims_process_edit3.asp?IDValue=' + newRNO + '" frameborder="0" width="100%" height="500px"></iframe></div></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapseFiveSearch">Notes</a></h4></div><div id="collapseFiveSearch" class="panel-collapse collapse"><div class="panel-body"><iframe class="embed-responsive-item" src="http://leia/asp/greshamgis/parcel_view.asp?rno=' + newRNO + '" frameborder="0" width="100%" height="500px"></iframe></div></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapseThreeSearch">District Information from METRO</a></h4></div><div id="collapseThreeSearch" class="panel-collapse collapse"><div class="panel-body"><iframe src="metroreport.html?ID=' + attr.SITEADDR + '" frameborder="0" width="100%" height="600px"></iframe></div></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapsefourSearch">More information from County</a></h4></div><div id="collapsefourSearch" class="panel-collapse collapse"><div class="panel-body"><iframe class="embed-responsive-item" src="parcelreport.html?ID=' + attr.RNO + '"  frameborder="0" width="100%" height="480px"></iframe></div></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapsefiveSearch">Census information</a></h4></div><div id="collapsefiveSearch" class="panel-collapse collapse"><div class="panel-body"><iframe class="embed-responsive-item" src="censusreport.html?TRACT=' + censusTractNo + '"  frameborder="0" width="100%" height="520px"></iframe></div></div></div></div></div></div>';
+                        attr.newState_ID = "<a href='http://www4.multco.us/surveyimages/dist/assr/out/" + stateIDfirst + ".pdf' onclick='window.open(this.href," + '"' + "window" + '"' + ',' + '"' + 'resizable,scrollbars,titlebar=no' + '"' + ");return false;'>Link</a>";
+                        attr.newRNO = attr.RNO.replace("R", "");
+
+                        var content = app.parcelTemplate({attr:attr});
 
                         infoContent += content;
                         app.map.graphics.add(graphic);
@@ -2412,10 +1958,8 @@ initMap();
 
                 var hteSearchAdd = "<br/><b>HTE Search</b><br />If you are searching for an old property that can no longer be located, you may find it in our HTE land database system.<br /><button onclick='javascript:hteSearch();' class='btnSubmit' data-role='button' id='btnHTE' data-mini='true' data-theme='b' data-corners='true' style='width:100%; min-height::35px;margin:5px;border-radius:15px;'>Search HTE Database</button>";
 
-
                 dom.byId("leftPane").innerHTML = addrCount + addrContent + hteSearchAdd;
                 openRightPanelSTab();
-                //$("#asc").listSorter();
             } else {
                 dojo.byId("featureCount").innerHTML = "";
                 var graphic = results.features[0];
@@ -2463,7 +2007,7 @@ initMap();
             }
         }
 
-        var showQueryResultsInt = function(results){
+        function showQueryResultsInt(results){
 
             var symbolPts = new esri.symbol.SimpleMarkerSymbol(esri.symbol.SimpleMarkerSymbol.STYLE_CIRCLE, 12,
                 new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID,
@@ -2529,7 +2073,6 @@ initMap();
                     app.map.centerAndZoom(coords, 6);
 
                 })
-
             }
         }       
 
@@ -2550,37 +2093,14 @@ initMap();
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
-/*
+
 function aerialChange(value) {
     app.map.removeAllLayers();
-    aerialMap = "aerialMap" + value;
-    if (value === "2014") {
-        app.map.addLayers([streetMap, aerialMap2014, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
-        if (opacityA) aerialMap2014.setOpacity(opacityA);
-        else aerialMap2014.setOpacity(0);
-    } else if (value === "2013") {
-        app.map.addLayers([streetMap, aerialMap2013, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
-        if (opacityA) aerialMap2013.setOpacity(opacityA);
-        else aerialMap2013.setOpacity(0);
-    } else if (value === "2012") {
-        app.map.addLayers([streetMap, aerialMap2012, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
-        if (opacityA) aerialMap2012.setOpacity(opacityA);
-        else aerialMap2012.setOpacity(0);
-    } else if (value === "2015") {
-        app.map.addLayers([streetMap, aerialMap2015, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
-        if (opacityA) aerialMap2015.setOpacity(opacityA);
-        else aerialMap2015.setOpacity(0);
-    } else if (value === "2007") {
-        app.map.addLayers([streetMap, aerialMap2007, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
-        if (opacityA) aerialMap2007.setOpacity(opacityA);
-        else aerialMap2015.setOpacity(0);
-    } else if (value === "2002") {
-        app.map.addLayers([streetMap, aerialMap2002, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
-        if (opacityA) aerialMap2002.setOpacity(opacityA);
-        else aerialMap2002.setOpacity(0);
-    }
+    app.map.addLayers([streetMap, window["aerialMap" + value], parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
+    if (opacityA) window["aerialMap" + value].setOpacity(opacityA);
+    else window["aerialMap" + value].setOpacity(0);
 }
-*/
+
 //Open search results panel and tab 
 function openRightPanelSTab() {
         if ($("#rightC").hasClass("hidden")) {
@@ -3003,7 +2523,6 @@ function showQueryResultsBu1(results, k) {
 
 }
 
-
 function findParcel(fullAddr, rno, rno6, stateId, city, zip, censusTractNo, addressStatus) {
     var infoContentAddr = ""; 
     var dirty = (new Date()).getTime();
@@ -3018,11 +2537,14 @@ function findParcel(fullAddr, rno, rno6, stateId, city, zip, censusTractNo, addr
         } else {
             for (var i = 0; i < resultsP.features.length; i++) {
                 var graphic = resultsP.features[i];
+
                 var attr = graphic.attributes;
-                var newRNO = attr.RNO.replace("R", "");
+                attr.newRNO = attr.RNO.replace("R", "");
+                attr.censusTractNo = censusTractNo;
                 var stateIDfirst = attr.STATEID.split(" ")[0];
-                var newState_ID = "<a href='http://www4.multco.us/surveyimages/dist/assr/out/" + stateIDfirst + ".pdf' onclick='window.open(this.href," + '"' + "window" + '"' + ',' + '"' + 'resizable,scrollbars,titlebar=no' + '"' + ");return false;'>Link</a>";
-                var content2 = '<div class="tab-pane active" id="searchResultsInfoW"><div class="panel-group" id="accordionSearch"><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapseOneSearch">TAXLOT Information</a><a href="parcelreportprint.html?ID=' + attr.RNO + '" target="_blank"><span class="glyphicon glyphicon-print" style="float:right"></span></a></h4></div><div id="collapseOneSearch" class="panel-collapse collapse in"><div class="panel-body"><table id="pi"><tr><td>StateID</td><td>' + attr.STATEID + '</td></tr><tr><td>RNO</td><td>' + attr.RNO + '</td></tr><tr><td>PropID</td><td>' + attr.RNO6 + '</td></tr><tr><td>Address</td><td>' + fullAddr + ' <b>' + addressStatus + '</b></td></tr><tr><td>City/Zip</td><td>' + attr.SITECITY + '&nbsp;OR&nbsp;' + attr.SITEZIP + '</td></tr><tr><td>Legal</td><td>' + attr.LEGAL + '</td></tr><tr><td>Zone</td><td><a href="https://greshamoregon.gov/Land-Use-District-Definitions/" target="_blank">' + attr.ZONE + '</a></td></tr><tr><td>Acres:</td><td>' + numberWithCommas(parseFloat(attr.GIS_ACRES).toFixed(2)) + '</td></tr><tr><td>SquareFeet:</td><td>' + numberWithCommas(parseFloat(attr.Shape_Area).toFixed(0)) + '</td></tr><tr><td>Primary Use</td><td>' + attr.LANDUSE + '</td></tr><tr><td>Bldg Sqft</td><td>' + numberWithCommas(attr.BLDGSQFT) + '</td></tr><tr><td>Year Built</td><td>' + attr.YEARBUILT + '</td></tr><tr><td>Land Val</td><td>' + '$' + numberWithCommas(parseFloat(attr.LANDVAL)) + '</td></tr><tr><td>Bldg Val</td><td>' + '$' + numberWithCommas(parseFloat(attr.BLDGVAL)) + '</td></tr><tr><td>Tax Code</td><td>' + attr.TAXCODE + '</td></tr><tr><td>Owner</td><td>' + attr.OWNER1 + " " + attr.OWNER2 + " " + attr.OWNER3 + '</td></tr><tr><td>Owner Address</td><td>' + attr.OWNERADDR + '</td></tr><tr><td>Owner City/Zip</td><td>' + attr.OWNERCITY + '&nbsp;' + attr.OWNERSTATE + '&nbsp;' + attr.OWNERZIP + '</td></tr><tr><td>Tax Plat</td><td>' + newState_ID + '</td></tr></table></div></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapseTwoSearch">SunGard/HTE Information</a></h4></div><div id="collapseTwoSearch" class="panel-collapse collapse"><div class="panel-body"><iframe class="embed-responsive-item" src="http://leia/asp/greshamgis/arcims_process_edit3.asp?IDValue=' + newRNO + '" frameborder="0" width="100%" height="500px"></iframe></div></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapseFiveSearch">Notes</a></h4></div><div id="collapseFiveSearch" class="panel-collapse collapse"><div class="panel-body"><iframe class="embed-responsive-item" src="http://leia/asp/greshamgis/parcel_view.asp?rno=' + newRNO + '" frameborder="0" width="100%" height="500px"></iframe></div></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapseThreeSearch">District Information from METRO</a></h4></div><div id="collapseThreeSearch" class="panel-collapse collapse"><div class="panel-body"><iframe src="metroreport.html?ID=' + attr.SITEADDR + '" frameborder="0" width="100%" height="600px"></iframe></div></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapsefourSearch">More information from County</a></h4></div><div id="collapsefourSearch" class="panel-collapse collapse"><div class="panel-body"><iframe class="embed-responsive-item" src="parcelreport.html?ID=' + attr.RNO + '"  frameborder="0" width="100%" height="480px"></iframe></div></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapsefiveSearch">Census information</a></h4></div><div id="collapsefiveSearch" class="panel-collapse collapse"><div class="panel-body"><iframe class="embed-responsive-item" src="censusreport.html?TRACT=' + censusTractNo + '"  frameborder="0" width="100%" height="520px"></iframe></div></div></div></div></div>';
+                attr.newState_ID = "<a href='http://www4.multco.us/surveyimages/dist/assr/out/" + stateIDfirst + ".pdf' onclick='window.open(this.href," + '"' + "window" + '"' + ',' + '"' + 'resizable,scrollbars,titlebar=no' + '"' + ");return false;'>Link</a>";
+
+                var content2 = app.parcelTemplate({attr:attr});
                 infoContentAddr += content2;
             }
         }
@@ -3149,16 +2671,16 @@ function showQueryResults1(results, k) {
     queryTaskC.execute(queryC, function(resultsC) {
         if (resultsC.features.length === 1) {
             var graphicC = resultsC.features[0];
-            var attrC = graphicC.attributes;
-            censusTractNo = attrC.TRACT;
+           
 
             var attr = graphicResults1.attributes;
-            var newRNO = attr.RNO.replace("R", "");
+            var attrC = graphicC.attributes;
+            attr.censusTractNo = attrC.TRACT;
+            attr.newRNO = attr.RNO.replace("R", "");
             var stateIDfirst = attr.STATEID.split(" ")[0];
-            var newState_ID = "<a href='http://www4.multco.us/surveyimages/dist/assr/out/" + stateIDfirst + ".pdf' onclick='window.open(this.href," + '"' + "window" + '"' + ',' + '"' + 'resizable,scrollbars,titlebar=no' + '"' + ");return false;'>Link</a>";
+            attr.newState_ID = "<a href='http://www4.multco.us/surveyimages/dist/assr/out/" + stateIDfirst + ".pdf' onclick='window.open(this.href," + '"' + "window" + '"' + ',' + '"' + 'resizable,scrollbars,titlebar=no' + '"' + ");return false;'>Link</a>";
             //check parcel number, owner, and address
-            content = '<div class="tab-pane active" id="searchResultsInfoW"><div class="panel-group" id="accordionSearch"><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapseOneSearch">TAXLOT Information</a><a href="parcelreportprint.html?ID=' + attr.RNO + '" target="_blank"><span class="glyphicon glyphicon-print" style="float:right"></span></a></h4></div><div id="collapseOneSearch" class="panel-collapse collapse in"><div class="panel-body"><table id="pi"><tr><td>StateID</td><td>' + attr.STATEID + '</td></tr><tr><td>RNO</td><td>' + attr.RNO + '</td></tr><tr><td>PropID</td><td>' + attr.RNO6 + '</td></tr><tr><td>Address</td><td>' + attr.SITEADDR + '</td></tr><tr><td>City/Zip</td><td>' + attr.SITECITY + '&nbsp;OR&nbsp;' + attr.SITEZIP + '</td></tr><tr><td>Legal</td><td>' + attr.LEGAL + '</td></tr><tr><td>Zone</td><td><a href="https://greshamoregon.gov/Land-Use-District-Definitions/" target="_blank">' + attr.ZONE + '</a></td></tr><tr><td>Acres:</td><td>' + numberWithCommas(parseFloat(attr.GIS_ACRES).toFixed(2)) + '</td></tr><tr><td>SquareFeet:</td><td>' + numberWithCommas(parseFloat(attr.Shape_Area).toFixed(0)) + '</td></tr><tr><td>Primary Use</td><td>' + attr.LANDUSE + '</td></tr><tr><td>Bldg Sqft</td><td>' + numberWithCommas(attr.BLDGSQFT) + '</td></tr><tr><td>Year Built</td><td>' + attr.YEARBUILT + '</td></tr><tr><td>Land Val</td><td>' + numberWithCommas(attr.LANDVAL) + '</td></tr><tr><td>Bldg Val</td><td>' + numberWithCommas(attr.BLDGVAL) + '</td></tr><tr><td>Tax Code</td><td>' + attr.TAXCODE + '</td></tr><tr><td>Owner</td><td>' + attr.OWNER1 + " " + attr.OWNER2 + " " + attr.OWNER3 + '</td></tr><tr><td>Owner Address</td><td>' + attr.OWNERADDR + '</td></tr><tr><td>Owner City/Zip</td><td>' + attr.OWNERCITY + '&nbsp;' + attr.OWNERSTATE + '&nbsp;' + attr.OWNERZIP + '</td></tr><tr><td>Tax Plat</td><td>' + newState_ID + '</td></tr></table></div></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapseTwoSearch">SunGard/HTE Information</a></h4></div><div id="collapseTwoSearch" class="panel-collapse collapse"><div class="panel-body"><iframe class="embed-responsive-item" src="http://leia/asp/greshamgis/arcims_process_edit3.asp?IDValue=' + newRNO + '" frameborder="0" width="100%" height="500px"></iframe></div></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapseFiveSearch">Notes</a></h4></div><div id="collapseFiveSearch" class="panel-collapse collapse"><div class="panel-body"><iframe class="embed-responsive-item" src="http://leia/asp/greshamgis/parcel_view.asp?rno=' + newRNO + '" frameborder="0" width="100%" height="500px"></iframe></div></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapseThreeSearch">District Information from METRO</a></h4></div><div id="collapseThreeSearch" class="panel-collapse collapse"><div class="panel-body"><iframe src="metroreport.html?ID=' + attr.SITEADDR + '" frameborder="0" width="100%" height="600px"></iframe></div></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapsefourSearch">More information from County</a></h4></div><div id="collapsefourSearch" class="panel-collapse collapse"><div class="panel-body"><iframe class="embed-responsive-item" src="parcelreport.html?ID=' + attr.RNO + '"  frameborder="0" width="100%" height="480px"></iframe></div></div></div><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a data-toggle="collapse" href="#collapsefiveSearch">Census information</a></h4></div><div id="collapsefiveSearch" class="panel-collapse collapse"><div class="panel-body"><iframe class="embed-responsive-item" src="censusreport.html?TRACT=' + censusTractNo + '"  frameborder="0" width="100%" height="520px"></iframe></div></div></div></div></div>';
-
+            var content = app.parcelTemplate({attr:attr});
 
             //infoContentSub += content;      
             app.map.graphics.add(graphicResults1);
@@ -3302,7 +2824,6 @@ function showQueryResultsA2(results) {
                 censusTractNo = attrC.TRACT;
                 //End of Census info
 
-                //set zoom extent 
                 selectedParcelGeometry = results.features[0].geometry;
                 findParcel(addressStreetaddr, addressRNO, addressRNO6, addressStateid, addressCity, addressZip, censusTractNo, addr2Status);
 
@@ -3311,7 +2832,6 @@ function showQueryResultsA2(results) {
         app.map.centerAndZoom(results.features[0].geometry, 8);
     }
 }
-
 
 function hteSearch() {
     if (searchCategorySelected == "Search by Address") {
@@ -3383,73 +2903,3 @@ function resizeIcons() {
 $(".navbar-toggle").click(function(event) {
     $(".navbar-collapse").toggle('in');
 });
-
-
-(function($) {
-
-    $.fn.listSorter = function(options) {
-        var that = this;
-        var settings = {
-            order: 'asc'
-        };
-        options = $.extend(settings, options);
-
-        var items = $('li', that).get();
-        var filtered = '';
-
-        switch (options.order) {
-            case 'asc':
-            case 'desc':
-                break;
-            default:
-                return new Error('Invalid option');
-        }
-
-        return that.each(function() {
-
-            if (options.order == 'asc') {
-
-                var asc = items.sort(function(a, b) {
-
-                    var $text1 = $(a).text();
-                    var $text2 = $(b).text();
-
-                    return $text1[0].toLowerCase() > $text2[0].toLowerCase();
-
-                });
-
-
-                for (var i = 0; i < asc.length; i++) {
-
-                    filtered += '<li>' + $(asc[i]).text() + '</li>';
-
-                }
-
-                $(that).html(filtered);
-
-            } else {
-
-                var desc = items.sort(function(a, b) {
-
-                    var $text1 = $(a).text();
-                    var $text2 = $(b).text();
-
-                    return $text1[0].toLowerCase() < $text2[0].toLowerCase();
-
-                });
-
-
-                for (var j = 0; j < desc.length; j++) {
-
-                    filtered += '<li>' + $(desc[j]).text() + '</li>';
-
-                }
-
-                $(that).html(filtered);
-
-            }
-
-        });
-    };
-
-})(jQuery);
