@@ -51,7 +51,7 @@ var parcelResults, xID, symbolIdentifyPoint, symbolIdentifyPolyline, symbolIdent
 var app = {};
 var selectionToolbar;
 var streetMap, parcelLines, cityStreetParcel, aerialMap2015, aerialMap2014, aerialMap2013, aerialMap2012, aerialMap2007, aerialMap2002, aerialMap;
-var layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater, visibleLayerIdsBaseData, visibleLayerIdsBoundaries, visibleLayerIdsEnvironmental, visibleLayerIdsPlace, visibleLayerIdsStormwater, visibleLayerIdsTransportation, visibleLayerIdsWastewater, visibleLayerIdsWater = [];
+var layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater, layerUtilities;
 var opacityA;
 
 function isInt(value) {
@@ -95,6 +95,7 @@ require(["esri/map",
     SimpleFillSymbol, SimpleLineSymbol, IdentifyTask, IdentifyParameters, Color, Font, TextSymbol, SnappingManager, Measurement, Scalebar, Draw, Polyline, GeometryEngine,
     dom, domConstruct, domStyle, query, on, parser, arrayUtils, Source, registry, connect) {
 
+
     parser.parse();
 
     parseOnLoad = "false";
@@ -112,7 +113,7 @@ require(["esri/map",
         app.parcelTemplate = UnderscoreTemplate(template);
     })
 
-    var layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater, visibleLayerIds, visibleLayerIdsServices, visibleLayerIdsIncentives, visibleLayerIdsQuick = [];
+    var layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater, layerUtilities, visibleLayerIds, visibleLayerIdsServices, visibleLayerIdsIncentives, visibleLayerIdsQuick = [];
 
     function parseLayerOptions(obj) {
         var layerOptions = {};
@@ -219,6 +220,7 @@ require(["esri/map",
         options.layerTransportation = options.layerTransportation || [];
         options.layerWastewater = options.layerWastewater || [];
         options.layerWater = options.layerWater || [];
+        options.layerUtilities = options.utilities || [];
         
         var map_options = {
             autoResize: false
@@ -266,7 +268,8 @@ require(["esri/map",
         });
 
         // streetMap = new ArcGISTiledMapServiceLayer("http://leia/arcgis/rest/services/gview/BaseMap/MapServer");
-        streetMap = new esri.layers.ArcGISTiledMapServiceLayer('http://maps.greshamoregon.gov/arcgis/rest/services/gview/BaseMap/MapServer')
+        streetMap = new esri.layers.ArcGISTiledMapServiceLayer('http://maps.greshamoregon.gov/arcgis/rest/services/gview/BaseMap/MapServer');
+        //utilities = new esri.layers.ArcGISDynamicMapServiceLayer('http://maps.greshamoregon.gov/arcgis/rest/services/gview/Utilities/MapServer');
         // parcelLines = new esri.layers.ArcGISTiledMapServiceLayer("http://leia/arcgis/rest/services/gview/ParcelLines/MapServer");
         // cityStreetParcel = new esri.layers.ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview/CityStreetParcel/MapServer");
         aerialMap2015 = new esri.layers.ArcGISTiledMapServiceLayer("http://maps.greshamoregon.gov/arcgis/rest/services/gview/AerialCacheNew/MapServer");
@@ -314,6 +317,79 @@ require(["esri/map",
         //for infowindow only shows up on the right panel
         app.map.infoWindow.set("popupWindow", false);
 
+            //createLegend
+        app.legendItemTemplate = UnderscoreTemplate("<table style='width:100%;'><tr><td style='width:30px;'><label class='beforecheck'><input type='checkbox' class='toc-item list_item<%=obj.idx%>' id='<%=obj.t%><%=obj.layerIdx%>CheckBox' value=0  /></label></td><td><label class='aftercheck'><input type='checkbox' class='selbox' id='<%=obj.t%>selBox' data-layer-id='<%=obj.layerIdx%>'/><span class='label'><%=obj.name%></span></label></td></tr></table>");
+
+       var layers = {
+        'basedata': [
+            {idx:1,t:'basedata',layerIdx: 0, name:'City Limits'},
+            {idx:1,t:'basedata',layerIdx: 1, name:'Arterials'},
+            {idx:1,t:'basedata',layerIdx: 2, name:'Streets'},
+            {idx:1,t:'basedata',layerIdx: 3, name:'TaxLots (East County)'},
+            {idx:1,t:'basedata',layerIdx: 4, name:'House Numbers - main'},
+            {idx:1,t:'basedata',layerIdx: 4, name:'Addresses - all'},
+            {idx:1,t:'basedata',layerIdx: 5, name:'R Numbers'},
+            {idx:1,t:'basedata',layerIdx: 6, name:'Businesses/Tenants'},
+            {idx:1,t:'basedata',layerIdx: 7, name:'City Owned'},
+            {idx:1,t:'basedata',layerIdx: 8, name:'Agreements'},
+            {idx:1,t:'basedata',layerIdx: 9, name:'Quarter Sections'},
+            {idx:1,t:'basedata',layerIdx:10,name:'Easements'}
+        ],
+        'boundaries':[
+        {idx:2, t:'boundaries',  layerIdx : 0,name:'Zoning'},
+        {idx:2, t:'boundaries',  layerIdx : 1,name:'Hauler'},
+        {idx:2, t:'boundaries',  layerIdx : 2,name:'Neighborhood'},
+        {idx:2, t:'boundaries',  layerIdx : 3,name:'Code Enforcement Districts'},
+        {idx:2, t:'boundaries',  layerIdx : 4,name:'CDBG Prequalified Areas'},
+        {idx:2, t:'boundaries',  layerIdx : 5,name:'Other Cities'},
+        {idx:2, t:'boundaries',  layerIdx : 6,name:'Zip Codes'},
+        {idx:2, t:'boundaries',  layerIdx : 7,name:'Planning Actions'},
+        {idx:2, t:'boundaries',  layerIdx : 8,name:'Marijuana Dispensaries'},
+        {idx:2, t:'boundaries',  layerIdx : 9,name:'Marijuana Grow Zones'},
+        {idx:2, t:'boundaries', layerIdx : 10, name:'Current Land Use'},
+        {idx:2, t:'boundaries', layerIdx : 11, name:'SFR1 Residential Review Required'},
+        {idx:2, t:'boundaries', layerIdx : 12, name:'Old Action Maps'},
+        {idx:2, t:'boundaries', layerIdx : 13, name:'Subdivisions'},
+        {idx:2, t:'boundaries', layerIdx : 14, name:'Rockwood Urban Renewal'},
+        {idx:2, t:'boundaries', layerIdx : 15, name:'Annexations'},
+        {idx:2, t:'boundaries', layerIdx : 16, name:'County Lines'},
+        {idx:2, t:'boundaries', layerIdx : 17, name:'Design Districts'},
+        {idx:2, t:'boundaries', layerIdx : 18, name:'Pleasant Valley Land Use'},
+        {idx:2, t:'boundaries', layerIdx : 19, name:'Springwater Land Use'},
+        {idx:2, t:'boundaries', layerIdx : 20, name:'Kelley Creek Headwaters Land Use'}
+        ],
+        'utilities':[
+            {idx:9,t:'utility',layerIdx:0, name:'Fire Hydrants'},
+            {idx:9,t:'utility',layerIdx:1, name:'Sewer Mains'},
+            {idx:9,t:'utility',layerIdx:2, name:'Stormwater Mains'},
+            {idx:9,t:'utility',layerIdx:3, name:'Water Mains'},
+            {idx:9,t:'utility',layerIdx:4, name:'Rockwood Water'}
+        ]
+
+    }
+
+        layers.basedata.forEach(function(lyr){
+            var item = app.legendItemTemplate(lyr);
+            $('#basedatagroup > div.ui-controlgroup-controls').append(item);
+        })
+
+        $('#basedatagroup').trigger('create');
+
+        layers.boundaries.forEach(function(lyr){
+            var item = app.legendItemTemplate(lyr);
+            $('#boundariesgroup > div.ui-controlgroup-controls').append(item);
+        })
+
+        $('#boundariesgroup').trigger('create');
+
+
+        layers.utilities.forEach(function(lyr){
+            var item = app.legendItemTemplate(lyr);
+            $('#utilitiesgroup > div.ui-controlgroup-controls').append(item);
+        })
+
+        $('#utilitiesgroup').trigger('create');
+
         //for whatever reason the map doesn't work correctly when we pass any layer options into the constructor
         //so we have to come back after the fact and adjust the legend... e.g Line 370-450
 
@@ -327,18 +403,24 @@ require(["esri/map",
                 "opacity": 0.8,
                 "id": id
             })
+
+            return layer
         }
 
-        createImageParams(layerBaseData, "http://leia/arcgis/rest/services/gview2/BaseData/MapServer", 'layerBaseData');
-        createImageParams(layerBoundaries, "http://leia/arcgis/rest/services/gview2/Boundaries/MapServer", 'layerBoundaries');
-        createImageParams(layerEnvironmental, "http://leia/arcgis/rest/services/gview2/Environmental/MapServer", 'layerEnvironmental');
-        createImageParams(layerPlace, "http://leia/arcgis/rest/services/gview2/Place/MapServer", 'layerPlace');
-        createImageParams(layerStormwater, "http://leia/arcgis/rest/services/gview2/StormWater/MapServer", 'layerStormwater');
-        createImageParams(layerTransportation, "http://leia/arcgis/rest/services/gview2/Transportation/MapServer", 'layerTransportation');
-        createImageParams(layerWastewater, "http://leia/arcgis/rest/services/gview2/WasteWater/MapServer", 'layerWastewater');
-        createImageParams(layerWater, "http://leia/arcgis/rest/services/gview2/Water/MapServer", 'layerWater');
+        // createImageParams(layerBaseData, "http://leia/arcgis/rest/services/gview2/BaseData/MapServer", 'layerBaseData');
+        // createImageParams(layerBoundaries, "http://leia/arcgis/rest/services/gview2/Boundaries/MapServer", 'layerBoundaries');
+        // createImageParams(layerEnvironmental, "http://leia/arcgis/rest/services/gview2/Environmental/MapServer", 'layerEnvironmental');
+        // createImageParams(layerPlace, "http://leia/arcgis/rest/services/gview2/Place/MapServer", 'layerPlace');
+        // createImageParams(layerStormwater, "http://leia/arcgis/rest/services/gview2/StormWater/MapServer", 'layerStormwater');
+        // createImageParams(layerTransportation, "http://leia/arcgis/rest/services/gview2/Transportation/MapServer", 'layerTransportation');
+        // createImageParams(layerWastewater, "http://leia/arcgis/rest/services/gview2/WasteWater/MapServer", 'layerWastewater');
+        // createImageParams(layerWater, "http://leia/arcgis/rest/services/gview2/Water/MapServer", 'layerWater');
 
-        app.map.addLayers([streetMap, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
+        layerUtilities = createImageParams(layerUtilities, "http://maps.greshamoregon.gov/arcgis/rest/services/gview/Utilities/MapServer", 'layerUtilities');
+        console.log(layerUtilities);
+
+        //app.map.addLayers([streetMap, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
+        app.map.addLayers([streetMap, layerUtilities]);
 
         //Legend
         legend = new Legend({
@@ -346,21 +428,23 @@ require(["esri/map",
             respectCurrentMapScale: true,
             layerInfos: [{
                 layer: layerBaseData
-            }, {
-                layer: layerBoundaries
-            }, {
-                layer: layerEnvironmental
-            }, {
-                layer: layerPlace
-            }, {
-                layer: layerStormwater
-            }, {
-                layer: layerTransportation
-            }, {
-                layer: layerWastewater
-            }, {
-                layer: layerWater
-            }]
+            }
+            // , {
+            //     layer: layerBoundaries
+            // }, {
+            //     layer: layerEnvironmental
+            // }, {
+            //     layer: layerPlace
+            // }, {
+            //     layer: layerStormwater
+            // }, {
+            //     layer: layerTransportation
+            // }, {
+            //     layer: layerWastewater
+            // }, {
+            //     layer: layerWater
+            // }
+            ]
         }, "legendDiv");
 		
         function handleLayerOptions(layer,options, sliderNumber, selector){
@@ -398,6 +482,61 @@ require(["esri/map",
         }]);
 		
         //End of Legend
+
+        /*
+        ____ ____ _    ____ ____ ___ _ ____ _  _ 
+        [__  |___ |    |___ |     |  | |  | |\ | 
+        ___] |___ |___ |___ |___  |  | |__| | \| 
+        */
+    
+
+        var mapdraw = new esri.toolbars.Draw(app.map);
+        var mapDrawEnd;
+
+        $('#btnStartSelect').on('click', function(){
+             mapdraw.activate(esri.toolbars.Draw.EXTENT); 
+             mapDrawEnd = dojo.connect(mapdraw,"onDrawEnd",drawEnd);
+        })
+
+        function drawEnd(geometry){
+          app.map.graphics.clear();
+          var  symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_NONE, 
+                     new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_DASHDOT,
+                     new dojo.Color([255,0,0]), 2), new dojo.Color([255,255,0,0.25]));
+          var graphic = new esri.Graphic(geometry,symbol);
+          app.map.graphics.add(graphic);
+          queryByGeometry(geometry);
+          mapdraw.deactivate(); 
+          dojo.disconnect(mapDrawEnd);
+        }
+
+        function queryByGeometry(geometry){
+
+            //get currently selectable layers
+            var layers = $('.selbox:checked');
+           
+            for(var i=0;i<layers.length;i++){
+                
+                
+                var lyr_id = $(layers[i]).attr('data-layer-id');
+                var query = new esri.tasks.Query();
+                query.geometry = geometry;
+                var querytask = new esri.tasks.QueryTask("http://maps.greshamoregon.gov/arcgis/rest/services/gview/Utilities/MapServer/"+lyr_id);
+                query.where = '1=1';
+                dojo.connect(querytask,"onComplete",function(data){
+                    dojo.byId("leftPane").innerHTML = JSON.stringify(data.features);
+                    openRightPanelSTab();
+                });
+                
+                query.returnGeometry = true;
+                query.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                querytask.execute(query);
+            }
+
+          
+        }
+
+
 
         //Define Queries
         queryTaskPa = new esri.tasks.QueryTask("http://maps.greshamoregon.gov/arcgis/rest/services/Parcel/EastCountyParcels/MapServer/0");
@@ -863,7 +1002,11 @@ require(["esri/map",
         |___ |___ |__] |___ | \| |__/ 
 
         */
-                              
+                  
+
+
+
+
         function refreshLegend(){
             legend.refresh([{
                 layer: layerBaseData
@@ -934,25 +1077,27 @@ require(["esri/map",
 
         //Use the ImageParameters to set the visibleLayerIds layers in the map service during ArcGISDynamicMapServiceLayer construction.
 
-        $('.toc-item').on('click', function(){
+        $('.toc-item').on('change', function(){
 
             var list_number = $(this).attr('class').replace('toc-item','').trim();
 
             visibleLayerIds = [];
 
-            query(list_number).forEach(function(layer){
-                if(layer.checked){
+            var layers = $('.'+list_number);
 
-                    //special handling for environmnental layer
-                    if (layer.value === '9,10,11') {
+            for(var i=0;i<layers.length;i++){
+
+                if(layers[i].checked){
+                     if (layers[i].value === '9,10,11') {
                         visibleLayerIds.push(9);
                         visibleLayerIds.push(10);
                         visibleLayerIds.push(11);
                     } else {
-                        visibleLayerIds.push(layer.value);
+                        visibleLayerIds.push(layers[i].value);
                     }
                 }
-            })
+
+            }
 
             if (visibleLayerIds.length === 0) {
                 visibleLayerIds.push(-1);
@@ -985,6 +1130,9 @@ require(["esri/map",
                     break;
                 case 'list_item8':
                     layer = layerWater
+                    break;
+                case 'list_item9':
+                    layer = layerUtilities
                     break;
             }
 
@@ -1255,9 +1403,7 @@ require(["esri/map",
                 $("#iptType").attr("placeholder", "type a business or tenant name");
             } else if (searchCategorySelected === "Search by Manhole") {
                 $("#iptType").attr("placeholder", "type a manhole ID");
-            } else if (searchCategorySelected === "Search by Intersection") {
-                $("#iptType").attr("placeholder", "type a cross street...");
-            }else {
+            } else {
                 console.log(searchCategorySelected.toString());
             }
             var caretInsert = document.createElement("span");
