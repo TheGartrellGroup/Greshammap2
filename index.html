@@ -49,6 +49,11 @@
     .ui-btn.ui-checkbox-on.ui-btn-a:after {
         background-color: red !important;
     }
+
+   .aftercheck.ui-checkbox-on:after{
+        background-color:#FFBF00 !important;
+    }
+
     </style>
 </head>
 
@@ -73,8 +78,10 @@
                     <li class='dropdown'>
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Identify <span class="caret"></span></a>
                         <ul class='dropdown-menu'>
-                            <li><a href='#' title='Hold down control to select multiple'><i class='glyphicon glyphicon-screenshot'></i> Click</a></li>
-                            <li><a href='#' id='btnStartSelect'><i class='glyphicon glyphicon-edit'></i> Draw</a></li>
+                            <li><a href='#' title='Hold down control to select multiple' id='btnSelectPoint'><i class='glyphicon glyphicon-screenshot'></i> Point</a></li>
+                            <li><a href='#' id='btnSelectExtent'><i class='glyphicon glyphicon-edit'></i> Draw Rectangle</a></li>
+                            <li><a href='#' id='btnSelectPolygon'><i class='glyphicon glyphicon-edit'></i> Draw Polygon</a></li>
+                            <li><a href='#' id='btnSelectFreehandPolygon'><i class='glyphicon glyphicon-edit'></i> Draw Freehand Polygon</a></li>
                         </ul>
                     </li>
                     <li><a id="measureLink" href="#"><span class="glyphicon glyphicon-resize-horizontal"></span> Measure</a>
@@ -170,6 +177,20 @@
                                     <div id="collapseOne" class="panel-collapse collapse in">
                                         <div class="panel-body">
                                             <fieldset data-role="controlgroup" id='basedatagroup'>
+                                              <table style='width:100%'>
+<tr><td style='min-width:30px;max-width:40px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item1' id='basedata0CheckBox' value=0 checked="checked" /></label></td><td><label class='aftercheck'><input type='checkbox' data-service='BaseData' class='selBox' data-layer-id='0' >  <span class="label">City Limits</span></label></td></tr>
+<tr><td style='min-width:30px;max-width:40px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item1' id='basedata1CheckBox' value=1/>                   </label></td><td><label class='aftercheck'><input type='checkbox' data-service='BaseData' class='selBox' data-layer-id='1' > <span class="label">Arterials</span></label></td></tr>
+<tr><td style='min-width:30px;max-width:40px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item1' id='basedata2CheckBox' value=2 checked="checked" /></label></td><td><label class='aftercheck'><input type='checkbox' data-service='BaseData' class='selBox' data-layer-id='2' > <span class="label">Streets</span></label></td></tr>
+<tr><td style='min-width:30px;max-width:40px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item1' id='basedata3CheckBox' value=3 checked="checked" /></label></td><td><label class='aftercheck'><input type='checkbox' data-service='BaseData' class='selBox' data-layer-id='3' > <span class="label">TaxLots (East County)</span></label></td></tr>
+<tr><td style='min-width:30px;max-width:40px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item1' id='basedata4CheckBox' value=4 /> </label></td><td><label class='aftercheck'>                 <input type='checkbox' data-service='BaseData' class='selBox' data-layer-id='4' >  <span class="label">House Numbers - main</span></label></td></tr>
+<tr><td style='min-width:30px;max-width:40px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item1' id='basedata4CheckBox' value=4 /> </label></td><td><label class='aftercheck'>                 <input type='checkbox' data-service='BaseData' class='selBox' data-layer-id='4' >  <span class="label">Addresses - all</span></label></td></tr>
+<tr><td style='min-width:30px;max-width:40px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item1' id='basedata5CheckBox' value=5 /> </label></td><td><label class='aftercheck'>                 <input type='checkbox' data-service='BaseData' class='selBox' data-layer-id='5' >  <span class="label">R Numbers</span></label></td></tr>
+<tr><td style='min-width:30px;max-width:40px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item1' id='basedata6CheckBox' value=6 /> </label></td><td><label class='aftercheck'>                 <input type='checkbox' data-service='BaseData' class='selBox' data-layer-id='6' >  <span class="label">Businesses/Tenants</span></label></td></tr>
+<tr><td style='min-width:30px;max-width:40px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item1' id='basedata7CheckBox' value=7 /> </label></td><td><label class='aftercheck'>                 <input type='checkbox' data-service='BaseData' class='selBox' data-layer-id='7' >  <span class="label">City Owned</span></label></td></tr>
+<tr><td style='min-width:30px;max-width:40px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item1' id='basedata8CheckBox' value=8/></label></td><td><label class='aftercheck'>                   <input type='checkbox' data-service='BaseData' class='selBox' data-layer-id='8' > <span class="label">Agreements</span></label></td></tr>
+<tr><td style='min-width:30px;max-width:40px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item1' id='basedata9CheckBox' value=9 /> </label></td><td><label class='aftercheck'>                <input type='checkbox' data-service='BaseData' class='selBox' data-layer-id='9' >   <span class="label">Quarter Sections</span></label></td></tr>
+<tr><td style='min-width:30px;max-width:40px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item1' id='basedata10CheckBox' value=10 /> </label></td><td><label class='aftercheck'>               <input type='checkbox' data-service='BaseData' class='selBox' data-layer-id='10' >    <span class="label">Easements</span></label></td></tr>
+</table>
                                             </fieldset>
                                             <div data-role="fieldcontain" style="margin:0px">
                                                 <label for="slider-1" class="opacityFont">Opacity</label>
@@ -189,25 +210,29 @@
                                     <div id="collapseTwo" class="panel-collapse collapse">
                                         <div class="panel-body">
                                             <fieldset data-role="controlgroup" id='boundariesgroup'>
-                                            </fieldset>
-                                            <div data-role="fieldcontain" style="margin:0px">
-                                                <label for="slider-2" class="opacityFont">Opacity</label>
-                                                <input type="range" class='layer-slider' id="slider-2" value="0.5" min="0" max="1" step="0.1" data-highlight="true" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                 <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <h4 class="panel-title">
-                                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwelve">
-                                              Utilities
-                                            </a>
-                                        </h4>
-                                    </div>
-                                    <div id="collapseTwelve" class="panel-collapse collapse">
-                                        <div class="panel-body">
-                                            <fieldset data-role="controlgroup" id='utilitiesgroup'>
+                                            <table>
+<tr><td style='min-width:30px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries0CheckBox' value=0 />  </label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='0'> <span class="label">Zoning</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries1CheckBox' value=1 />  </label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='1'> <span class="label">Hauler</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries2CheckBox' value=2 />  </label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='2'> <span class="label">Neighborhood</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries3CheckBox' value=3 />  </label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='3'> <span class="label">Code Enforcement Districts</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries4CheckBox' value=4 />  </label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='4'> <span class="label">CDBG Prequalified Areas</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries5CheckBox' value=5 />  </label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='5'> <span class="label">Other Cities</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries6CheckBox' value=6 />  </label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='6'> <span class="label">Zip Codes</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries7CheckBox' value=7 />  </label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='7'> <span class="label">Planning Actions</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries8CheckBox' value=8 />  </label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='8'> <span class="label">Marijuana Dispensaries</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries9CheckBox' value=9 />  </label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='9'> <span class="label">Marijuana Grow Zones</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries10CheckBox' value=10 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='10'> <span class="label">Current Land Use</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries11CheckBox' value=11 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='11'> <span class="label">SFR1 Residential Review Required</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries12CheckBox' value=12 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='12'> <span class="label">Old Action Maps</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries13CheckBox' value=13 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='13'> <span class="label">Subdivisions</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries14CheckBox' value=14 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='14'> <span class="label">Rockwood Urban Renewal</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries15CheckBox' value=15 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='15'> <span class="label">Annexations</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries16CheckBox' value=16 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='16'> <span class="label">County Lines</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries17CheckBox' value=17 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='17'> <span class="label">Design Districts</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries18CheckBox' value=18 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='18'> <span class="label">Pleasant Valley Land Use</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries19CheckBox' value=19 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='19'> <span class="label">Springwater Land Use</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries20CheckBox' value=20 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='20'> <span class="label">Kelley Creek Headwaters Land Use</span> </label></td></tr>
+</table>
                                             </fieldset>
                                             <div data-role="fieldcontain" style="margin:0px">
                                                 <label for="slider-2" class="opacityFont">Opacity</label>
@@ -225,53 +250,26 @@
                           </h4>
                                     </div>
                                     <div id="collapseThree" class="panel-collapse collapse">
-                                        <div class="panel-body">
+                                        <div class="panel-body" style='overflow-x:scroll;'>
                                             <fieldset data-role="controlgroup">
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item3' id='environmental0CheckBox' value=0 /><span class="label">Streams</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item3' id='environmental1CheckBox' value=1 /><span class="label">Flood Plain</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item3' id='environmental1CheckBox' value=2 /><span class="label">Flood Plain - Proposed</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item3' id='environmental2CheckBox' value=3 /><span class="label">Contours (10ft)</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item3' id='environmental3CheckBox' value=4 /><span class="label">Open Space Overlay (Planning)</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item3' id='environmental4CheckBox' value=5 /><span class="label">Hillside Overlay</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item3' id='environmental5CheckBox' value=6 /><span class="label">Historical Overlay</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item3' id='environmental6CheckBox' value=7 /><span class="label">Gresham Butte Scenic View Overlay District</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item3' id='environmental7CheckBox' value=8 /><span class="label">HCA Values</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item3' id='environmental8CheckBox' value=9,10,11 /><span class="label">WQRA</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item3' id='environmental9CheckBox' value=12 /><span class="label">Portland Columbia South Shore Well Field</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item3' id='environmental10CheckBox' value=13 /><span class="label">Gresham Cascade Well Field</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item3' id='environmental11CheckBox' value=14 /><span class="label">Significant Trees</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item3' id='environmental12CheckBox' value=15 /><span class="label">Designated UIC Area</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item3' id='environmental12CheckBox' value=16 /><span class="label">Multnomah Co. Drainage District Levee</span>
-                                                </label>
+                                                
+<table style='width:100%'>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item3' id='environmental0CheckBox' value=0 /></label>        </td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Environmental' data-layer-id='0'> <span class="label">Streams</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item3' id='environmental1CheckBox' value=1 /></label>        </td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Environmental' data-layer-id='1'> <span class="label">Flood Plain</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item3' id='environmental1CheckBox' value=2 /></label>        </td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Environmental' data-layer-id='1'> <span class="label">Flood Plain - Proposed</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item3' id='environmental2CheckBox' value=3 /></label>        </td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Environmental' data-layer-id='2'> <span class="label">Contours (10ft)</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item3' id='environmental3CheckBox' value=4 /></label>        </td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Environmental' data-layer-id='3'> <span class="label">Open Space Overlay (Planning)</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item3' id='environmental4CheckBox' value=5 /></label>        </td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Environmental' data-layer-id='4'> <span class="label">Hillside Overlay</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item3' id='environmental5CheckBox' value=6 /></label>        </td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Environmental' data-layer-id='5'> <span class="label">Historical Overlay</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item3' id='environmental6CheckBox' value=7 /></label>        </td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Environmental' data-layer-id='6'> <span class="label">Gresham Butte Scenic View Overlay District</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item3' id='environmental7CheckBox' value=8 /></label>        </td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Environmental' data-layer-id='7'> <span class="label">HCA Values</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item3' id='environmental8CheckBox' value='9,10,11'/> </label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Environmental' data-layer-id='8'> <span class="label">WQRA</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item3' id='environmental9CheckBox' value=12 /></label>       </td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Environmental' data-layer-id='9'> <span class="label">Portland Columbia South Shore Well Field</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item3' id='environmental10CheckBox' value=13 /></label>      </td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Environmental' data-layer-id='10'> <span class="label">Gresham Cascade Well Field</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item3' id='environmental11CheckBox' value=14 /></label>      </td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Environmental' data-layer-id='11'> <span class="label">Significant Trees</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item3' id='environmental12CheckBox' value=15 /></label>      </td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Environmental' data-layer-id='12'> <span class="label">Designated UIC Area</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item3' id='environmental12CheckBox' value=16 /></label>      </td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Environmental' data-layer-id='12'> <span class="label">Multnomah Co. Drainage District Levee</span> </label></td></tr>
+</table>
                                             </fieldset>
                                             <div data-role="fieldcontain" style="margin:0px">
                                                 <label for="slider-3" class="opacityFont">Opacity</label>
@@ -291,30 +289,16 @@
                                     <div id="collapseFour" class="panel-collapse collapse">
                                         <div class="panel-body">
                                             <fieldset data-role="controlgroup">
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item4' id='place0CheckBox' value=0 /><span class="label">School Districts</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item4' id='place1CheckBox' value=1 /><span class="label">Parks and Greenspaces</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item4' id='place2CheckBox' value=2 /><span class="label">Fire Stations</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item4' id='place4CheckBox' value=3 /><span class="label">Enterprise Zone</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item4' id='place5CheckBox' value=4 /><span class="label">New Industries Grant</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item4' id='place6CheckBox' value=5 /><span class="label">Strategic Investment Zone</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item4' id='place7CheckBox' value=6 /><span class="label">Vertical Housing Development Zone</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item4' id='place8CheckBox' value=7 /><span class="label">Garage-to-Storefront Incentive</span>
-                                                </label>
+                                               <table style='width:100%'>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item4' id='place0CheckBox' value=0 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Place' data-layer-id='0'> <span class="label">School Districts</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item4' id='place1CheckBox' value=1 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Place' data-layer-id='1'> <span class="label">Parks and Greenspaces</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item4' id='place2CheckBox' value=2 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Place' data-layer-id='2'> <span class="label">Fire Stations</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item4' id='place4CheckBox' value=3 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Place' data-layer-id='4'> <span class="label">Enterprise Zone</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item4' id='place5CheckBox' value=4 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Place' data-layer-id='5'> <span class="label">New Industries Grant</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item4' id='place6CheckBox' value=5 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Place' data-layer-id='6'> <span class="label">Strategic Investment Zone</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item4' id='place7CheckBox' value=6 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Place' data-layer-id='7'> <span class="label">Vertical Housing Development Zone</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item4' id='place8CheckBox' value=7 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Place' data-layer-id='8'> <span class="label">Garage-to-Storefront Incentive</span> </label></td></tr>
+</table>
                                             </fieldset>
                                             <div data-role="fieldcontain" style="margin:0px">
                                                 <label for="slider-4" class="opacityFont">Opacity</label>
@@ -334,33 +318,18 @@
                                     <div id="collapseFive" class="panel-collapse collapse">
                                         <div class="panel-body">
                                             <fieldset data-role="controlgroup">
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item5' id='stormWater0CheckBox' value=0 /><span class="label">Public Structures</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item5' id='stormWater1CheckBox' value=1 /><span class="label">Private Structures</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item5' id='stormWater2CheckBox' value=2 /><span class="label">Public Lines</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item5' id='stormWater3CheckBox' value=3 /><span class="label">Private Lines</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item5' id='stormWater4CheckBox' value=4 /><span class="label">Basins</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item5' id='stormWater5CheckBox' value=5 /><span class="label">COG UICs</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item5' id='stormWater6CheckBox' value=6 /><span class="label">Outfalls Photos</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item5' id='stormWater7CheckBox' value=7 /><span class="label">Minor Drainage Complaints</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item5' id='stormWater8CheckBox' value=8 /><span class="label">Minor Drainage Problems</span>
-                                                </label>
+                                               
+<table style='width:100%'>
+<tr><td style='min-width:30px;'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item5' id='stormWater0CheckBox' value=0 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' id='stormWater0Sel'> <span class="label">Public Structures</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item5' id='stormWater1CheckBox' value=1 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' id='stormWater1Sel'> <span class="label">Private Structures</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item5' id='stormWater2CheckBox' value=2 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' id='stormWater2Sel'> <span class="label">Public Lines</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item5' id='stormWater3CheckBox' value=3 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' id='stormWater3Sel'> <span class="label">Private Lines</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item5' id='stormWater4CheckBox' value=4 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' id='stormWater4Sel'> <span class="label">Basins</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item5' id='stormWater5CheckBox' value=5 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' id='stormWater5Sel'> <span class="label">COG UICs</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item5' id='stormWater6CheckBox' value=6 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' id='stormWater6Sel'> <span class="label">Outfalls Photos</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item5' id='stormWater7CheckBox' value=7 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' id='stormWater7Sel'> <span class="label">Minor Drainage Complaints</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'> <input type='checkbox' class='toc_item list_item5' id='stormWater8CheckBox' value=8 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' id='stormWater8Sel'> <span class="label">Minor Drainage Problems</span> </label></td></tr>
+</table>
                                             </fieldset>
                                             <div data-role="fieldcontain" style="margin:0px">
                                                 <label for="slider-5" class="opacityFont">Opacity</label>
@@ -380,84 +349,34 @@
                                     <div id="collapseSix" class="panel-collapse collapse">
                                         <div class="panel-body">
                                             <fieldset data-role="controlgroup">
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation0CheckBox' value=0 /><span class="label">Bike Routes</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation1CheckBox' value=1 /><span class="label">Bus Stops</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation2CheckBox' value=2 /><span class="label">Bus Routes</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation3CheckBox' value=3 /><span class="label">Downtown Street Type</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation4CheckBox' value=4 /><span class="label">Functional Class Overlay</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation5CheckBox' value=5 /><span class="label">Functional Class</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation6CheckBox' value=6 /><span class="label">Functional Class Transit Streets</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation7CheckBox' value=7 /><span class="label">Future Street Plans</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation8CheckBox' value=8 /><span class="label">Speed Zones</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation9CheckBox' value=9 /><span class="label">Signal Interconnect</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation10CheckBox' value=10 /><span class="label">Street Lights</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation11CheckBox' value=11/><span class="label">Street Signs</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation12CheckBox' value=12 /><span class="label">Hazardous Route</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation13CheckBox' value=13 /><span class="label">Street Sweeper Schedule</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation14CheckBox' value=14 /><span class="label">Traffic Counts</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation15CheckBox' value=15 /><span class="label">Pervious Area</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation16CheckBox' value=16 /><span class="label">Medians and Roadside Maintenance Areas</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation17CheckBox' value=17 /><span class="label">Trans Asbuilts</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation18CheckBox' value=18 /><span class="label">Tree Inventory</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation19CheckBox' value=19 /><span class="label">Sidewalk Ramps</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation20CheckBox' value=20 /><span class="label">Sidewalks</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation21CheckBox' value=21 /><span class="label">USDOT National Highway System</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation22CheckBox' value=22 /><span class="label">Trails</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation23CheckBox' value=23 /><span class="label">Preventative Anti-Ice Areas</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation24CheckBox' value=24 /><span class="label">Plow Routes</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item6' id='transportation25CheckBox' value=25 /><span class="label">Snow and Sand Zones</span>
-                                                </label>
+                                               <table style='width:100%'>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation0CheckBox' value=0 /></label></td><td><label class='aftercheck'>    <input type='checkbox' data-service='Transportation' data-layer-id='0'   class='selBox'><span class="label">Bike Routes</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation1CheckBox' value=1 /></label></td><td><label class='aftercheck'>    <input type='checkbox' data-service='Transportation' data-layer-id='1'   class='selBox'><span class="label">Bus Stops</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation2CheckBox' value=2 /></label></td><td><label class='aftercheck'>    <input type='checkbox' data-service='Transportation' data-layer-id='2'   class='selBox'><span class="label">Bus Routes</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation3CheckBox' value=3 /></label></td><td><label class='aftercheck'>    <input type='checkbox' data-service='Transportation' data-layer-id='3'   class='selBox'><span class="label">Downtown Street Type</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation4CheckBox' value=4 /></label></td><td><label class='aftercheck'>    <input type='checkbox' data-service='Transportation' data-layer-id='4'   class='selBox'><span class="label">Functional Class Overlay</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation5CheckBox' value=5 /></label></td><td><label class='aftercheck'>    <input type='checkbox' data-service='Transportation' data-layer-id='5'   class='selBox'><span class="label">Functional Class</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation6CheckBox' value=6 /></label></td><td><label class='aftercheck'>    <input type='checkbox' data-service='Transportation' data-layer-id='6'   class='selBox'><span class="label">Functional Class Transit Streets</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation7CheckBox' value=7 /></label></td><td><label class='aftercheck'>    <input type='checkbox' data-service='Transportation' data-layer-id='7'   class='selBox'><span class="label">Future Street Plans</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation8CheckBox' value=8 /></label></td><td><label class='aftercheck'>    <input type='checkbox' data-service='Transportation' data-layer-id='8'   class='selBox'><span class="label">Speed Zones</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation9CheckBox' value=9 /></label></td><td><label class='aftercheck'>    <input type='checkbox' data-service='Transportation' data-layer-id='9'   class='selBox'><span class="label">Signal Interconnect</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation10CheckBox' value=10 /></label></td><td><label class='aftercheck'>  <input type='checkbox' data-service='Transportation' data-layer-id='10'  class='selBox'><span class="label">Street Lights</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation11CheckBox' value=11/></label></td><td><label class='aftercheck'>   <input type='checkbox' data-service='Transportation' data-layer-id='11'   class='selBox'><span class="label">Street Signs</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation12CheckBox' value=12 /></label></td><td><label class='aftercheck'>  <input type='checkbox' data-service='Transportation' data-layer-id='12'  class='selBox'><span class="label">Hazardous Route</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation13CheckBox' value=13 /></label></td><td><label class='aftercheck'>  <input type='checkbox' data-service='Transportation' data-layer-id='13'  class='selBox'><span class="label">Street Sweeper Schedule</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation14CheckBox' value=14 /></label></td><td><label class='aftercheck'>  <input type='checkbox' data-service='Transportation' data-layer-id='14'  class='selBox'><span class="label">Traffic Counts</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation15CheckBox' value=15 /></label></td><td><label class='aftercheck'>  <input type='checkbox' data-service='Transportation' data-layer-id='15'  class='selBox'><span class="label">Pervious Area</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation16CheckBox' value=16 /></label></td><td><label class='aftercheck'>  <input type='checkbox' data-service='Transportation' data-layer-id='16'  class='selBox'><span class="label">Medians and Roadside Maintenance Areas</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation17CheckBox' value=17 /></label></td><td><label class='aftercheck'>  <input type='checkbox' data-service='Transportation' data-layer-id='17'  class='selBox'><span class="label">Trans Asbuilts</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation18CheckBox' value=18 /></label></td><td><label class='aftercheck'>  <input type='checkbox' data-service='Transportation' data-layer-id='18'  class='selBox'><span class="label">Tree Inventory</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation19CheckBox' value=19 /></label></td><td><label class='aftercheck'>  <input type='checkbox' data-service='Transportation' data-layer-id='19'  class='selBox'><span class="label">Sidewalk Ramps</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation20CheckBox' value=20 /></label></td><td><label class='aftercheck'>  <input type='checkbox' data-service='Transportation' data-layer-id='20'  class='selBox'><span class="label">Sidewalks</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation21CheckBox' value=21 /></label></td><td><label class='aftercheck'>  <input type='checkbox' data-service='Transportation' data-layer-id='21'  class='selBox'><span class="label">USDOT National Highway System</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation22CheckBox' value=22 /></label></td><td><label class='aftercheck'>  <input type='checkbox' data-service='Transportation' data-layer-id='22'  class='selBox'><span class="label">Trails</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation23CheckBox' value=23 /></label></td><td><label class='aftercheck'>  <input type='checkbox' data-service='Transportation' data-layer-id='23'  class='selBox'><span class="label">Preventative Anti-Ice Areas</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation24CheckBox' value=24 /></label></td><td><label class='aftercheck'>  <input type='checkbox' data-service='Transportation' data-layer-id='24'  class='selBox'><span class="label">Plow Routes</span> </label></td></tr>
+<tr><td style='min-width:30px;'><label class='beforecheck'><input type='checkbox' class='toc_item list_item6' id='transportation25CheckBox' value=25 /></label></td><td><label class='aftercheck'>  <input type='checkbox' data-service='Transportation' data-layer-id='25'  class='selBox'><span class="label">Snow and Sand Zones</span> </label></td></tr>
+</table>
                                             </fieldset>
                                             <div data-role="fieldcontain" style="margin:0px">
                                                 <label for="slider-6" class="opacityFont">Opacity</label>
@@ -477,27 +396,15 @@
                                     <div id="collapseSeven" class="panel-collapse collapse">
                                         <div class="panel-body">
                                             <fieldset data-role="controlgroup">
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item7' id='wasteWater0CheckBox' value=0 /><span class="label">Manholes</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item7' id='wasteWater1CheckBox' value=1 /><span class="label">Mains</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item7' id='wasteWater2CheckBox' value=2 /><span class="label">Lateral</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item7' id='wasteWater3CheckBox' value=3 /><span class="label">Basins</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item7' id='wasteWater4CheckBox' value=4 /><span class="label">Backflow Waivers</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item7' id='wasteWater5CheckBox' value=5 /><span class="label">Pump Stations</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item7' id='wasteWater6CheckBox' value=6 /><span class="label">Pump Station SubBasins</span>
-                                                </label>
+                                               <table style='width:100%'>
+<tr><td style='min-width:30px'><label class='beforecheck' > <input type='checkbox' class='toc_item list_item7' id='wasteWater0CheckBox' value=0 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selbox' id='wasteWater0Sel'> <span class="label">Manholes</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck' > <input type='checkbox' class='toc_item list_item7' id='wasteWater1CheckBox' value=1 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selbox' id='wasteWater1Sel'> <span class="label">Mains</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck' > <input type='checkbox' class='toc_item list_item7' id='wasteWater2CheckBox' value=2 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selbox' id='wasteWater2Sel'> <span class="label">Lateral</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck' > <input type='checkbox' class='toc_item list_item7' id='wasteWater3CheckBox' value=3 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selbox' id='wasteWater3Sel'> <span class="label">Basins</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck' > <input type='checkbox' class='toc_item list_item7' id='wasteWater4CheckBox' value=4 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selbox' id='wasteWater4Sel'> <span class="label">Backflow Waivers</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck' > <input type='checkbox' class='toc_item list_item7' id='wasteWater5CheckBox' value=5 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selbox' id='wasteWater5Sel'> <span class="label">Pump Stations</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck' > <input type='checkbox' class='toc_item list_item7' id='wasteWater6CheckBox' value=6 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selbox' id='wasteWater6Sel'> <span class="label">Pump Station SubBasins</span> </label></td></tr>
+</table>
                                             </fieldset>
                                             <div data-role="fieldcontain" style="margin:0px">
                                                 <label for="slider-7" class="opacityFont">Opacity</label>
@@ -517,33 +424,17 @@
                                     <div id="collapseEight" class="panel-collapse collapse">
                                         <div class="panel-body">
                                             <fieldset data-role="controlgroup">
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item8' id='water0CheckBox' value=0 /><span class="label">Valves</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item8' id='water1CheckBox' value=1 /><span class="label">Water Fittings</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item8' id='water2CheckBox' value=2 /><span class="label">Hydrants</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item8' id='water3CheckBox' value=3 /><span class="label">Filling Hydrants</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item8' id='water4CheckBox' value=4 /><span class="label">Water Services</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item8' id='water5CheckBox' value=5 /><span class="label">Water Mains</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item8' id='water6CheckBox' value=6 /><span class="label">Abandoned Water Infrastructure</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item8' id='water7CheckBox' value=7 /><span class="label">Service Level</span>
-                                                </label>
-                                                <label>
-                                                    <input type='checkbox' class='toc-item list_item8' id='water8CheckBox' value=8 /><span class="label">Rockwood Water</span>
-                                                </label>
+                                                <table style='width:100%'>
+<tr><td style='min-width:30px'><label class='beforecheck' > <input type='checkbox' class='toc_item list_item8' id='water0CheckBox' value=0 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' id='water0Sel'> <span class="label">Valves</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck' > <input type='checkbox' class='toc_item list_item8' id='water1CheckBox' value=1 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' id='water1Sel'> <span class="label">Water Fittings</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck' > <input type='checkbox' class='toc_item list_item8' id='water2CheckBox' value=2 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' id='water2Sel'> <span class="label">Hydrants</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck' > <input type='checkbox' class='toc_item list_item8' id='water3CheckBox' value=3 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' id='water3Sel'> <span class="label">Filling Hydrants</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck' > <input type='checkbox' class='toc_item list_item8' id='water4CheckBox' value=4 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' id='water4Sel'> <span class="label">Water Services</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck' > <input type='checkbox' class='toc_item list_item8' id='water5CheckBox' value=5 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' id='water5Sel'> <span class="label">Water Mains</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck' > <input type='checkbox' class='toc_item list_item8' id='water6CheckBox' value=6 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' id='water6Sel'> <span class="label">Abandoned Water Infrastructure</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck' > <input type='checkbox' class='toc_item list_item8' id='water7CheckBox' value=7 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' id='water7Sel'> <span class="label">Service Level</span> </label></td></tr>
+<tr><td style='min-width:30px'><label class='beforecheck' > <input type='checkbox' class='toc_item list_item8' id='water8CheckBox' value=8 /></label></td><td><label class='aftercheck'><input type='checkbox' class='selBox' id='water8Sel'> <span class="label">Rockwood Water</span> </label></td></tr>
+</table>
                                             </fieldset>
                                             <div data-role="fieldcontain" style="margin:0px">
                                                 <label for="slider-8" class="opacityFont">Opacity</label>
@@ -694,6 +585,14 @@
     <script src="js/underscore.template.min.js"></script>
     <script src="http://js.arcgis.com/3.14/"></script>
     <script src="js/gm2.js"></script>
+    <script src="js/src/selection.js"></script>
+   <script src="js/src/layerList.js"></script>
+   <script src="js/src/googleStreetView.js"></script>
+   <script src="js/src/measurement.js"></script>
+   <script src="js/src/identify.js"></script>
+  <script src="js/src/geocoder.js"></script>
+  <script src="js/src/print.js"></script>
+  <script src="js/src/search.js"></script>
 </body>
 
 </html>
