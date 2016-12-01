@@ -97,8 +97,8 @@ require(["esri/map",
 
     app.printUrl = "http://leia/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task";
 
-    //esriConfig.defaults.io.proxyUrl = "http://localhost/proxy/proxy.ashx";
-    //esriConfig.defaults.io.alwaysUseProxy = true;
+    esriConfig.defaults.io.proxyUrl = "http://localhost/proxy/proxy.ashx";
+    esriConfig.defaults.io.alwaysUseProxy = true;
     esriConfig.defaults.geometryService = new GeometryService("http://www.gartrellgroup.net/arcgis/rest/services/Utilities/Geometry/GeometryServer");
 	
     var map, usaLayer, dynamicLayerInfos;
