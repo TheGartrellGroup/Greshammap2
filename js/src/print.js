@@ -1,6 +1,6 @@
 app.initializePrint = function(){
 
-    require(["esri/request", "dojo/_base/array", "esri/tasks/PrintTemplate", "esri/tasks/LegendLayer",], function(esriRequest, arrayUtils,  PrintTemplate,LegendLayer){
+    require(["esri/request", "dojo/_base/array","esri/dijit/Print", "esri/tasks/PrintTemplate", "esri/tasks/LegendLayer",], function(esriRequest, arrayUtils, Print, PrintTemplate,LegendLayer){
 
         //get print templates from the export web map task
         var printInfo = esriRequest({
