@@ -1,0 +1,176 @@
+<div class="tab-pane" id="searchResultsInfoW">
+    <div class="panel-group" id="accordionSearch">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title"><a data-toggle="collapse" href="#collapseOneSearch">TAXLOT Information</a><a href="parcelreportprint.html?ID=<%=attr.RNO%>" target="_blank"><span class="glyphicon glyphicon-print" style="float:right"></span></a></h4></div>
+            <div id="collapseOneSearch" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <table id="pi">
+                        <tr>
+                            <td>StateID</td>
+                            <td>
+                                <%=attr.STATEID%>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>RNO</td>
+                            <td>
+                                <%=attr.RNO%>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>PropID</td>
+                            <td>
+                                <%=attr.RNO6%>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Address</td>
+                            <td>
+                                <%=attr.SITEADDR%>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>City/Zip</td>
+                            <td>
+                                <%=attr.SITECITY%>&nbsp;OR&nbsp;<%=attr.SITEZIP%>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Legal</td>
+                            <td>
+                                <%=attr.LEGAL%>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Zone</td>
+                            <td>
+                                <a href="https://greshamoregon.gov/Land-Use-District-Definitions/" target="_blank"><%=attr.ZONE%></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Acres:</td>
+                            <td><% numberWithCommas(parseFloat(attr.GIS_ACRES).toFixed(2)) %></td>
+                         </tr>
+                         <tr>
+                         <td>SquareFeet:</td>
+                     <td><% numberWithCommas(parseFloat(attr.Shape_Area).toFixed(0)) %></td>
+                     </tr>
+                     <tr>
+                     <td>Primary Use</td>
+                     <td><%=attr.LANDUSE%></td>
+                        </tr>
+                        <tr>
+                            <td>Building Sqft</td>
+                            <td>
+                                <% numberWithCommas(parseFloat(attr.BLDGSQFT)) %>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Year Built</td>
+                            <td>
+                                <%=attr.YEARBUILT%>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Land Value</td>
+                            <td>
+                                <%="$" + numberWithCommas(parseFloat(attr.LANDVAL))%>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Building Value</td>
+                            <td>
+                                <%="$" + numberWithCommas(parseFloat(attr.BLDGVAL))%>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Tax Code</td>
+                            <td>
+                                <%=attr.TAXCODE%>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Owner</td>
+                            <td>
+                                <%=attr.OWNER1 + " " + attr.OWNER2 + " " + attr.OWNER3%>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Owner Address</td>
+                            <td>
+                                <%=attr.OWNERADDR%>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Owner City/Zip</td>
+                            <td>
+                                <%=attr.OWNERCITY%>&nbsp;<%=attr.OWNERSTATE%>&nbsp;<%=attr.OWNERZIP%>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Tax Plat</td>
+                            <td>
+                                <%=attr.newState_ID%>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title"><a data-toggle="collapse" href="#collapseTwoSearch">SunGard/HTE Information</a></h4></div>
+            <div id="collapseTwoSearch" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <iframe class="embed-responsive-item" src="http://leia/asp/greshamgis/arcims_process_edit3.asp?IDValue=<%=attr.newRNO%>" frameborder="0" width="100%" height="500px"></iframe>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title"><a data-toggle="collapse" href="#collapseFiveSearch">Notes</a><a href="notereportprint.html?ID=<%=attr.RNO%>" target="_blank"><span class="glyphicon glyphicon-print" style="float:right"></span></a></h4></div>
+            <div id="collapseFiveSearch" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <iframe class="embed-responsive-item" src="http://leia/asp/greshamgis/parcel_view.asp?rno=<%=attr.newRNO%>" frameborder="0" width="100%" height="500px"></iframe>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title"><a data-toggle="collapse" href="#collapseThreeSearch">PITS</a></h4></div>
+            <div id="collapseThreeSearch" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <iframe src="http://pits.greshamoregon.gov/gm2_callback?address=<%=attr.SITEADDR%>" frameborder="0" width="100%" height="600px"></iframe>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title"><a data-toggle="collapse" href="#collapseThreeSearch">District Information from METRO</a></h4></div>
+            <div id="collapseThreeSearch" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <iframe src="metroreport.html?ID=<%=attr.SITEADDR%>" frameborder="0" width="100%" height="600px"></iframe>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title"><a data-toggle="collapse" href="#collapsefourSearch">More information from County</a></h4></div>
+            <div id="collapsefourSearch" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <iframe class="embed-responsive-item" src="parcelreport.html?ID=<%=attr.RNO%>" frameborder="0" width="100%" height="480px"></iframe>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title"><a data-toggle="collapse" href="#collapsefiveSearch">Census Information</a></h4></div>
+            <div id="collapsefiveSearch" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <iframe class="embed-responsive-item" src="censusreport.html?TRACT=<%=attr.censusTractNo%>" frameborder="0" width="100%" height="520px"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
