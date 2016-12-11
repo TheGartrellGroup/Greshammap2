@@ -73,7 +73,7 @@ app.initializePrint = function(){
 
         function handleError(err) {
                 console.log("Something broke: ", err);
-            }
+        }
         //End of Print   
     })
 };

@@ -97,8 +97,8 @@ require(["esri/map",
 
     app.printUrl = "http://leia/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task";
 
-    esriConfig.defaults.io.proxyUrl = "http://localhost/proxy/proxy.ashx";
-    esriConfig.defaults.io.alwaysUseProxy = true;
+    //esriConfig.defaults.io.proxyUrl = "http://localhost/proxy/proxy.ashx";
+    //esriConfig.defaults.io.alwaysUseProxy = true;
     esriConfig.defaults.geometryService = new GeometryService("http://www.gartrellgroup.net/arcgis/rest/services/Utilities/Geometry/GeometryServer");
 	
     var map, usaLayer, dynamicLayerInfos;
@@ -260,11 +260,13 @@ require(["esri/map",
             scalebarUnit: "dual"
         });
 
-        streetMap = new ArcGISTiledMapServiceLayer("http://leia/arcgis/rest/services/gview/BaseMap/MapServer");
-        parcelLines = new esri.layers.ArcGISTiledMapServiceLayer("http://leia/arcgis/rest/services/gview/ParcelLines/MapServer");
-        cityStreetParcel = new esri.layers.ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview/CityStreetParcel/MapServer");
+        // streetMap = new ArcGISTiledMapServiceLayer("http://leia/arcgis/rest/services/gview/BaseMap/MapServer");
+        streetMap = new esri.layers.ArcGISTiledMapServiceLayer('http://maps.greshamoregon.gov/arcgis/rest/services/gview/BaseMap/MapServer');
+        //utilities = new esri.layers.ArcGISDynamicMapServiceLayer('http://maps.greshamoregon.gov/arcgis/rest/services/gview/Utilities/MapServer');
+        // parcelLines = new esri.layers.ArcGISTiledMapServiceLayer("http://leia/arcgis/rest/services/gview/ParcelLines/MapServer");
+        // cityStreetParcel = new esri.layers.ArcGISDynamicMapServiceLayer("http://leia/arcgis/rest/services/gview/CityStreetParcel/MapServer");
         aerialMap2015 = new esri.layers.ArcGISTiledMapServiceLayer("http://maps.greshamoregon.gov/arcgis/rest/services/gview/AerialCacheNew/MapServer");
-        aerialMap2014 = new esri.layers.ArcGISTiledMapServiceLayer("http://leia/arcgis/rest/services/gview/AerialCache/MapServer");
+        // aerialMap2014 = new esri.layers.ArcGISTiledMapServiceLayer("http://leia/arcgis/rest/services/gview/AerialCache/MapServer");
         aerialMap2013 = new esri.layers.ArcGISTiledMapServiceLayer("http://maps.greshamoregon.gov/arcgis/rest/services/gview/AerialCacheOld/MapServer");
         aerialMap2012 = new esri.layers.ArcGISTiledMapServiceLayer("http://maps.greshamoregon.gov/arcgis/rest/services/gview/AerialCache12/MapServer");
         aerialMap2007 = new esri.layers.ArcGISImageServiceLayer("http://www3.multco.us/arcgispublic/rest/services/Imagery/Urban_2007/ImageServer");
@@ -297,7 +299,8 @@ require(["esri/map",
             var selectedRadioID = "#" + "aerialR" + options.aerial[0];
             $(selectedRadioID).prop("checked", true);
             var aerialOpacity = options.aerial[1];
-            app.map.addLayers([streetMap, aerialYear, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
+            // app.map.addLayers([streetMap, aerialYear, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
+            app.map.addLayers([streetMap]);
             aerialYear.setOpacity(aerialOpacity);
             $('#slider-aerial').val(aerialOpacity).slider("refresh");
         } else {
@@ -325,20 +328,21 @@ require(["esri/map",
             return layer
         }
 
-        layerBaseData = createImageParams(layerBaseData, "http://leia/arcgis/rest/services/gview2/BaseData/MapServer", 'layerBaseData');
+        //layerBaseData = createImageParams(layerBaseData, "http://leia/arcgis/rest/services/gview2/BaseData/MapServer", 'layerBaseData');
+        layerBaseData = createImageParams(layerBaseData, "http://maps.greshamoregon.gov/arcgis/rest/services/gview/BaseData/MapServer", 'layerBaseData');
 
-        layerBoundaries = createImageParams(layerBoundaries, "http://leia/arcgis/rest/services/gview2/Boundaries/MapServer", 'layerBoundaries');
-        layerEnvironmental = createImageParams(layerEnvironmental, "http://leia/arcgis/rest/services/gview2/Environmental/MapServer", 'layerEnvironmental');
-        layerPlace=createImageParams(layerPlace, "http://leia/arcgis/rest/services/gview2/Place/MapServer", 'layerPlace');
-        layerStormwater=createImageParams(layerStormwater, "http://leia/arcgis/rest/services/gview2/StormWater/MapServer", 'layerStormwater');
-        layerTransportation=createImageParams(layerTransportation, "http://leia/arcgis/rest/services/gview2/Transportation/MapServer", 'layerTransportation');
-        layerWastewater = createImageParams(layerWastewater, "http://leia/arcgis/rest/services/gview2/WasteWater/MapServer", 'layerWastewater');
-        layerWater = createImageParams(layerWater, "http://leia/arcgis/rest/services/gview2/Water/MapServer", 'layerWater');
+        // createImageParams(layerBoundaries, "http://leia/arcgis/rest/services/gview2/Boundaries/MapServer", 'layerBoundaries');
+        // createImageParams(layerEnvironmental, "http://leia/arcgis/rest/services/gview2/Environmental/MapServer", 'layerEnvironmental');
+        // createImageParams(layerPlace, "http://leia/arcgis/rest/services/gview2/Place/MapServer", 'layerPlace');
+        // createImageParams(layerStormwater, "http://leia/arcgis/rest/services/gview2/StormWater/MapServer", 'layerStormwater');
+        // createImageParams(layerTransportation, "http://leia/arcgis/rest/services/gview2/Transportation/MapServer", 'layerTransportation');
+        // createImageParams(layerWastewater, "http://leia/arcgis/rest/services/gview2/WasteWater/MapServer", 'layerWastewater');
+        // createImageParams(layerWater, "http://leia/arcgis/rest/services/gview2/Water/MapServer", 'layerWater');
 
         layerUtilities = createImageParams(layerUtilities, "http://maps.greshamoregon.gov/arcgis/rest/services/gview/Utilities/MapServer", 'layerUtilities');
 
-        app.map.addLayers([streetMap, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
-        //app.map.addLayers([streetMap, layerUtilities]);
+        //app.map.addLayers([streetMap, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
+        app.map.addLayers([streetMap, layerUtilities]);
 
         //Legend
         legend = new Legend({
@@ -347,21 +351,21 @@ require(["esri/map",
             layerInfos: [{
                 layer: layerBaseData
             }
-            , {
-                layer: layerBoundaries
-            }, {
-                layer: layerEnvironmental
-            }, {
-                layer: layerPlace
-            }, {
-                layer: layerStormwater
-            }, {
-                layer: layerTransportation
-            }, {
-                layer: layerWastewater
-            }, {
-                layer: layerWater
-            }
+            // , {
+            //     layer: layerBoundaries
+            // }, {
+            //     layer: layerEnvironmental
+            // }, {
+            //     layer: layerPlace
+            // }, {
+            //     layer: layerStormwater
+            // }, {
+            //     layer: layerTransportation
+            // }, {
+            //     layer: layerWastewater
+            // }, {
+            //     layer: layerWater
+            // }
             ]
         }, "legendDiv");
 		

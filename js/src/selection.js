@@ -151,6 +151,9 @@ app.initializeSelection= (function(){
 
                     html+='</body></html>'
 
+                    // var win = window.open(url, '_blank');
+                    // win.focus();
+
                     var wnd = window.open("about:blank", "", "_blank");
                     wnd.document.write(html);
 
