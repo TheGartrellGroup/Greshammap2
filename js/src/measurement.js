@@ -2,7 +2,7 @@
 
  app.initializeMeasurement = function() {
 
-    require(["esri/dijit/Measurement","esri/geometry/geometryEngine","dojo/dom", "dojo/on", "esri/geometry/Polyline","esri/geometry/Polygon","esri/symbols/Font", "esri/symbols/TextSymbol", "esri/Color", "esri/graphic"], function(Measurement,GeometryEngine,dom, on, Polyline, Polygon, Font, TextSymbol, Color, Graphic){
+    require(["esri/dijit/Measurement","esri/geometry/geometryEngine","dojo/dom", "dojo/on", "esri/geometry/Polyline","esri/geometry/Polygon","esri/geometry/Point", "esri/symbols/Font", "esri/symbols/TextSymbol", "esri/Color", "esri/graphic"], function(Measurement,GeometryEngine,dom, on, Polyline, Polygon, Point, Font, TextSymbol, Color, Graphic){
 
      measurement = new Measurement({
          map: app.map,
@@ -92,7 +92,7 @@
      })
 
      measurement.on("measure", function(evt) {
-
+        console.info('measure event')
          dojo.disconnect(idfClick);
          dojo.disconnect(gsvClick);
          mapClickEvent.remove();
@@ -126,6 +126,7 @@
              var t = new TextSymbol((length).toFixed(2) + ' ' + unit.toLowerCase(), font, new Color([0, 0, 0]));
 
              t.setOffset(20, 30);
+             console.log(point);
              var g2 = new Graphic(point, t);
              textSymbols.push(g2);
              app.map.graphics.add(g2);
@@ -139,16 +140,18 @@
              mapMeasureEvent = on(app.map, "mouse-move", function(evt) {
                 
                  var poly = new Polygon(app.map.spatialReference);
-                 //console.log(point)
+                 
+                 console.log('Num points: '+point.rings[0].length + ' last point: '+point.rings[0][point.rings[0].length-2])
+
+                 var floatingPoint = [evt.mapPoint.x, evt.mapPoint.y];
+
                  var newpoly = JSON.parse(JSON.stringify(point));
 
-                 newpoly.rings[0].splice(newpoly.rings[0].length-1, 0,[evt.mapPoint.x, evt.mapPoint.y]).reverse();
+                 newpoly.rings[0].splice(newpoly.rings[0].length-1, 0,floatingPoint).reverse();
 
                  poly.addRing(newpoly.rings[0]);
                  
                  if(unit=='Sq Feet'){unit ='square-feet'}
-
-                    //console.log(poly.rings[0])
 
                  area = GeometryEngine.planarArea(poly, unit.toLowerCase());
 
@@ -162,24 +165,23 @@
                  }).html(area.toFixed(2) + ' ' + unit.toLowerCase());
              });
 
-             // var line = new Polyline(app.map.spatialReference);
-             // line.addPath([point, lastPoint]);
-             // lastPoint = point;
 
-             // length = GeometryEngine.planarLength(line, unit.toLowerCase());
+             //add segment text
+             var line = new Polyline(app.map.spatialReference);
+             line.addPath([point.rings[0][point.rings[0].length-2], point.rings[0][point.rings[0].length-1]]);
+             
+             var munit = 'feet';
+             var length = GeometryEngine.planarLength(line, munit);
+             
+             var font = new Font("16px", Font.STYLE_NORMAL, Font.VARIANT_NORMAL, Font.WEIGHT_BOLDER, 'Arial, sans-serif');
+             var t = new TextSymbol((length).toFixed(2) + ' ' + munit.toLowerCase(), font, new Color([0, 0, 0]));
 
-             // var font = new Font("16px", Font.STYLE_NORMAL, Font.VARIANT_NORMAL, Font.WEIGHT_BOLDER, 'Arial, sans-serif');
-             // var t = new TextSymbol((length).toFixed(2) + ' ' + unit.toLowerCase(), font, new Color([0, 0, 0]));
-
-             // t.setOffset(20, 30);
-             // var g2 = new Graphic(point, t);
-             // textSymbols.push(g2);
-             // app.map.graphics.add(g2);
-             // $('#floatingMeasurePanel').css({
-             //     'top': evt.clientY - 30,
-             //     'left': evt.clientX + 20
-             // })
-             // $('#floatingMeasurePanel').show();
+             t.setOffset(20, 30);
+             var p = new Point(point.rings[0][point.rings[0].length-2],app.map.spatialReference);
+             console.log(p)
+             var g2 = new Graphic(p, t);
+             textSymbols.push(g2);
+             app.map.graphics.add(g2);
          }
      });
 
