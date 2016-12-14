@@ -612,8 +612,17 @@ require(["esri/map",
             app.map.graphics.clear();
         });
 
-       
+        $('#btnToggleSelectable').on('click', function(){
+            $('.aftercheck.ui-checkbox-on').removeClass('ui-checkbox-on').addClass('ui-checkbox-off');
+            $('.selBox').removeAttr('checked');
+        });
+
+        $(function () {
+          $('[data-toggle="popover"]').popover()
+        })
+
         $('.aftercheck').attr('title', 'Make selectable');
+        $('.beforecheck').attr('title', 'Toggle Visibility');
 
         //End of resize window
 

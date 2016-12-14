@@ -4,6 +4,7 @@
 
     require(["esri/dijit/Measurement","esri/geometry/geometryEngine","dojo/dom", "dojo/on", "esri/geometry/Polyline","esri/geometry/Polygon","esri/geometry/Point", "esri/symbols/Font", "esri/symbols/TextSymbol", "esri/Color", "esri/graphic"], function(Measurement,GeometryEngine,dom, on, Polyline, Polygon, Point, Font, TextSymbol, Color, Graphic){
 
+
      measurement = new Measurement({
          map: app.map,
          defaultLengthUnit: "esriFeet",
@@ -65,13 +66,36 @@
                  $('#dijit_layout_ContentPane_3').html((length).toFixed(2) + ' ' + unit.toLowerCase())
              });
          }
-
      });
 
      measurement.on('measure-end', function(evt) {
          dojo.disconnect(mapMeasureEvent)
          $('#floatingMeasurePanel').hide();
 
+          if(measurement.getTool().toolName != 'distance'){
+            var point = evt.geometry;
+
+            var munit = 'feet';
+            //add anno for last segment of polygon
+            var line = new Polyline(app.map.spatialReference);
+             line.addPath([point.rings[0][point.rings[0].length-2], point.rings[0][point.rings[0].length-1]]);
+             
+             var length = GeometryEngine.planarLength(line, munit);
+             
+             var font = new Font("16px", Font.STYLE_NORMAL, Font.VARIANT_NORMAL, Font.WEIGHT_BOLDER, 'Arial, sans-serif');
+             var t = new TextSymbol((length).toFixed(2) + ' ' + munit.toLowerCase(), font, new Color([0, 0, 0]));
+
+             var upc = findMiddlePoint(point.rings[0][point.rings[0].length-2],point.rings[0][point.rings[0].length-1] )
+          
+             var p = new Point(upc,app.map.spatialReference);
+             var g2 = new Graphic(p, t);
+             textSymbols.push(g2);
+             app.map.graphics.add(g2)
+
+          }
+
+
+         bringTextToFront();
 
          var userAgent = navigator.userAgent.toString().toLowerCase();
         //IE11 does not recognize userAgent so use rv variable to identify IE11.
@@ -89,10 +113,12 @@
             app.map.graphics.remove(textSymbols[textSymbols.length-1])
         }
 
+
+
      })
 
      measurement.on("measure", function(evt) {
-        console.info('measure event')
+            
          dojo.disconnect(idfClick);
          dojo.disconnect(gsvClick);
          mapClickEvent.remove();
@@ -126,7 +152,6 @@
              var t = new TextSymbol((length).toFixed(2) + ' ' + unit.toLowerCase(), font, new Color([0, 0, 0]));
 
              t.setOffset(20, 30);
-             console.log(point);
              var g2 = new Graphic(point, t);
              textSymbols.push(g2);
              app.map.graphics.add(g2);
@@ -141,8 +166,6 @@
                 
                  var poly = new Polygon(app.map.spatialReference);
                  
-                 console.log('Num points: '+point.rings[0].length + ' last point: '+point.rings[0][point.rings[0].length-2])
-
                  var floatingPoint = [evt.mapPoint.x, evt.mapPoint.y];
 
                  var newpoly = JSON.parse(JSON.stringify(point));
@@ -165,25 +188,80 @@
                  }).html(area.toFixed(2) + ' ' + unit.toLowerCase());
              });
 
+             //need to fix this.
+             var munit = 'feet';
 
              //add segment text
-             var line = new Polyline(app.map.spatialReference);
-             line.addPath([point.rings[0][point.rings[0].length-2], point.rings[0][point.rings[0].length-1]]);
+             if(point.rings[0].length == 5){
+                //add anno for length of the first segment
+                var firstline = new Polyline(app.map.spatialReference);
+                firstline.addPath([point.rings[0][0], point.rings[0][1]]);
+                var ulength = GeometryEngine.planarLength(firstline, munit);
              
-             var munit = 'feet';
+                var font = new Font("16px", Font.STYLE_NORMAL, Font.VARIANT_NORMAL, Font.WEIGHT_BOLDER, 'Arial, sans-serif');
+                var ut = new TextSymbol((ulength).toFixed(2) + ' ' + munit.toLowerCase(), font, new Color([0, 0, 0]));
+
+                var upc = findMiddlePoint(point.rings[0][0], point.rings[0][1])
+
+                var up = new Point(upc,app.map.spatialReference);
+                var g3 = new Graphic(up, ut);
+                textSymbols.push(g3);
+                app.map.graphics.add(g3);
+                bringTextToFront();
+             }
+
+             var line = new Polyline(app.map.spatialReference);
+
+             var index1 = 2, index2 = 3;
+
+             if(point.rings[0].length> 5){
+                index1 = 4; index2 = 5;
+             }
+
+             line.addPath([point.rings[0][point.rings[0].length-index1], point.rings[0][point.rings[0].length-index2]]);
+             
              var length = GeometryEngine.planarLength(line, munit);
              
              var font = new Font("16px", Font.STYLE_NORMAL, Font.VARIANT_NORMAL, Font.WEIGHT_BOLDER, 'Arial, sans-serif');
              var t = new TextSymbol((length).toFixed(2) + ' ' + munit.toLowerCase(), font, new Color([0, 0, 0]));
 
-             t.setOffset(20, 30);
-             var p = new Point(point.rings[0][point.rings[0].length-2],app.map.spatialReference);
-             console.log(p)
+             var upc = findMiddlePoint(point.rings[0][point.rings[0].length-index1],point.rings[0][point.rings[0].length-index2] )
+          
+             var p = new Point(upc,app.map.spatialReference);
              var g2 = new Graphic(p, t);
              textSymbols.push(g2);
-             app.map.graphics.add(g2);
+             app.map.graphics.add(g2)
+             bringTextToFront();
          }
      });
+
+    function findMiddlePoint(p1, p2){
+        var xdiff = Math.abs(p1[0] - p2[0])/2;
+        var ydiff = Math.abs(p1[1] - p2[1])/2;
+
+        var x = p1[0];
+        var y = p1[1];
+
+        //is second to last point north or south?
+        if(p1[0] > p2[0]){
+           x -= xdiff;
+        } else {
+           x += xdiff;
+        }
+
+        if(p1[1] > p2[1]){
+           y -= ydiff;
+        } else {
+           y += ydiff;
+        }
+        return [x,y];
+    }
+
+    function bringTextToFront(){
+        textSymbols.forEach(function(g) {
+             g.getDojoShape().moveToFront();
+         })
+    }
 
      $("#measureLink").click(function() {
 
@@ -196,7 +274,7 @@
 
              if (textSymbols.length > 0) {
                  textSymbols.forEach(function(g) {
-                     app.map.graphics.remove(g);
+                     app.map.remove(g);
                  })
                  textSymbols = [];
              }

@@ -17,7 +17,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <title>GreshamMap2</title>
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.css" />
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css" />
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
     <link rel="stylesheet" href="http://js.arcgis.com/3.10/js/esri/css/esri.css" />
@@ -192,7 +192,7 @@
                                         <div class="panel-body">
                                             <fieldset data-role="controlgroup" id='basedatagroup'>
                                               <table style='width:100%'>
-                                            
+                                            <tr><th style='padding-bottom: 2px;'><b style='margin-bottom:2px;margin-left:10px;padding-left:4px' class='label label-warning' data-toggle="popover"  data-trigger='hover' data-content="Check these boxes to make a layer selectable">S</b></th><th><b style='margin-bottom:2px;margin-left:10px;padding-left:4px' class='label label-default' data-toggle="popover" data-trigger='hover' data-content="Click these eye-cons to turn layers on/off">V</b></th></tr>
 <tr><td style='min-width:31px;max-width:40px'>             <label class='aftercheck'> <input type='checkbox' data-service='BaseData' class='selBox' data-layer-id='0'  /></label></td> <td><label    class='beforecheck'><input type='checkbox' class='toc_item list_item1' id='basedata0CheckBox' value=0 checked>  <span class="label">City Limits</span></label></td>             </tr>
 <tr><td style='min-width:31px;max-width:40px'>             <label class='aftercheck'> <input type='checkbox' data-service='BaseData' class='selBox' data-layer-id='1' /> </label></td> <td><label    class='beforecheck'><input type='checkbox' class='toc_item list_item1' id='basedata1CheckBox' value=1> <span class="label">Arterials</span></label></td>                        </tr>
 <tr><td style='min-width:31px;max-width:40px'>             <label class='aftercheck'> <input type='checkbox' data-service='BaseData' class='selBox' data-layer-id='2'   /></label></td><td><label    class='beforecheck'><input type='checkbox' class='toc_item list_item1' id='basedata2CheckBox' value=2 checked> <span class="label">Streets</span></label></td>                  </tr>
@@ -225,6 +225,7 @@
                                         <div class="panel-body">
                                             <fieldset data-role="controlgroup" id='boundariesgroup'>
                                             <table style='width:100%'>
+                                            <tr><th style='padding-bottom: 2px;'><b style='margin-bottom:2px;margin-left:10px;padding-left:4px' class='label label-warning' data-toggle="popover"  data-trigger='hover' data-content="Check these boxes to make a layer selectable">S</b></th><th><b style='margin-bottom:2px;margin-left:10px;padding-left:4px' class='label label-default' data-toggle="popover" data-trigger='hover' data-content="Click these eye-cons to turn layers on/off">V</b></th></tr>
 <tr><td style='min-width:31px;max-width:40px;'><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='0'> </label></td><td><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries0CheckBox' value=0 />  <span class="label">Zoning</span>                             </label></td></tr>
 <tr><td style='min-width:31px;max-width:40px;'><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='1'> </label></td><td><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries1CheckBox' value=1 />  <span class="label">Hauler</span>                             </label></td></tr>
 <tr><td style='min-width:31px;max-width:40px;'><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Boundaries' data-layer-id='2'> </label></td><td><label class='beforecheck'> <input type='checkbox' class='toc_item list_item2' id='boundaries2CheckBox' value=2 />  <span class="label">Neighborhood</span>                       </label></td></tr>
@@ -268,6 +269,7 @@
                                             <fieldset data-role="controlgroup">
                                                 
 <table style='width:100%'>
+<tr><th style='padding-bottom: 2px;'><b style='margin-bottom:2px;margin-left:10px;padding-left:4px' class='label label-warning' data-toggle="popover"  data-trigger='hover' data-content="Check these boxes to make a layer selectable">S</b></th><th><b style='margin-bottom:2px;margin-left:10px;padding-left:4px' class='label label-default' data-toggle="popover" data-trigger='hover' data-content="Click these eye-cons to turn layers on/off">V</b></th></tr>
 <tr><td style='min-width:31px;'><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Environmental' data-layer-id='0'> </label> </td><td><label class='beforecheck'><input type='checkbox' class='toc_item list_item3' id='environmental0CheckBox' value=0 />         <span class="label">    Streams</span> </label>                                                                    </td></tr>
 <tr><td style='min-width:31px;'><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Environmental' data-layer-id='1'> </label> </td><td><label class='beforecheck'><input type='checkbox' class='toc_item list_item3' id='environmental1CheckBox' value=1 />         <span class="label">    Flood Plain</span> </label>                                                                </td></tr>
 <tr><td style='min-width:31px;'><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Environmental' data-layer-id='1'> </label> </td><td><label class='beforecheck'><input type='checkbox' class='toc_item list_item3' id='environmental1CheckBox' value=2 />         <span class="label">    Flood Plain - Proposed</span> </label>                                                     </td></tr>
@@ -304,6 +306,7 @@
                                         <div class="panel-body">
                                             <fieldset data-role="controlgroup">
                                                <table style='width:100%'>
+                                               <tr><th style='padding-bottom: 2px;'><b style='margin-bottom:2px;margin-left:10px;padding-left:4px' class='label label-warning' data-toggle="popover"  data-trigger='hover' data-content="Check these boxes to make a layer selectable">S</b></th><th><b style='margin-bottom:2px;margin-left:10px;padding-left:4px' class='label label-default' data-toggle="popover" data-trigger='hover' data-content="Click these eye-cons to turn layers on/off">V</b></th></tr>
 <tr><td style='min-width:31px;'><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Place' data-layer-id='0'></label></td><td><label class='beforecheck'><input type='checkbox' class='toc_item list_item4' id='place0CheckBox' value=0 /> <span class="label">School Districts</span>                        </label></td></tr>
 <tr><td style='min-width:31px;'><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Place' data-layer-id='1'></label></td><td><label class='beforecheck'><input type='checkbox' class='toc_item list_item4' id='place1CheckBox' value=1 /> <span class="label">Parks and Greenspaces</span>                       </label></td></tr>
 <tr><td style='min-width:31px;'><label class='aftercheck'><input type='checkbox' class='selBox' data-service='Place' data-layer-id='2'></label></td><td><label class='beforecheck'><input type='checkbox' class='toc_item list_item4' id='place2CheckBox' value=2 /> <span class="label">Fire Stations</span>                       </label></td></tr>
@@ -334,6 +337,7 @@
                                             <fieldset data-role="controlgroup">
                                                
 <table style='width:100%'>
+<tr><th style='padding-bottom: 2px;'><b style='margin-bottom:2px;margin-left:10px;padding-left:4px' class='label label-warning' data-toggle="popover"  data-trigger='hover' data-content="Check these boxes to make a layer selectable">S</b></th><th><b style='margin-bottom:2px;margin-left:10px;padding-left:4px' class='label label-default' data-toggle="popover" data-trigger='hover' data-content="Click these eye-cons to turn layers on/off">V</b></th></tr>
 <tr><td style='min-width:31px;'><label class='aftercheck'><input type='checkbox' class='selBox' id='stormWater0Sel'>  </label></td><td><label class='beforecheck'><input type='checkbox' class='toc_item list_item5' id='stormWater0CheckBox' value=0 /><span class="label">Public Structures</span> </label></td></tr>
 <tr><td style='min-width:31px;'><label class='aftercheck'><input type='checkbox' class='selBox' id='stormWater1Sel'>  </label></td><td><label class='beforecheck'><input type='checkbox' class='toc_item list_item5' id='stormWater1CheckBox' value=1 /><span class="label">Private Structures</span> </label></td></tr>
 <tr><td style='min-width:31px;'><label class='aftercheck'><input type='checkbox' class='selBox' id='stormWater2Sel'>  </label></td><td><label class='beforecheck'><input type='checkbox' class='toc_item list_item5' id='stormWater2CheckBox' value=2 /><span class="label">Public Lines</span> </label></td></tr>
@@ -364,6 +368,7 @@
                                         <div class="panel-body">
                                             <fieldset data-role="controlgroup">
                                                <table style='width:100%'>
+                                               <tr><th style='padding-bottom: 2px;'><b style='margin-bottom:2px;margin-left:10px;padding-left:4px' class='label label-warning' data-toggle="popover"  data-trigger='hover' data-content="Check these boxes to make a layer selectable">S</b></th><th><b style='margin-bottom:2px;margin-left:10px;padding-left:4px' class='label label-default' data-toggle="popover" data-trigger='hover' data-content="Click these eye-cons to turn layers on/off">V</b></th></tr>
 <tr><td style='min-width:31px;'><label class='aftercheck'>   <input type='checkbox' data-service='Transportation' data-layer-id='0'   class='selBox'>        </label></td><td><label class='beforecheck'> <input type='checkbox' class='toc_item list_item6' id='transportation0CheckBox' value=0 />       <span class="label">Bike Routes</span> </label></td></tr>
 <tr><td style='min-width:31px;'><label class='aftercheck'>   <input type='checkbox' data-service='Transportation' data-layer-id='1'   class='selBox'>        </label></td><td><label class='beforecheck'> <input type='checkbox' class='toc_item list_item6' id='transportation1CheckBox' value=1 />       <span class="label">Bus Stops</span> </label></td></tr>
 <tr><td style='min-width:31px;'><label class='aftercheck'>   <input type='checkbox' data-service='Transportation' data-layer-id='2'   class='selBox'>        </label></td><td><label class='beforecheck'> <input type='checkbox' class='toc_item list_item6' id='transportation2CheckBox' value=2 />       <span class="label">Bus Routes</span> </label></td></tr>
@@ -411,6 +416,7 @@
                                         <div class="panel-body">
                                             <fieldset data-role="controlgroup">
                                                <table style='width:100%'>
+                                               <tr><th style='padding-bottom: 2px;'><b style='margin-bottom:2px;margin-left:10px;padding-left:4px' class='label label-warning' data-toggle="popover"  data-trigger='hover' data-content="Check these boxes to make a layer selectable">S</b></th><th><b style='margin-bottom:2px;margin-left:10px;padding-left:4px' class='label label-default' data-toggle="popover" data-trigger='hover' data-content="Click these eye-cons to turn layers on/off">V</b></th></tr>
 <tr><td style='min-width:31px'><label class='aftercheck' ><input type='checkbox' class='selbox' id='wasteWater0Sel'> </label></td><td><label class='beforecheck'><input type='checkbox' class='toc_item list_item7' id='wasteWater0CheckBox' value=0 /> <span class="label">Manholes</span> </label></td></tr>
 <tr><td style='min-width:31px'><label class='aftercheck' ><input type='checkbox' class='selbox' id='wasteWater1Sel'> </label></td><td><label class='beforecheck'><input type='checkbox' class='toc_item list_item7' id='wasteWater1CheckBox' value=1 /> <span class="label">Mains</span> </label></td></tr>
 <tr><td style='min-width:31px'><label class='aftercheck' ><input type='checkbox' class='selbox' id='wasteWater2Sel'> </label></td><td><label class='beforecheck'><input type='checkbox' class='toc_item list_item7' id='wasteWater2CheckBox' value=2 /> <span class="label">Lateral</span> </label></td></tr>
@@ -439,6 +445,7 @@
                                         <div class="panel-body">
                                             <fieldset data-role="controlgroup">
                                                 <table style='width:100%'>
+                                                <tr><th style='padding-bottom: 2px;'><b style='margin-bottom:2px;margin-left:10px;padding-left:4px' class='label label-warning' data-toggle="popover"  data-trigger='hover' data-content="Check these boxes to make a layer selectable">S</b></th><th><b style='margin-bottom:2px;margin-left:10px;padding-left:4px' class='label label-default' data-toggle="popover" data-trigger='hover' data-content="Click these eye-cons to turn layers on/off">V</b></th></tr>
 <tr><td style='min-width:31px'><label class='aftercheck' ><input type='checkbox' class='selBox' id='water0Sel'> </label></td><td><label class='beforecheck'><input type='checkbox' class='toc_item list_item8' id='water0CheckBox' value=0 /> <span class="label">Valves</span> </label></td></tr>
 <tr><td style='min-width:31px'><label class='aftercheck' ><input type='checkbox' class='selBox' id='water1Sel'> </label></td><td><label class='beforecheck'><input type='checkbox' class='toc_item list_item8' id='water1CheckBox' value=1 /> <span class="label">Water Fittings</span> </label></td></tr>
 <tr><td style='min-width:31px'><label class='aftercheck' ><input type='checkbox' class='selBox' id='water2Sel'> </label></td><td><label class='beforecheck'><input type='checkbox' class='toc_item list_item8' id='water2CheckBox' value=2 /> <span class="label">Hydrants</span> </label></td></tr>
@@ -460,6 +467,7 @@
                             </div>
                             <button type="button" id="btnDeleteAll" class="btn">Clear All Layers</button>
                             <button type="button" id="btnDeleteSelection" class="btn">Clear All Drawings</button>
+                             <button type="button" id="btnToggleSelectable" class="btn">Clear All Selectable</button>
                         </div>
                         <!-- Layers Tab Contents-->
                         <div class="tab-pane" id="searchResults">
@@ -594,7 +602,7 @@
     <div id='floatingMeasurePanel' style='position:absolute;height:auto;top:30px;left:30px;z-index:10000;padding: 5px;background: rgba(255, 255, 255, .9); border: 1px solid rgb(187, 187, 187);
     border-radius: 5px;font-size:13px !important;display:none'></div>
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script src="http://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script src="js/underscore.template.min.js"></script>
     <script src="http://js.arcgis.com/3.14/"></script>

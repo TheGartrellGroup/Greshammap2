@@ -83,7 +83,8 @@ app.initializeSelection= (function(){
                             var query = new esri.tasks.Query();
                             query.geometry = geometry;
                             var querytask = new esri.tasks.QueryTask(url+'/'+idx);
-                            query.where = '1=1';                    
+                            query.where = '1=1';
+                            query.outFields =['*'];          
                             query.returnGeometry = true;
                             query.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
                             var qr =querytask.execute(query);
@@ -97,7 +98,8 @@ app.initializeSelection= (function(){
                         var query = new esri.tasks.Query();
                         query.geometry = geometry;
                         var querytask = new esri.tasks.QueryTask(url+'/'+layerNumber);
-                        query.where = '1=1';                    
+                        query.where = '1=1';       
+                        query.outFields =['*'];             
                         query.returnGeometry = true;
                         query.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
                         var qr =querytask.execute(query);
@@ -136,7 +138,14 @@ app.initializeSelection= (function(){
                                 html += '<td>'+i+'</td>';
 
                                 fieldNames.forEach(function(field){
+                                  if(typeof(feat.attributes[field]) == 'string' && feat.attributes[field].toUpperCase().indexOf('HTTP://')> -1){
+
+                                    html+='<td><a href="'+feat.attributes[field]+'" target="blank">'+feat.attributes[field]+'</a></td>';
+                                  } else {
+
                                     html+='<td>'+feat.attributes[field]+'</td>';
+                                  }
+
                                 })
 
                                 html+='</tr>';
