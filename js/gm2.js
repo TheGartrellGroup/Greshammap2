@@ -95,7 +95,8 @@ require(["esri/map",
 
     parseOnLoad = "false";
 
-    app.printUrl = "http://leia/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task";
+    //app.printUrl = "http://leia/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task";
+    app.printUrl = "http://maps.greshamoregon.gov/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task";
 
     //esriConfig.defaults.io.proxyUrl = "http://localhost/proxy/proxy.ashx";
     //esriConfig.defaults.io.alwaysUseProxy = true;
@@ -623,6 +624,11 @@ require(["esri/map",
 
         $('.aftercheck').attr('title', 'Make selectable');
         $('.beforecheck').attr('title', 'Toggle Visibility');
+
+        $.get('views/exportModal.htm').then(function(template){
+        app.exportTemplate = UnderscoreTemplate(template);
+        $('body').append(app.exportTemplate)
+        })
 
         //End of resize window
 

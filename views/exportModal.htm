@@ -1,0 +1,173 @@
+<style>
+
+
+#exportModal .modal-body {
+  overflow: hidden;
+  text-align: center; }
+  #exportModal .modal-body #exportImage {
+    height: 100%;
+    width: 100%; }
+
+.export-size {
+  padding-bottom: 10px;
+  margin: 0 auto;
+  float: none; }
+  .export-size #grpSize {
+    margin-top: 10px; }
+
+.export-label {
+  width: 50px;
+  text-align: left; }
+
+.row.export-row {
+  padding-top: 10px;
+  margin-left: -15px; }
+</style>
+
+<div class="modal fade" id="exportModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 id='exportModalHeader' class="modal-title">Export Map...</h4>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <img id='exportImage' />
+                </div>
+                <div class='row export-row'>
+                    <div class='col-md-6 col-sm-6 export-layout'>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td class="export-label">
+                                        <strong>Layout:</strong>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" data-toggle="buttons" id="grpLayout">
+                                            <label class="btn btn-default active">
+                                                <input type="radio" name='grpLayout' value="PORTRAIT" checked="checked">Portrait
+                                            </label>
+                                            <label class="btn btn-default">
+                                                <input type="radio" name='grpLayout' value="LANDSCAPE">Landscape
+                                            </label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class='col-md-6 col-sm-6 export-format'>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td class="export-label">
+                                        <strong>Format: </strong>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" data-toggle="buttons" id="grpFormat">
+                                            <label class="btn btn-default">
+                                                <input type="radio" name='grpFormat' value="PRINT">Print
+                                            </label>
+                                            <label class="btn btn-default active">
+                                                <input type="radio" name='grpFormat' value="PDF" checked>PDF
+                                            </label>
+                                            <label class="btn btn-default">
+                                                <input type="radio" name='grpFormat' value="IMAGE">Image
+                                            </label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class='row export-row'>
+                    <div class='col-md-12 col-sm-12 export-size'>
+                        <!-- Prepended checkbox -->
+                        <table style='width:100%;'>
+                            <tr>
+                                <td class="export-label">
+                                    <strong>Title:</strong>
+                                </td>
+                                <td>
+                                    <div class="input-group margin-top-10">
+                                        <span class="input-group-addon">
+                                              <input type="checkbox" id='chk-export-title' checked>
+                                          </span>
+                                        <input id="txt-export-title" class="form-control" value='Testmap' type="text" placeholder="Map title" style='width:90%'>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="export-label">
+                                    <strong>Subtitle:</strong>
+                                </td>
+                                <td>
+                                    <div class="input-group margin-top-10">
+                                        <span class="input-group-addon">
+                                              <input type="checkbox" id='chk-export-subtitle' checked>
+                                          </span>
+                                        <input id="txt-export-subtitle" class="form-control" value='Test subtitle' type="text" placeholder="Map subtitle" style='width:90%'>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class='row export-row'>
+                    <div class='col-md-6 col-sm-6 export-size'>
+                        <table>
+                            <tr>
+                                <td class="export-label">
+                                    <strong>Size:</strong>
+                                </td>
+                                <td>
+                                    <div class="btn-group" data-toggle="buttons" id="grpSize">
+                                        <label class="btn btn-default active">
+                                            <input type="radio" name="grpSize" value="SMALL" checked="checked">8.5 x 11
+                                        </label>
+                                        <label class="btn btn-default">
+                                            <input type="radio" name="grpSize" value="LARGE">11 x 17
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class='col-md-6 col-sm-6 export-size'>
+                        <table>
+                            <tr>
+                                <td class="export-label" style='vertical-align:top;padding-top:10px;'>
+                                    <strong>Options:</strong>
+                                </td>
+                                <td style='padding-left:15px;text-align:left'>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" id="chk-export-legend" value="1" checked> Legend
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" id="chk-export-scale" value="2" checked> Scale
+                                        </label>
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" id="chk-export-north-arrow" value="3" checked> North Arrow
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id='btn-export-cancel' data-dismiss="modal">Cancel</button>
+                <button class="ladda-button btn btn-info" data-style="expand-right" id='btn-export'><span class="ladda-label"><i class='glyphicon glyphicon-export'></i> &nbsp;Export </span></button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
