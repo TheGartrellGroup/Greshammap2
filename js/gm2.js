@@ -43,6 +43,7 @@ var dojoConfig = {
 };
 
 var map;
+var loading;
 var legend;
 var featureLayer;
 var gsvClick, infowiClick, idfClick;
@@ -75,7 +76,7 @@ require(["esri/map",
 
     "esri/tasks/locator", "esri/graphic", "esri/InfoTemplate", "esri/symbols/SimpleMarkerSymbol", "esri/tasks/GeometryService", "esri/SpatialReference",
     "esri/geometry/Point", "esri/geometry", "esri/request", "esri/config",
-    "esri/dijit/Print", "esri/tasks/PrintTemplate", "esri/tasks/LegendLayer",
+    "esri/dijit/Print", "esri/tasks/PrintTemplate", "esri/tasks/PrintTask", "esri/tasks/LegendLayer",
     "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol", "esri/tasks/IdentifyTask", "esri/tasks/IdentifyParameters", "esri/Color",
      "esri/symbols/Font",
    "esri/dijit/Scalebar", 
@@ -87,7 +88,7 @@ require(["esri/map",
     "dojo/domReady!"
 ], function(Map, ArcGISTiledMapServiceLayer, ArcGISDynamicMapServiceLayer, ArcGISImageServiceLayer, GraphicsLayer, FeatureLayer, ImageParameters, DynamicLayerInfo, LayerDataSource,
     LayerDrawingOptions, Legend, Popup,  HomeButton, LocateButton, Extent,
-    Locator, Graphic, InfoTemplate, SimpleMarkerSymbol, GeometryService, SpatialReference, Point, Geometry, esriRequest, esriConfig, Print, PrintTemplate, LegendLayer,
+    Locator, Graphic, InfoTemplate, SimpleMarkerSymbol, GeometryService, SpatialReference, Point, Geometry, esriRequest, esriConfig, Print, PrintTemplate, PrintTask, LegendLayer,
     SimpleFillSymbol, SimpleLineSymbol, IdentifyTask, IdentifyParameters, Color, Font,  Scalebar, 
     dom, domConstruct, domStyle, query, on, parser, arrayUtils, Source, registry, connect, all) {
 
@@ -98,8 +99,8 @@ require(["esri/map",
     //app.printUrl = "http://leia/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task";
     app.printUrl = "http://maps.greshamoregon.gov/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task";
 
-    //esriConfig.defaults.io.proxyUrl = "http://localhost/proxy/proxy.ashx";
-    //esriConfig.defaults.io.alwaysUseProxy = true;
+    esriConfig.defaults.io.proxyUrl = "http://localhost/proxy/proxy.ashx";
+    esriConfig.defaults.io.alwaysUseProxy = true;
     esriConfig.defaults.geometryService = new GeometryService("http://www.gartrellgroup.net/arcgis/rest/services/Utilities/Geometry/GeometryServer");
 	
     var map, usaLayer, dynamicLayerInfos;
@@ -206,6 +207,8 @@ require(["esri/map",
 
         options = options || {};
         
+        loading = dom.byId("loadingImg");
+
         options.layerBaseData = options.layerBaseData || [];
         options.layerBoundaries = options.layerBoundaries || [];
         options.layerPlace = options.layerPlace || [];
@@ -249,6 +252,9 @@ require(["esri/map",
         app.map = new Map('map',
             map_options 
         );
+
+        on(app.map, "update-start",  function(){esri.show(dom.byId("loadingImg"))});
+        on(app.map, "update-end",  function(){esri.hide(dom.byId("loadingImg"))});
 
         var home = new HomeButton({
             map: app.map
@@ -340,10 +346,10 @@ require(["esri/map",
         // createImageParams(layerWastewater, "http://leia/arcgis/rest/services/gview2/WasteWater/MapServer", 'layerWastewater');
         // createImageParams(layerWater, "http://leia/arcgis/rest/services/gview2/Water/MapServer", 'layerWater');
 
-        layerUtilities = createImageParams(layerUtilities, "http://maps.greshamoregon.gov/arcgis/rest/services/gview/Utilities/MapServer", 'layerUtilities');
+        
 
         //app.map.addLayers([streetMap, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
-        app.map.addLayers([streetMap, layerUtilities]);
+        app.map.addLayers([streetMap]);
 
         //Legend
         legend = new Legend({
@@ -433,8 +439,6 @@ require(["esri/map",
 
         app.initializeIdentify(); //calls code in identify.js
         //how much of identify code is necessary?
-
-        app.initializePrint(); //calls code in print.js
 
         app.initializeSearch(); //calls code in search.js
 
@@ -626,11 +630,13 @@ require(["esri/map",
         $('.beforecheck').attr('title', 'Toggle Visibility');
 
         $.get('views/exportModal.htm').then(function(template){
-        app.exportTemplate = UnderscoreTemplate(template);
-        $('body').append(app.exportTemplate)
-        })
 
-        //End of resize window
+            app.exportTemplate = UnderscoreTemplate(template);
+
+            $('body').append(app.exportTemplate)
+
+            app.export.init(); //calls code in print.js
+        })
 
     }
 }); // End of AMD Codes
@@ -835,19 +841,7 @@ $.myfunction = function() {
     console.log(urlAdd);
 }
 
-//Toggle button - tools
-$("#printLink").click(function() {
-    //$("#print_button").toggle();
-    if ($('#print_button').is(':visible')) {
-        $('#print_button').hide("fast", "swing");
-    } else {
-        $('#print_button').show("fast", "swing");
-        $('#btnGoogle').hide();
-        $('#myText').hide();
-        $('#btnIdentify').hide();
-        $('#measurementDiv').hide();
-    }
-});
+
 //End of Toggle button
 
 function deleteList() {

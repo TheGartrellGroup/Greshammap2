@@ -8,10 +8,7 @@
     height: 100%;
     width: 100%; }
 
-.export-size {
-  padding-bottom: 10px;
-  margin: 0 auto;
-  float: none; }
+
   .export-size #grpSize {
     margin-top: 10px; }
 
@@ -21,7 +18,12 @@
 
 .row.export-row {
   padding-top: 10px;
-  margin-left: -15px; }
+  margin-left: -15px; 
+}
+
+  .margin-top-10{
+    margin-top:10px;
+  }
 </style>
 
 <div class="modal fade" id="exportModal">
@@ -66,9 +68,6 @@
                                     </td>
                                     <td>
                                         <div class="btn-group" data-toggle="buttons" id="grpFormat">
-                                            <label class="btn btn-default">
-                                                <input type="radio" name='grpFormat' value="PRINT">Print
-                                            </label>
                                             <label class="btn btn-default active">
                                                 <input type="radio" name='grpFormat' value="PDF" checked>PDF
                                             </label>
@@ -95,7 +94,7 @@
                                         <span class="input-group-addon">
                                               <input type="checkbox" id='chk-export-title' checked>
                                           </span>
-                                        <input id="txt-export-title" class="form-control" value='Testmap' type="text" placeholder="Map title" style='width:90%'>
+                                        <input id="txt-export-title" class="form-control" value='Gresham Map' type="text" placeholder="Map title" style='width:90%'>
                                     </div>
                                 </td>
                             </tr>
@@ -106,13 +105,18 @@
                                 <td>
                                     <div class="input-group margin-top-10">
                                         <span class="input-group-addon">
-                                              <input type="checkbox" id='chk-export-subtitle' checked>
+                                              <input type="checkbox" id='chk-export-subtitle'>
                                           </span>
-                                        <input id="txt-export-subtitle" class="form-control" value='Test subtitle' type="text" placeholder="Map subtitle" style='width:90%'>
+                                        <input id="txt-export-subtitle" class="form-control" type="text" placeholder="Map subtitle" style='width:90%'>
                                     </div>
                                 </td>
                             </tr>
                         </table>
+                    </div>
+                </div>
+                <div class='row export-row'>
+                    <div class='col-md-12 col-sm-12 export-size'>
+                       
                     </div>
                 </div>
                 <div class='row export-row'>
@@ -155,6 +159,11 @@
                                     <div class="checkbox">
                                         <label>
                                             <input type="checkbox" id="chk-export-north-arrow" value="3" checked> North Arrow
+                                        </label>
+                                    </div>
+                                     <div class="checkbox" id='chk-parcel-data-div' style='display:none;'>
+                                        <label>
+                                            <input type="checkbox" id="chk-parcel-data" value="1" checked> Parcel data
                                         </label>
                                     </div>
                                 </td>

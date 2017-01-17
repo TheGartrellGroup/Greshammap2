@@ -2,12 +2,26 @@ app.initializeSelection= (function(){
 
     return function() { 
 
-        require(["esri/toolbars/draw", "dojo/promise/all", "dojo/on", "esri/geometry/geometryEngine"], function(Draw, all, on, GeometryEngine){
+        require(["esri/toolbars/draw", "dojo/promise/all", "dojo/on", "esri/geometry/geometryEngine", "dojo/dom","esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol", "esri/Color", "esri/symbols/SimpleMarkerSymbol"], function(Draw, all, on, GeometryEngine, dom, SimpleFillSymbol, SimpleLineSymbol, Color, SimpleMarkerSymbol){
 
             var mapdraw = new esri.toolbars.Draw(app.map);
             var mapDrawEnd;
 
+            function validate(){
+               var layers = $('.selBox:checked');
+               if(layers.length==0){
+                alert('Please mark at least one layer selectable in the layers menu')
+                return false;
+               }
+               return true;
+            }
+
+            $('#selectLink').on('click', function(){
+               app.deactivateMeasurement();
+                           });
+
             $('#btnSelectExtent').on('click', function(){
+                if(!validate()){return false}
                  app.map.graphics.clear();
                  dojo.disconnect(mapClickEvent)
                  mapdraw.activate(esri.toolbars.Draw.EXTENT); 
@@ -15,6 +29,7 @@ app.initializeSelection= (function(){
             })
 
             $('#btnSelectPolygon').on('click', function(){
+              if(!validate()){return false}
                  app.map.graphics.clear();
                  dojo.disconnect(mapClickEvent)
                  mapdraw.activate(esri.toolbars.Draw.POLYGON); 
@@ -22,6 +37,7 @@ app.initializeSelection= (function(){
             })
 
             $('#btnSelectFreehandPolygon').on('click', function(){
+              if(!validate()){return false}
                  app.map.graphics.clear();
                  dojo.disconnect(mapClickEvent)
                  mapdraw.activate(esri.toolbars.Draw.FREEHAND_POLYGON); 
@@ -29,24 +45,29 @@ app.initializeSelection= (function(){
             })
 
             $('#btnSelectPoint').on('click', function(){
+              if(!validate()){return false}
                  app.map.graphics.clear();
                  dojo.disconnect(mapClickEvent)
                  mapdraw.activate(esri.toolbars.Draw.POINT); 
                  mapDrawEnd = dojo.connect(mapdraw,"onDrawEnd",drawEnd);
             })
 
+             $('#btnClearSelected').on('click', function(){
+                app.map.graphics.clear();
+            })
+
             function drawEnd(geometry){
 
-                if(geometry.type == 'point'){
-                    geometry = GeometryEngine.buffer(geometry, 100, 'feet');
-                }
+              if(geometry.type == 'point'){
+                  geometry = GeometryEngine.buffer(geometry, 100, 'feet');
+              }
 
               app.map.graphics.clear();
-              var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_NONE, 
-                         new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_DASHDOT,
-                         new dojo.Color([255,255,0]), 2), new dojo.Color([255,255,0,0]));
-              var graphic = new esri.Graphic(geometry,symbol);
-              app.map.graphics.add(graphic);
+              //var symbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_NONE, 
+                    //     new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_DASHDOT,
+                     //    new dojo.Color([255,255,0]), 2), new dojo.Color([255,255,0,0]));
+              //var graphic = new esri.Graphic(geometry,symbol);
+              //app.map.graphics.add(graphic);
               queryByGeometry(geometry);
               mapdraw.deactivate();
               dojo.disconnect(mapDrawEnd);
@@ -63,6 +84,21 @@ app.initializeSelection= (function(){
                 if(layers.length ===0 ){
                     return;
                 }
+
+                esri.show(dom.byId("loadingImg"))
+
+                 var sfs = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+                  new SimpleLineSymbol(SimpleLineSymbol.STYLE_DASHDOT,
+                  new Color([255,255,0]), 2),new Color([255,255,0,0.25])
+                 );
+
+                 var sls = new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+                  new Color([255,255,0]), 3);
+
+                  var sms = new SimpleMarkerSymbol();
+                  sms.setStyle(SimpleMarkerSymbol.STYLE_CIRCLE);
+                  sms.setSize(10);
+                  sms.setColor(new Color([255,255,0,1]));
 
                 var tasks = {};
 
@@ -86,7 +122,7 @@ app.initializeSelection= (function(){
                             query.where = '1=1';
                             query.outFields =['*'];          
                             query.returnGeometry = true;
-                            query.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                            query.spatialRelationship = esri.tasks.Query.SPATIAL_REL_INTERSECTS;
                             var qr =querytask.execute(query);
                             var obj = {};
                             var layerName = window['layer'+service].layerInfos[idx].name;
@@ -101,7 +137,7 @@ app.initializeSelection= (function(){
                         query.where = '1=1';       
                         query.outFields =['*'];             
                         query.returnGeometry = true;
-                        query.spatialRelationship = esri.tasks.Query.SPATIAL_REL_CONTAINS;
+                        query.spatialRelationship = esri.tasks.Query.SPATIAL_REL_INTERSECTS;
                         var qr =querytask.execute(query);
                         var layerName = window['layer'+service].layerInfos[layerNumber].name;
                         tasks[layerName]=qr;
@@ -136,21 +172,45 @@ app.initializeSelection= (function(){
                                 html+= "<tr>";
 
                                 html += '<td>'+i+'</td>';
-
+                               
                                 fieldNames.forEach(function(field){
-                                  if(typeof(feat.attributes[field]) == 'string' && feat.attributes[field].toUpperCase().indexOf('HTTP://')> -1){
+                                  
+                                  if(typeof(feat.attributes[field]) == 'string'){
+                                    if(feat.attributes[field].toUpperCase().indexOf('HTTP://')> -1 || feat.attributes[field].toUpperCase().indexOf('FILE://') > -1){
 
-                                    html+='<td><a href="'+feat.attributes[field]+'" target="blank">'+feat.attributes[field]+'</a></td>';
+                                      html+='<td><a href="'+feat.attributes[field]+'" target="blank">'+feat.attributes[field]+'</a></td>';
+                                    } else {
+                                       html+='<td>'+feat.attributes[field]+'</td>';
+                                    }
                                   } else {
 
                                     html+='<td>'+feat.attributes[field]+'</td>';
                                   }
-
                                 })
 
                                 html+='</tr>';
+
+                                //draw feature
+
+                                var graphic = feat;
+
+                                if(feat.geometry.type == 'polyline'){
+                                  graphic.setSymbol(sls);
+                                } else if (feat.geometry.type == 'polygon'){
+                                  graphic.setSymbol(sfs);
+                                } else if (feat.geometry.type == 'point'){
+                                  graphic.setSymbol(sms);
+                                }
+  
+                                //Set the infoTemplate.
+                               // graphic.setInfoTemplate(infoTemplate);
+  
+                                //Add graphic to the map graphics layer.
+                                app.map.graphics.add(graphic);
+
                             })
                             html += '</tbody></table>'
+
                         } else {
 
                             html += '<h3>'+r+'</h3><hr/> <br/>No features found'
@@ -165,6 +225,8 @@ app.initializeSelection= (function(){
 
                     var wnd = window.open("about:blank", "", "_blank");
                     wnd.document.write(html);
+
+                    esri.hide(dom.byId("loadingImg"))
 
                 });
             }

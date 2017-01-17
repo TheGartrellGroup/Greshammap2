@@ -18,6 +18,8 @@
     <title>GreshamMap2</title>
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css" />
+    <link rel='stylesheet' href='./css/cropper.min.css'/>
+    <link rel='stylesheet' href='./css/ladda.min.css'/>
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
     <link rel="stylesheet" href="http://js.arcgis.com/3.10/js/esri/css/esri.css" />
@@ -48,10 +50,9 @@
     
     .ui-btn.ui-checkbox-on.ui-btn-a:after {
         background-color: red !important;
-
     }
 
-   .aftercheck.ui-checkbox-on:after{
+    .aftercheck.ui-checkbox-on:after{
         background-color:#FFBF00 !important;
     }
 
@@ -68,6 +69,20 @@
     .ui-btn.ui-checkbox-off:after, .ui-btn.ui-checkbox-on:after, .ui-btn.ui-radio-off:after, .ui-btn.ui-radio-on:after {
     width: 20px !important;
         }
+
+        .esriMeasurementTableHeader{
+            width:auto !important;
+        }
+        .esriMeasurement .esriMeasurementTableContainer .esriMeasurementResultTable .esriMeasurementTableCell{
+            width:20% !important;
+        }
+
+        #selectLink:hover {
+    font-size: 1.1em;
+    color: white;
+    text-shadow: 2px 2px #837e7c;
+}
+
     </style>
 </head>
 
@@ -90,12 +105,13 @@
                     <li><a id="streetViewLink" href="#"><span class="glyphicon glyphicon-picture"></span> Street View</a>
                     </li>
                     <li class='dropdown'>
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Identify <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" id='selectLink' style='color:#fff;'>Select <span class="caret"></span></a>
                         <ul class='dropdown-menu'>
                             <li><a href='#' title='Hold down control to select multiple' id='btnSelectPoint'><i class='glyphicon glyphicon-screenshot'></i> Point</a></li>
                             <li><a href='#' id='btnSelectExtent'><i class='glyphicon glyphicon-edit'></i> Draw Rectangle</a></li>
                             <li><a href='#' id='btnSelectPolygon'><i class='glyphicon glyphicon-edit'></i> Draw Polygon</a></li>
                             <li><a href='#' id='btnSelectFreehandPolygon'><i class='glyphicon glyphicon-edit'></i> Draw Freehand Polygon</a></li>
+                              <li><a href='#' id='btnClearSelected'><i class='glyphicon glyphicon-remove'></i> Clear selected features</a></li>
                         </ul>
                     </li>
                     <li><a id="measureLink" href="#"><span class="glyphicon glyphicon-resize-horizontal"></span> Measure</a>
@@ -140,6 +156,7 @@
                     <div id="HomeButton"></div>
                     <input type="image" id="btnGoogle" src="images/streetview18x20.png" style="width:30px;height:30px;background-color:grey;" />
                     <div id="LocateButton" onclick="javascript:initFunc();"></div>
+                    <img id="loadingImg" src="images/loading.gif" style="top:50%;position:absolute;height:30px;left:49.5%; z-index:100;" />
                 </div>
                 <div class="btnMap">
                     <button type="button" id="btnRightPanel"><span class="glyphicon glyphicon-list"></span>
@@ -547,7 +564,7 @@
         </div>
     </div>
     <!-- Modal Help-->
-    
+
     <div class="modal" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -605,6 +622,15 @@
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <!-- export deps -->
+    <script src='js/vendor/cropper.min.js'></script>
+    <script src='js/vendor/spin.min.js'></script>
+    <script src='js/vendor/ladda.min.js'></script>
+    <script src='js/vendor/html2canvas.js'></script>
+    <script src='js/vendor/FileSaver.min.js'></script>
+    <script src='js/vendor/jspdf.min.js'></script>
+    <script src='js/vendor/jspdf.plugin.autotable.js'></script>
+    <!-- end export deps -->
     <script src="js/underscore.template.min.js"></script>
     <script src="http://js.arcgis.com/3.14/"></script>
     <script src="js/gm2.js"></script>
@@ -616,6 +642,7 @@
   <script src="js/src/geocoder.js"></script>
   <script src="js/src/print.js"></script>
   <script src="js/src/search.js"></script>
+
 </body>
 
 </html>
