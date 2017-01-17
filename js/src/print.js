@@ -105,6 +105,15 @@ app.export= {
 
                             $("#loadingImg").hide();
 
+                            if($("#chk-parcel-data").is(':checked')){
+                                $($('#grpFormat').children()[1]).attr('disabled', true)
+                                $($('#grpFormat').children()[0]).addClass('active');
+                                $($('[name="grpFormat"]')[0]).attr('checked', true);
+                                $($('[name="grpFormat"]')[1]).removeAttr('checked');
+                            } else {
+                                 $($('#grpFormat').children()[1]).removeAttr('disabled')
+                            }
+
                         }
                     })
 
@@ -142,6 +151,18 @@ app.export= {
 
             $('#chk-parcel-data').on('change', function(){
             	var parcel = $(this).is(':checked')
+
+                if(parcel){
+                    debugger
+                    $($('#grpFormat').children()[1]).attr('disabled', true)
+                    $($('[name="grpFormat"]')[0]).attr('checked', true);
+                    $($('[name="grpFormat"]')[1]).removeAttr('checked');
+                    $($('#grpLayout').children()).removeAttr('disabled')
+                    $($('#grpSize').children()).removeAttr('disabled')
+                } else {
+                    $($('#grpFormat').children()[1]).removeAttr('disabled')
+                }
+
             	setTimeout(function() {
                     var layout = $('[name="grpLayout"]:checked').val();
                     var size = $('[name="grpSize"]:checked').val();
