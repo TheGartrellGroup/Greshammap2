@@ -155,6 +155,7 @@ app.export= {
                 if(parcel){
                     debugger
                     $($('#grpFormat').children()[1]).attr('disabled', true)
+                    $($('#grpFormat').children()[0]).addClass('active');
                     $($('[name="grpFormat"]')[0]).attr('checked', true);
                     $($('[name="grpFormat"]')[1]).removeAttr('checked');
                     $($('#grpLayout').children()).removeAttr('disabled')
