@@ -182,7 +182,7 @@ app.export= {
                 var $map = $('#map')
                 Web_Map_as_JSON.exportOptions  = {'outputSize':[window.innerWidth, window.innerHeight],"dpi": 96}
                
-                $.ajax({'url':'http://localhost/proxy/proxy.ashx?http://maps.greshamoregon.gov/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task/execute', 'data':'f=json&Format=PNG32&Layout_Template=MAP_ONLY&Web_Map_as_JSON='+encodeURIComponent(JSON.stringify(Web_Map_as_JSON)), 'dataType':'json', 'method':'POST'}).then(function(data){
+                $.ajax({'url':'http://localhost/proxy/proxy.ashx?http://leia/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task/execute', 'data':'f=json&Format=PNG32&Layout_Template=MAP_ONLY&Web_Map_as_JSON='+encodeURIComponent(JSON.stringify(Web_Map_as_JSON)), 'dataType':'json', 'method':'POST'}).then(function(data){
                         cb(data.results[0].value.url)
                     })
             })
