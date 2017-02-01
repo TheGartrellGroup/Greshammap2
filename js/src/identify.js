@@ -229,7 +229,7 @@ app.initializeIdentify = function(){
 
                     //End of Census info
 
-                    queryTaskP = new esri.tasks.QueryTask("http://maps.greshamoregon.gov/arcgis/rest/services/Parcel/EastCountyParcels/MapServer/0");
+                    queryTaskP = new esri.tasks.QueryTask("http://leia/arcgis/rest/services/Parcel/EastCountyParcels/MapServer/0");
                     queryP = new esri.tasks.Query();
                     queryP.returnGeometry = true;
                     queryP.outFields = ["*"];

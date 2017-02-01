@@ -341,8 +341,6 @@ require(["esri/map",
         createImageParams(layerWastewater, "http://leia/arcgis/rest/services/gview2/WasteWater/MapServer", 'layerWastewater');
         createImageParams(layerWater, "http://leia/arcgis/rest/services/gview2/Water/MapServer", 'layerWater');
 
-        
-
         app.map.addLayers([streetMap, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
         
 
@@ -412,11 +410,11 @@ require(["esri/map",
         });
 
         //Define Queries
-        queryTaskPa = new esri.tasks.QueryTask("http://maps.greshamoregon.gov/arcgis/rest/services/Parcel/EastCountyParcels/MapServer/0");
+        queryTaskPa = new esri.tasks.QueryTask("http:/leia/arcgis/rest/services/Parcel/EastCountyParcels/MapServer/0");
         queryPa = new esri.tasks.Query({returnGeometry:true, outFields:['*']});
 
         // //define queries
-        queryTaskA = new esri.tasks.QueryTask("http://maps.greshamoregon.gov/arcgis/rest/services/Parcel/AddressPts/MapServer/1");
+        queryTaskA = new esri.tasks.QueryTask("http://leia/arcgis/rest/services/Parcel/AddressPts/MapServer/1");
         queryA = new esri.tasks.Query({returnGeometry:true, outFields:['*']});
 
         //End of Define Queries
@@ -1193,7 +1191,7 @@ function showQueryResults1(results, k) {
     //Census info
     var point = graphicResults1.geometry;
     var censusTractNo;
-    queryTaskC = new esri.tasks.QueryTask("http://maps.greshamoregon.gov/arcgis/rest/services/Parcel/Census/MapServer/0");
+    queryTaskC = new esri.tasks.QueryTask("http://leia/arcgis/rest/services/Parcel/Census/MapServer/0");
     queryC = new esri.tasks.Query();
     queryC.returnGeometry = true;
     queryC.outFields = ["*"];
@@ -1267,7 +1265,7 @@ function showQueryResults2(results, k) {
     //Census info
     var point = selectedParcelGeometry;
     var censusTractNo;
-    queryTaskC = new esri.tasks.QueryTask("http://maps.greshamoregon.gov/arcgis/rest/services/Parcel/Census/MapServer/0");
+    queryTaskC = new esri.tasks.QueryTask("http:/leia/arcgis/rest/services/Parcel/Census/MapServer/0");
     queryC = new esri.tasks.Query();
     queryC.returnGeometry = true;
     queryC.outFields = ["*"];
@@ -1341,7 +1339,7 @@ function showQueryResultsA2(results) {
             //Census info
         var point = graphic.geometry;
         var censusTractNo;
-        queryTaskC = new esri.tasks.QueryTask("http://maps.greshamoregon.gov/arcgis/rest/services/Parcel/Census/MapServer/0");
+        queryTaskC = new esri.tasks.QueryTask("http://leia/arcgis/rest/services/Parcel/Census/MapServer/0");
         queryC = new esri.tasks.Query();
         queryC.returnGeometry = true;
         queryC.outFields = ["*"];
