@@ -106,7 +106,7 @@ app.initializeSelection= (function(){
                     var layer = $(layers[i]).attr('id');
                     var service =  $(layers[i]).attr('data-service')
                     var layerNumber =  $(layers[i]).attr('data-layer-id');
-
+	debugger
                     var url = window['layer'+service].url;
 
                     //need to check if it's a group layer first...

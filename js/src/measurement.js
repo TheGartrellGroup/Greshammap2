@@ -303,9 +303,6 @@ app.textSymbols = [];
             measurement.setTool(measurement.getTool().toolName, false)
         }
          $('#measurementDiv').hide("fast", "swing");
-         mapClickEvent = on(app.map, "click", function(evt) {
-             app.showLocation(evt);
-         });
 
          if (app.textSymbols.length > 0) {
              app.textSymbols.forEach(function(g) {

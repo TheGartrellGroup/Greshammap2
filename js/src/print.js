@@ -408,26 +408,29 @@ app.export= {
                                             break;
                                         }
                                     }
+									
+									if(lg.legend.length){
+									
+										lg.legend.forEach(function(symbol){
+											var linesHigh = app.export.calcTextHeight(ctx, symbol.label, 140-41, 15)
+											fullHeight += 15 * linesHigh;
+										})
 
-		                        	lg.legend.forEach(function(symbol){
-						                var linesHigh = app.export.calcTextHeight(ctx, symbol.label, 140-41, 15)
-						                fullHeight += 15 * linesHigh;
-						            })
+										runningHeight += fullHeight*.7;
 
-		                        	runningHeight += fullHeight*.7;
+										if (parcel && fullHeight*.7 > legendHeightSpace){
+											//need another page...
+											keepOnSinglePage = false;
+										}
 
-		                        	if (parcel && fullHeight*.7 > legendHeightSpace){
-		                        		//need another page...
-		                        		keepOnSinglePage = false;
-		                        	}
-
-		                            var name = l.layerInfos[parseInt(val)].name;
-		                            mapComponents.push(new Promise(function(resolve, reject) {
-		                                resolve({
-		                                    object: 'legend',
-		                                    canvas: app.export.renderCanvasLegend(name, lg.legend)
-		                                })
-		                            }))
+										var name = l.layerInfos[parseInt(val)].name;
+										mapComponents.push(new Promise(function(resolve, reject) {
+											resolve({
+												object: 'legend',
+												canvas: app.export.renderCanvasLegend(name, lg.legend)
+											})
+										}))
+									}
 		                        })
 		                    }
 		                })
@@ -807,11 +810,11 @@ app.export= {
 
             var offset=titleHeightLines
 
-            var fullHeight =titleHeightLines * 15;
+            var fullHeight =titleHeightLines * 19;
 
             legend.forEach(function(symbol){
-                var linesHigh = app.export.calcTextHeight(ctx, symbol.label, 140-41, 15)
-                fullHeight += 15 * linesHigh;
+                var linesHigh = app.export.calcTextHeight(ctx, symbol.label, 140-41, 19)
+                fullHeight += 19 * linesHigh;
             })
 
             canvas.height = fullHeight+5;
@@ -834,7 +837,7 @@ app.export= {
                 ctx.drawImage(im, 10, offset, im.height, im.width);
                 ctx.fillStyle = '#111111';
                 ctx.font = "10px 'Arial'";
-                offset = app.export.wrapCanvasText(ctx, symbol.label, 41, offset+15, 140, 15)
+                offset = app.export.wrapCanvasText(ctx, symbol.label, 41, offset+19, 140, 19)
             });
 
             return canvas;

@@ -147,13 +147,14 @@ require(["esri/map",
         return layerOptions;
     }
 
-    if (QueryString.map !== undefined) {
+    if (QueryString.map) {
 
         var layersRequest = esriRequest({
             url: './config/' + QueryString.map + '.js',
             handleAs: "json",
             callbackParamName: "callback"
         });
+
         layersRequest.then(
             function(response) {
                 var options = {};
@@ -333,13 +334,13 @@ require(["esri/map",
         }
 
         layerBaseData = createImageParams(layerBaseData, "http://leia/arcgis/rest/services/gview2/BaseData/MapServer", 'layerBaseData');
-        createImageParams(layerBoundaries, "http://leia/arcgis/rest/services/gview2/Boundaries/MapServer", 'layerBoundaries');
-        createImageParams(layerEnvironmental, "http://leia/arcgis/rest/services/gview2/Environmental/MapServer", 'layerEnvironmental');
-        createImageParams(layerPlace, "http://leia/arcgis/rest/services/gview2/Place/MapServer", 'layerPlace');
-        createImageParams(layerStormwater, "http://leia/arcgis/rest/services/gview2/StormWater/MapServer", 'layerStormwater');
-        createImageParams(layerTransportation, "http://leia/arcgis/rest/services/gview2/Transportation/MapServer", 'layerTransportation');
-        createImageParams(layerWastewater, "http://leia/arcgis/rest/services/gview2/WasteWater/MapServer", 'layerWastewater');
-        createImageParams(layerWater, "http://leia/arcgis/rest/services/gview2/Water/MapServer", 'layerWater');
+        layerBoundaries = createImageParams(layerBoundaries, "http://leia/arcgis/rest/services/gview2/Boundaries/MapServer", 'layerBoundaries');
+        layerEnvironmental = createImageParams(layerEnvironmental, "http://leia/arcgis/rest/services/gview2/Environmental/MapServer", 'layerEnvironmental');
+        layerPlace=createImageParams(layerPlace, "http://leia/arcgis/rest/services/gview2/Place/MapServer", 'layerPlace');
+        layerStormwater=createImageParams(layerStormwater, "http://leia/arcgis/rest/services/gview2/StormWater/MapServer", 'layerStormwater');
+        layerTransportation=createImageParams(layerTransportation, "http://leia/arcgis/rest/services/gview2/Transportation/MapServer", 'layerTransportation');
+        layerWastewater=createImageParams(layerWastewater, "http://leia/arcgis/rest/services/gview2/WasteWater/MapServer", 'layerWastewater');
+        layerWater=createImageParams(layerWater, "http://leia/arcgis/rest/services/gview2/Water/MapServer", 'layerWater');
 
         app.map.addLayers([streetMap, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
         
@@ -351,21 +352,21 @@ require(["esri/map",
             layerInfos: [{
                 layer: layerBaseData
             }
-            // , {
-            //     layer: layerBoundaries
-            // }, {
-            //     layer: layerEnvironmental
-            // }, {
-            //     layer: layerPlace
-            // }, {
-            //     layer: layerStormwater
-            // }, {
-            //     layer: layerTransportation
-            // }, {
-            //     layer: layerWastewater
-            // }, {
-            //     layer: layerWater
-            // }
+            , {
+                layer: layerBoundaries
+            }, {
+                layer: layerEnvironmental
+            }, {
+                layer: layerPlace
+            }, {
+                layer: layerStormwater
+            }, {
+                layer: layerTransportation
+            }, {
+                layer: layerWastewater
+            }, {
+                layer: layerWater
+            }
             ]
         }, "legendDiv");
 		
@@ -772,62 +773,62 @@ function locationError(error) {
 //End of GeoLocation   
 
 //create a string with all visiable layers for passing it to a url
-$.myfunction = function() {
-    var uBase = "";
+function getMapState() {
+   var uBase = "";
     for (var i = 0; i <= $(".list_item1").last().val(); i++) {
         if ($('#basedata' + i + 'CheckBox').prop('checked')) uBase += i + ",";
     }
     var uOpBase = $("#slider-1").val();
-
-    var uPlan = "";
+ 
+    var uBoundary = "";
     for (var i = 0; i <= $(".list_item2").last().val(); i++) {
-        if ($('#boundaries' + i + 'CheckBox').prop('checked')) uPlan += i + ",";
+        if ($('#boundaries' + i + 'CheckBox').prop('checked')) uBoundary += i + ",";
     }
-    var uOpPlan = $("#slider-2").val();
-
-    var uServices = "";
+    var uOpBoundary = $("#slider-2").val();
+ 
+    var uEnv = "";
     for (var i = 0; i <= $(".list_item3").last().val(); i++) {
-        if ($('#environmental' + i + 'CheckBox').prop('checked')) uServices += i + ",";
+        if ($('#environmental' + i + 'CheckBox').prop('checked')) uEnv += i + ",";
     }
-    var uOpServices = $("#slider-3").val();
-
-    var uInct = "";
+    var uOpEnv = $("#slider-3").val();
+ 
+    var uPlace = "";
     for (var i = 0; i <= $(".list_item4").last().val(); i++) {
-        if ($('#place' + i + 'CheckBox').prop('checked')) uInct += i + ",";
+        if ($('#place' + i + 'CheckBox').prop('checked')) uPlace += i + ",";
     }
-    var uOpInct = $("#slider-4").val();
-
+    var uOpPlace = $("#slider-4").val();
+ 
     var uStWa = "";
     for (var i = 0; i <= $(".list_item5").last().val(); i++) {
         if ($('#stormWater' + i + 'CheckBox').prop('checked')) uInct += i + ",";
     }
     var uOpStWa = $("#slider-5").val();
-
+ 
     var uTran = "";
     for (var i = 0; i <= $(".list_item6").last().val(); i++) {
         if ($('#transportation' + i + 'CheckBox').prop('checked')) uInct += i + ",";
     }
     var uOpTran = $("#slider-6").val();
-
+ 
     var uWaWa = "";
     for (var i = 0; i <= $(".list_item7").last().val(); i++) {
         if ($('#wasteWater' + i + 'CheckBox').prop('checked')) uInct += i + ",";
     }
     var uOpWaWa = $("#slider-7").val();
-
+ 
     var uWater = "";
     for (var i = 0; i <= $(".list_item8").last().val(); i++) {
         if ($('#water' + i + 'CheckBox').prop('checked')) uInct += i + ",";
     }
     var uOpWater = $("#slider-8").val();
-
+ 
     var zoomLevel = app.map.getZoom();
     urlAdd = "?";
     urlAdd += "z=" + zoomLevel;
     var mapCenter = app.map.extent.getCenter();
     urlAdd += "&c=" + mapCenter.x + "," + mapCenter.y;
-
-    urlAdd += "&layerBase=" + uBase + uOpBase + "&layerPlan=" + uPlan + uOpPlan + "&layerServices=" + uServices + uOpServices + "&layerIncentives=" + uInct + uOpInct + "&layer=" + uStWa + uOpStWa + "&layerIncentives=" + uTran + uOpTran + "&layerIncentives=" + uWaWa + uOpWaWa + "&layerIncentives=" + uWater + uOpWater;
+ 
+    urlAdd += "&layerBaseData=" + uBase + uOpBase + "&layerBoundaries=" + uBoundary + uOpBoundary + "&layerPlace=" + uPlace + uOpPlace +"&layerEnvironmental=" + uEnv + uOpEnv + "&layerStormwater=" + uStWa + uOpStWa + "&layerTransportation=" + uTran + uOpTran + "&layerWastewater=" + uWaWa + uOpWaWa + "&layerWater=" + uWater + uOpWater;
     console.log(urlAdd);
 }
 
