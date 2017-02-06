@@ -2,20 +2,24 @@ app.export= {
         mode: 'PDF',
         init: function() {
 
-        	function setAspectRatio(layout, format, size, parcel) {
+            function setAspectRatio(layout, format, size, parcel) {
 
                 if (format == 'IMAGE') {
                     app.export.cropper.setAspectRatio(NaN);
                 } else if (layout == 'PORTRAIT') {
-                	
+                    
                     if (size == 'SMALL') {
-                    	if(parcel){
-                        	app.export.cropper.setAspectRatio(1.6);
-                    	}else {
-                    		app.export.cropper.setAspectRatio(1);
-                    	}
+                        if(parcel){
+                            app.export.cropper.setAspectRatio(1.6);
+                        }else {
+                            app.export.cropper.setAspectRatio(1);
+                        }
                     } else {
-                        app.export.cropper.setAspectRatio(0.8);
+                        if(parcel){
+                            app.export.cropper.setAspectRatio(1);
+                        }else {
+                            app.export.cropper.setAspectRatio(0.8);
+                        }
                     }
                 } else {
                     if(size=='SMALL'){
@@ -106,6 +110,7 @@ app.export= {
                             $("#loadingImg").hide();
 
                             if($("#chk-parcel-data").is(':checked')){
+                                $($('#grpLayout').children()[1]).attr('disabled', true)
                                 $($('#grpFormat').children()[1]).attr('disabled', true)
                                 $($('#grpFormat').children()[0]).addClass('active');
                                 $($('[name="grpFormat"]')[0]).attr('checked', true);
@@ -118,13 +123,14 @@ app.export= {
                     })
 
                     if ($('#accordionSearch').children().length){
-
-                    	//show option to include parcel info.
-                    	$("#chk-parcel-data-div").show();
-                    	$("#chk-parcel-data").attr('checked', true);
+                        //show option to include parcel info.
+                        $("#chk-parcel-data-div").show();
+                        $("#chk-parcel-data").attr('checked', true);
+                        $($('#grpLayout').children()[1]).attr('disabled', true)
                     } else {
-                    	$("#chk-parcel-data-div").hide();
-                    	$("#chk-parcel-data").removeAttr('checked');
+                        $("#chk-parcel-data-div").hide();
+                        $("#chk-parcel-data").removeAttr('checked');
+                        $($('#grpLayout').children()[1]).removeAttr('disabled')
                     }
 
                     $('#exportModal').modal('show')
@@ -134,7 +140,7 @@ app.export= {
 
             $('#btn-export').on('click', function() {
 
-            	app.export.button.start();
+                app.export.button.start();
 
                 switch (app.export.mode) {
                     case "PRINT":
@@ -150,26 +156,36 @@ app.export= {
             });
 
             $('#chk-parcel-data').on('change', function(){
-            	var parcel = $(this).is(':checked')
+
+                var parcel = $(this).is(':checked')
 
                 if(parcel){
-                    debugger
-                    $($('#grpFormat').children()[1]).attr('disabled', true)
+                    
+                    $($('#grpLayout').children()[1]).attr('disabled', true)
+
+                    $($('#grpLayout').children()[0]).addClass('active');
+                    $($('#grpLayout').children()[1]).removeClass('active');
+                    $($('[name="grpLayout"]')[0]).prop('checked', true);
+                    $($('[name="grpLayout"]')[1]).removeAttr('checked');
+
+                    $($('#grpFormat').children()[1]).prop('disabled', true)
+
                     $($('#grpFormat').children()[0]).addClass('active');
-                    $($('[name="grpFormat"]')[0]).attr('checked', true);
+                    $($('[name="grpFormat"]')[0]).prop('checked', true);
                     $($('[name="grpFormat"]')[1]).removeAttr('checked');
-                    $($('#grpLayout').children()).removeAttr('disabled')
+
                     $($('#grpSize').children()).removeAttr('disabled')
                 } else {
                     $($('#grpFormat').children()[1]).removeAttr('disabled')
+                    $($('#grpLayout').children()[1]).removeAttr('disabled')
                 }
 
-            	setTimeout(function() {
+                setTimeout(function() {
                     var layout = $('[name="grpLayout"]:checked').val();
                     var size = $('[name="grpSize"]:checked').val();
                     var format = $('[name="grpFormat"]:checked').val();
                     setAspectRatio(layout, format, size, parcel);
-                }, 1)
+                }, 10)
             })
         },
         map: function(cb) {
@@ -243,163 +259,176 @@ app.export= {
 
             require(["dojo/_base/array"], function(arrayUtils){
 
-	            var layout = $('[name="grpLayout"]:checked').val().toLowerCase();
-	            var size = $('[name="grpSize"]:checked').val().toLowerCase();
-	            
-	            //invalidate if previously created...
-	            app.export.legendCanvas = undefined;
-	            app.export.datagridCanvas = undefined;
+                var layout = $('[name="grpLayout"]:checked').val().toLowerCase();
+                var size = $('[name="grpSize"]:checked').val().toLowerCase();
+                
+                //invalidate if previously created...
+                app.export.legendCanvas = undefined;
+                app.export.datagridCanvas = undefined;
 
-	            var mainCanvas = document.createElement('canvas'), 
-	                mapCanvas = app.export.cropper.getCroppedCanvas(),
-	                im = new Image(),
-	                northArrowImage,
-	                ctx,
-	                fullImage,
-	                lctx,
-	                keepOnSinglePage = true,
-	                runningHeight=0;
+                var mainCanvas = document.createElement('canvas'), 
+                    mapCanvas = app.export.cropper.getCroppedCanvas(),
+                    im = new Image(),
+                    northArrowImage,
+                    ctx,
+                    fullImage,
+                    lctx,
+                    keepOnSinglePage = true,
+                    runningHeight=0;
 
-	            var addTitle = $('#chk-export-title').is(':checked');
-	            var addSubtitle = $('#chk-export-subtitle').is(':checked');
-	            var addLegend = $('#chk-export-legend').is(':checked');
-	            var addScale = $('#chk-export-scale').is(':checked');
-	            var addNorthArrow = $('#chk-export-north-arrow').is(':checked');
+                var addTitle = $('#chk-export-title').is(':checked');
+                var addSubtitle = $('#chk-export-subtitle').is(':checked');
+                var addLegend = $('#chk-export-legend').is(':checked');
+                var addScale = $('#chk-export-scale').is(':checked');
+                var addNorthArrow = $('#chk-export-north-arrow').is(':checked');
 
-		        var parcel = $("#chk-parcel-data").is(':checked');
+                var parcel = $("#chk-parcel-data").is(':checked');
 
-	            if(mode=='image' && !addTitle && !addSubtitle && !addLegend && !addScale && !addNorthArrow){
-	                app.export.image(mapCanvas);
-	                app.export.button.stop();
-	                return;
-	            }
+                if(mode=='image' && !addTitle && !addSubtitle && !addLegend && !addScale && !addNorthArrow){
+                    app.export.image(mapCanvas);
+                    app.export.button.stop();
+                    return;
+                }
 
-	            // console.log({height:mapCanvas.height, width:mapCanvas.width})
+                // console.log({height:mapCanvas.height, width:mapCanvas.width})
 
-	            im.src = mapCanvas.toDataURL();
+                im.src = mapCanvas.toDataURL();
 
-	            im.onload = function(){
+                im.onload = function(){
 
-		            var mapHeightOffset = 0, margin = 0;
+                    var mapHeightOffset = 0, margin = 0;
 
-		            var legendHeightSpace, maxXLegendWidth;
+                    var maxLegendHeightSpace, maxLegendXCoord;
 
-		            if(layout =='portrait'){
-		                if(size =='small'){
-		                    legendHeightSpace = (parcel) ? 300 : 140;
-		                    maxXLegendWidth = (parcel) ? 570 : 360;
-		                } else {
-		                    legendHeightSpace = 222;
-		                    maxXLegendWidth = 660;
-		                }
-		            } else if(layout=='landscape') {
-		                if (size =='small'){
-		                     legendHeightSpace = 130;
-		                     maxXLegendWidth = 660;
-		                } else {
-		                     legendHeightSpace = 200;
-		                     maxXLegendWidth = 880;
-		                }
-		            }
-		                
-		            if(!addTitle){
-		                legendHeightSpace += 30;
-		            } else{
-		                mapHeightOffset += 39;
-		            }
+                    if(layout =='portrait'){
+                        if(size =='small'){
+                            maxLegendHeightSpace = (parcel) ? 300 : 140;
+                            maxLegendXCoord = (parcel) ? 570 : 360;
+                        } else {
+                            maxLegendHeightSpace = (parcel) ? 500 : 222;
+                            maxLegendXCoord = (parcel) ? 800 : 660;
+                        }
+                    } else if(layout=='landscape') {
+                        if (size =='small'){
+                             maxLegendHeightSpace = 130;
+                             maxLegendXCoord = 660;
+                        } else {
+                             maxLegendHeightSpace = 200;
+                             maxLegendXCoord = 880;
+                        }
+                    }
 
-		            if(!addSubtitle){
-		                legendHeightSpace += 24
-		            } else {
-		                mapHeightOffset += 30;
-		            }
+                    if(!addTitle){
+                        maxLegendHeightSpace += 30;
+                    } else{
+                        mapHeightOffset += 39;
+                    }
 
-		            if(mode !== 'image'){
+                    if(!addSubtitle){
+                        maxLegendHeightSpace += 24
+                    } else {
+                        mapHeightOffset += 30;
+                    }
 
-		                switch(layout){
+                    console.info('Legend height space is '+maxLegendHeightSpace)
 
-		                    case 'portrait':
-		                        switch(size){
-		                            case 'small':
-		                                mainCanvas.width  = 768;
-		                                mainCanvas.height = 1008;
-		                                ctx = mainCanvas.getContext('2d');
-		                                if(parcel){
-		                                	ctx.drawImage(im, 0, mapHeightOffset, 768, 480);
-	                            		} else {
-		                            		ctx.drawImage(im, 0, mapHeightOffset, 768, 768);
-		                            	}
-		                            	break;
-		                            case 'large':
-		                                mainCanvas.width  = 1008;
-		                                mainCanvas.height = 1584;
-		                                ctx = mainCanvas.getContext('2d');
-		                                ctx.drawImage(im, 0, mapHeightOffset, 1008, 1260);
-		                                break;
-		                            }
-		                        break;
+                    if(mode !== 'image'){
 
-		                    case 'landscape':
-		                        switch(size){
-		                            case 'small':
-		                                mainCanvas.width  = 1008;
-		                                mainCanvas.height = 768;
-		                                ctx = mainCanvas.getContext('2d');
-		                                ctx.drawImage(im, 0, mapHeightOffset, 1008, 538);
-		                                break
-		                            case 'large':
-		                                mainCanvas.width  = 1584;
-		                                mainCanvas.height = 1008;
-		                                ctx = mainCanvas.getContext('2d');
-		                                ctx.drawImage(im, 0, mapHeightOffset, 1584, 700);
-		                                break
-		                        }
-		                        break;
-		                }
+                        switch(layout){
 
-		            } else {
+                            case 'portrait':
+                                switch(size){
+                                    case 'small':
+                                        mainCanvas.width  = 768;
+                                        mainCanvas.height = 1008;
+                                        ctx = mainCanvas.getContext('2d');
+                                        if(parcel){
+                                            ctx.drawImage(im, 0, mapHeightOffset, 768, 480);
+                                        } else {
+                                            ctx.drawImage(im, 0, mapHeightOffset, 768, 768);
+                                        }
+                                        break;
+                                    case 'large':
+                                        mainCanvas.width  = 1008;
+                                        // mainCanvas.height = 1584;
+                                        mainCanvas.height = 1600;
+                                        ctx = mainCanvas.getContext('2d');
 
-		                mainCanvas.width  = mapCanvas.width+40;
-		                mainCanvas.height = mapCanvas.height+250;
+                                        if(parcel){
+                                           ctx.drawImage(im, 0, mapHeightOffset, 1036, 1036);
+                                        } else {
+                                           ctx.drawImage(im, 0, mapHeightOffset, 1008, 1260);
+                                        }
 
-		                ctx = mainCanvas.getContext('2d'),
+                                        break;
+                                    }
+                                break;
 
-		                ctx.fillStyle = '#FFF';
-		                ctx.fillRect(0,0,mainCanvas.width, mainCanvas.height);
-		                ctx.drawImage(im, 20, mapHeightOffset, mapCanvas.width, mapCanvas.height);
-		                margin = 20;
-		                keepOnSinglePage = false;
-		            }
+                            case 'landscape':
+                                switch(size){
+                                    case 'small':
+                                        mainCanvas.width  = 1008;
+                                        mainCanvas.height = 768;
+                                        ctx = mainCanvas.getContext('2d');
+                                        ctx.drawImage(im, 0, mapHeightOffset, 1008, 538);
+                                        break
+                                    case 'large':
+                                        mainCanvas.width  = 1584;
+                                        mainCanvas.height = 1008;
+                                        ctx = mainCanvas.getContext('2d');
+                                        ctx.drawImage(im, 0, mapHeightOffset, 1584, 700);
+                                        break
+                                }
+                                break;
+                        }
 
-		            var mapComponents = [];
+                    } else {
 
-		            /* Title */
-		            if(addTitle && $('#txt-export-title').val() !== ''){
-		                ctx.fillStyle = '#111111';
-		                ctx.font = "28px 'Arial'";
-		                ctx.fillText( $('#txt-export-title').val(), margin, 30);
-		            }
+                        mainCanvas.width  = mapCanvas.width+40;
+                        mainCanvas.height = mapCanvas.height+250;
 
-		            /* Subtitle */
-		            if(addSubtitle && $('#txt-export-subtitle').val() !== ''){
-		                ctx.fillStyle = '#111111';
-		                ctx.font = "20px 'Arial'";
-		                ctx.fillText( $('#txt-export-subtitle').val(), margin, mapHeightOffset-14);
-		            }
+                        ctx = mainCanvas.getContext('2d'),
 
-		            /* Legend and legend header*/
-		            // need something here to detect if legends or not...
-		            if(addLegend ){
-		            	var hasLegend = false;
-		                app.map.layerIds.forEach(function(layer) {
-		                    var l = app.map.getLayer(layer);
-		                    
-		                    if (l.id != 'layer0' && l.id != 'layer1' && l.id != 'layer2' && l.id != 'layer3' && l.id != 'layer4' && l.id != 'layer5') {
-		                     //basemap
-		                        l.visibleLayers.forEach(function(val) {
+                        ctx.fillStyle = '#FFF';
+                        ctx.fillRect(0,0,mainCanvas.width, mainCanvas.height);
+                        ctx.drawImage(im, 20, mapHeightOffset, mapCanvas.width, mapCanvas.height);
+                        margin = 20;
+                        keepOnSinglePage = false;
+                    }
+
+                    var mapComponents = [];
+
+                    /* Title */
+                    if(addTitle && $('#txt-export-title').val() !== ''){
+                        ctx.fillStyle = '#111111';
+                        ctx.font = "28px 'Arial'";
+                        ctx.fillText( $('#txt-export-title').val(), margin, 30);
+                    }
+
+                    /* Subtitle */
+                    if(addSubtitle && $('#txt-export-subtitle').val() !== ''){
+                        ctx.fillStyle = '#111111';
+                        ctx.font = "20px 'Arial'";
+                        ctx.fillText( $('#txt-export-subtitle').val(), margin, mapHeightOffset-14);
+                    }
+
+                    /* Legend and legend header*/
+                    // need something here to detect if legends or not...
+                    if(addLegend ){
+                        var hasLegend = false;
+
+                        // at this point we need to know if we need another page
+                        // to accommodate the legend. If any legend is going to exceed the height of the allotted space, then we'll need another page.
+
+                        app.map.layerIds.forEach(function(layer) {
+                            var l = app.map.getLayer(layer);
+                            
+                            if (l.id != 'layer0' && l.id != 'layer1' && l.id != 'layer2' && l.id != 'layer3' && l.id != 'layer4' && l.id != 'layer5') {
+                             //basemap
+                                l.visibleLayers.forEach(function(val) {
                                     
-		                        	var fullHeight = 0;
-		                        	hasLegend = true;
+                                    var fullHeight = 0;
+                                    hasLegend = true;
 
                                     var lg;
                                     for(var i=0;i<l.legendResponse.layers.length;i++){
@@ -408,220 +437,192 @@ app.export= {
                                             break;
                                         }
                                     }
-									
-									if(lg.legend.length){
-									
-										lg.legend.forEach(function(symbol){
-											var linesHigh = app.export.calcTextHeight(ctx, symbol.label, 140-41, 15)
-											fullHeight += 15 * linesHigh;
-										})
 
-										runningHeight += fullHeight*.7;
+                                    if(lg) {
 
-										if (parcel && fullHeight*.7 > legendHeightSpace){
-											//need another page...
-											keepOnSinglePage = false;
-										}
+                                        lg.legend.forEach(function(symbol){
+                                            var linesHigh = app.export.calcTextHeight(ctx, symbol.label, 140-41, 19)
+                                            fullHeight += 19 * linesHigh;
+                                        })
 
-										var name = l.layerInfos[parseInt(val)].name;
-										mapComponents.push(new Promise(function(resolve, reject) {
-											resolve({
-												object: 'legend',
-												canvas: app.export.renderCanvasLegend(name, lg.legend)
-											})
-										}))
-									}
-		                        })
-		                    }
-		                })
+                                        console.info('legend is: '+(fullHeight) + ' high');
 
-		                if(parcel && runningHeight > legendHeightSpace){
-                            debugger
-		                	keepOnSinglePage = false;
-		                }
+                                        runningHeight += fullHeight;
 
-		                if(!keepOnSinglePage){
-		                    lctx = app.export.createLegendCanvas(Math.max(runningHeight, legendHeightSpace));
-		                }
+                                        if (fullHeight > maxLegendHeightSpace){
+                                            //need another page...
+                                            console.log('Height of legend ('+fullHeight+') is more than maxLegendHeightSpace ('+maxLegendHeightSpace)
+                                            keepOnSinglePage = false;
+                                        }
 
-		                // Legend title
-		                if(hasLegend){
-			                if(keepOnSinglePage){
-			                    var legendTitleY =  (parcel) ? 585 : mainCanvas.height -legendHeightSpace-10;
-			                    var legendTitleX = (parcel) ? 580 : 0;
-			                    ctx.fillStyle = '#111111';
-			                    ctx.font = "20px 'Arial'";
-			                    ctx.fillText('Legend', legendTitleX, legendTitleY);
-			                } else {
-			                    lctx.fillStyle = '#111111';
-			                    lctx.font = "20px 'Arial'";
-			                    lctx.fillText('Legend', 0, 30);
-			                }
-			            }
-		            }
+                                        var name = l.layerInfos[parseInt(val)].name;
 
-		            /* Scale */
-		            var scaleHeight, scaleWidth;
-		            if(addScale){
-		                $('.esriScalebar').css('width', 'auto');
-		                scaleWidth = $('.esriScalebar').width()+30;
-		                scaleHeight = $('.esriScalebar').height()+20;
+                                        mapComponents.push(new Promise(function(resolve, reject) {
+                                            resolve({
+                                                object: 'legend',
+                                                canvas: app.export.renderCanvasLegend(name, lg.legend)
+                                            })
+                                        }))
+                                    }
+                                })
+                            }
+                        })
 
-		                mapComponents.push(new Promise(function(resolve, reject) {
-		                    setTimeout(function() {(html2canvas($('.esriScalebar'), {
-		                    width: scaleWidth,
-		                    height: scaleHeight
-		                }).then(function(canvas){resolve({'canvas':canvas, 'object':'scale'})}))},500)}));
-		            }
+                        console.info('runningHeight is: '+runningHeight)
 
-		             /* NorthArrow */
-		            if(addNorthArrow){
-		                
-		                northArrowImage = new Image();
+                        if(parcel && runningHeight > maxLegendHeightSpace){
+                            keepOnSinglePage = false;
+                        }
 
-		                mapComponents.push(new Promise(function(resolve){
-		                    northArrowImage.onload = function(){
-		                        resolve({'canvas':northArrowImage, 'object':'north_arrow'});
-		                    }
-		                }));
+                        console.info('keepOnSinglePage: '+keepOnSinglePage)
 
-		                northArrowImage.src = 'images/north_arrow.png';
-		            }
+                        if(!keepOnSinglePage){
+                            lctx = app.export.createLegendCanvas(Math.max(runningHeight, maxLegendHeightSpace));
+                        }
 
-		            /*disclaimer*/
-		            var today = new Date();
-		            var date = today.toISOString().substring(0, 10);
+                        // Legend title
+                        if(hasLegend){
+                            if(keepOnSinglePage){
+                                var legendTitleY =  (parcel) ? ((size==="small") ? 585 : 1100) : mainCanvas.height -maxLegendHeightSpace-10;
+                                var legendTitleX = (parcel) ? ((size==="small") ? 580 : 780) : 0;
+                                ctx.fillStyle = '#111111';
+                                ctx.font = "20px 'Arial'";
+                                ctx.fillText('Legend', legendTitleX, legendTitleY);
+                            } else {
+                                lctx.fillStyle = '#111111';
+                                lctx.font = "20px 'Arial'";
+                                lctx.fillText('Legend', 0, 30);
+                            }
+                        }
+                    }
 
-		            var disclaimerText = 'Created '+date+', by City of Gresham. City of Gresham provides no warranty, expressed or implied, as to the accuracy, reliability or completeness of this data.';
+                    /* Scale */
+                    var scaleHeight, scaleWidth;
+                    if(addScale){
+                        $('.esriScalebar').css('width', 'auto');
+                        scaleWidth = $('.esriScalebar').width()+30;
+                        scaleHeight = $('.esriScalebar').height()+20;
 
-		            var $el = $('<div class="export-title" style="font-size:8px;width:200px;">'+disclaimerText+'</div>');
-		            
-		            $el.css({
-		                "position": "absolute",
-		                "top": "0",
-		                'zIndex':-500
-		            });
+                        mapComponents.push(new Promise(function(resolve, reject) {
+                            setTimeout(function() {(html2canvas($('.esriScalebar'), {
+                            width: scaleWidth,
+                            height: scaleHeight
+                        }).then(function(canvas){resolve({'canvas':canvas, 'object':'scale'})}))},500)}));
+                    }
 
-		            $('body').append($el);
+                     /* NorthArrow */
+                    if(addNorthArrow){
+                        
+                        northArrowImage = new Image();
 
-		            mapComponents.push(new Promise(function(resolve, reject) {
-		                var $mel = $el;
-		                setTimeout(function() {
-		                    html2canvas($mel, {
-		                        width: $mel.width(),
-		                        height: $mel.height()
-		                    }).then(function(canvas) {
-		                        resolve({
-		                            'canvas': canvas,
-		                            'object': 'disclaimer'
-		                        });
-		                    })
-		                }, 500)
-		            }));
+                        mapComponents.push(new Promise(function(resolve){
+                            northArrowImage.onload = function(){
+                                resolve({'canvas':northArrowImage, 'object':'north_arrow'});
+                            }
+                        }));
 
-		            Promise.all(mapComponents).then(function(){
+                        northArrowImage.src = 'images/north_arrow.png';
+                    }
 
-		                var elements = [];
-		                var parcel = $("#chk-parcel-data").is(':checked');
-		                var movingLegendOriginX = (parcel && keepOnSinglePage) ? 570: 0;
-		                var movingLegendOriginY = (keepOnSinglePage===true) ? (parcel) ? 600 : mainCanvas.height-legendHeightSpace : 50;
+                    Promise.all(mapComponents).then(function(){
 
-		                function processor(i){
-		               
-		                    if (i> elements.length-1){
+                        var elements = [];
+                        var parcel = $("#chk-parcel-data").is(':checked');
+                        var movingLegendOriginX = (parcel && keepOnSinglePage) ? ((size==='small') ? 570 : 800): 0;
+                        var movingLegendOriginY = (keepOnSinglePage===true) ? (parcel) ? ((size==="small") ? 600 : 1110) : mainCanvas.height-maxLegendHeightSpace : 50;
 
-		                        //app.export.button.stop();
+                        function processor(i){
+                       
+                            if (i> elements.length-1){
 
-		                        if(mode=='pdf'){
-		                            app.export.pdf(mainCanvas);
-		                        } else if (mode=='print') {
-		                            app.export.print(mainCanvas);
-		                        } else { //image
-		                            app.export.image(mainCanvas);
-		                        }
+                                //app.export.button.stop();
 
-		                        return;
-		                    }
+                                if(mode=='pdf'){
+                                    app.export.pdf(mainCanvas);
+                                } else if (mode=='print') {
+                                    app.export.print(mainCanvas);
+                                } else { //image
+                                    app.export.image(mainCanvas);
+                                }
 
-		                    var element = elements[i];
-		                    var im = new Image();
-		                    i+=1;
-		                    switch(element.object){
-		                        case 'scale':
+                                return;
+                            }
 
-		                            im.onload = function(){
-		                                ctx.drawImage(im, mainCanvas.width-190,mainCanvas.height-(scaleHeight+40), scaleWidth,  scaleHeight);
-		                                processor(i);
-		                            };
+                            var element = elements[i];
+                            var im = new Image();
+                            i+=1;
+                            switch(element.object){
+                                case 'scale':
 
-		                            im.src = element.canvas.toDataURL();
-		                            break;
-		                        case 'legend':
-		                            im.onload = function(){
-		                                //console.log(im.height)
-		                                //console.log('image taller than what\s left: '+(im.height > mainCanvas.height-movingLegendOriginY))
+                                    im.onload = function(){
+                                        ctx.drawImage(im, mainCanvas.width-190,mainCanvas.height-(scaleHeight+20), scaleWidth,  scaleHeight);
+                                        processor(i);
+                                    };
 
-		                                if(!keepOnSinglePage){
-		                                     if(im.height > app.export.legendCanvas.height-movingLegendOriginY){
-		                                         movingLegendOriginX+= 175;
-		                                         movingLegendOriginY= 50
-		                                     }
-		                                } else {
-		                                    if(im.height > mainCanvas.height-movingLegendOriginY){
-		                                   movingLegendOriginX+= 175;
-		                                   movingLegendOriginY = mainCanvas.height-legendHeightSpace;
-		                                    }
-		                                }
+                                    im.src = element.canvas.toDataURL();
+                                    break;
+                                case 'legend':
+                                    im.onload = function(){
+                                        //console.log(im.height)
+                                        //console.log('image taller than what\s left: '+(im.height > mainCanvas.height-movingLegendOriginY))
 
-		                                if(movingLegendOriginX > maxXLegendWidth && lctx == undefined){ //we have to overflow
-		                                    lctx = app.export.createLegendCanvas();
-		                                    keepOnSinglePage = false;
-		                                    movingLegendOriginY=50;
-		                                    movingLegendOriginX=20;
-		                                }
+                                        if(!keepOnSinglePage){
+                                             if(im.height > app.export.legendCanvas.height-movingLegendOriginY){
+                                                 movingLegendOriginX+= 175;
+                                                 movingLegendOriginY= 50
+                                             }
+                                        } else {
+                                            if(im.height > mainCanvas.height-movingLegendOriginY){
+                                           movingLegendOriginX+= 175;
+                                           movingLegendOriginY = mainCanvas.height-maxLegendHeightSpace;
+                                            }
+                                        }
 
-		                                if(keepOnSinglePage){
-		                                    ctx.drawImage(im, movingLegendOriginX, movingLegendOriginY);
-		                                } else {
-		                                    lctx.drawImage(im, movingLegendOriginX, movingLegendOriginY);
-		                                }
+                                        if(movingLegendOriginX > maxLegendXCoord && lctx == undefined){ //we have to overflow
+                                            console.warn('keepOnSinglePage: '+keepOnSinglePage);
+                                            lctx = app.export.createLegendCanvas();
+                                            keepOnSinglePage = false;
+                                            movingLegendOriginY=50;
+                                            movingLegendOriginX=20;
+                                        }
 
-		                                movingLegendOriginY += im.height+10;
+                                        if(keepOnSinglePage){
+                                            ctx.drawImage(im, movingLegendOriginX, movingLegendOriginY);
+                                        } else {
+                                            lctx.drawImage(im, movingLegendOriginX, movingLegendOriginY);
+                                        }
 
-		                                processor(i);
-		                            };
+                                        movingLegendOriginY += im.height+10;
 
-		                            im.src = element.canvas.toDataURL();
+                                        processor(i);
+                                    };
 
-		                            break;
+                                    im.src = element.canvas.toDataURL();
 
-		                        case 'north_arrow':
-		                            ctx.drawImage(element.canvas, mainCanvas.width-75, mainCanvas.height-140, 60, 60);
-		                            processor(i);
-		                            break;
+                                    break;
 
-		                        case 'disclaimer':
-		                            ctx.drawImage(element.canvas, mainCanvas.width-210, mainCanvas.height-45);
-		                            processor(i);
-		                            break;
+                                case 'north_arrow':
+                                    ctx.drawImage(element.canvas, mainCanvas.width-75, mainCanvas.height-115, 60, 60);
+                                    processor(i);
+                                    break;
 
-		                    }
+                            }
 
-		                    app.export.button.setProgress(elements.length/i);
-		                
-		                }
+                            app.export.button.setProgress(elements.length/i);
+                        
+                        }
 
-		                for(var arg in arguments[0]){
-		                    elements.push(arguments[0][arg])
-		                }
+                        for(var arg in arguments[0]){
+                            elements.push(arguments[0][arg])
+                        }
 
-		                processor(0);
+                        processor(0);
 
-	                });
-				}
+                    });
+                }
             });
         },
-        pdf: function(canvas) {
+        pdf: function(canvas, legend) {
 
             var image = new Image();
 
@@ -646,7 +647,45 @@ app.export= {
 
                 var doc = new jsPDF(layout, 'pt', dims);
 
-                doc.addImage(image, 'JPEG', 25, 25, canvas.width*.7, canvas.height*.7);
+                 /*disclaimer*/
+                var today = new Date();
+                var date = today.toISOString().substring(0, 10);
+
+                var dc1='Created '+date+', by City of Gresham.';
+                var dc2='City of Gresham provides no warranty,';
+                var dc3='expressed or implied as to the accuracy,';
+                var dc4='reliability or completeness of this data.';
+
+                doc.setFontSize(7);
+                doc.setTextColor(100,100,100);
+
+                if(layout==='portrait'){
+                    if(size==='small' ){
+                        doc.text(430, 730, dc1);
+                        doc.text(430, 738, dc2);
+                        doc.text(430, 746, dc3);
+                        doc.text(430, 754, dc4);
+                    } else if (size==='large'){
+                        doc.text(615, 1140, dc1);
+                        doc.text(615, 1148, dc2);
+                        doc.text(615, 1156, dc3);
+                        doc.text(615, 1164, dc4);
+                    }
+                } else if(layout==='landscape'){
+                    if(size==='small' ){
+                        doc.text(600,562, dc1);
+                        doc.text(600,570, dc2);
+                        doc.text(600,578, dc3);
+                        doc.text(600,586, dc4);
+                    } else if (size==='large'){
+                        doc.text(1000,732, dc1);
+                        doc.text(1000,740, dc2);
+                        doc.text(1000,748, dc3);
+                        doc.text(1000,756, dc4);
+                    }
+                }
+
+                doc.addImage(image, 'PNG', 25, 25, canvas.width*.7, canvas.height*.7);
 
                 if($('#chk-parcel-data').is(':checked')){
 
@@ -654,13 +693,13 @@ app.export= {
 
                     doc.autoTable(res.columns, res.data, {
 
-                        startY: 425,
+                        startY: (size==="small") ? 425 : 790,
                         startX: 10,
                         drawHeaderRow: function(row, data) {
                           row.height = 20;
                         },
                         drawRow: function(row, data) {
-                        	row.height=14;
+                            row.height=14;
                           if (row.index === 0) return false;
                         },
                         margin: 27,
@@ -680,6 +719,7 @@ app.export= {
                     });
                 }
 
+                //if we had to overflow the legend onto another page, add it to the PDF here
                 if(app.export.legendCanvas !== undefined){
 
                     doc.addPage();
@@ -698,7 +738,23 @@ app.export= {
                 }
                 app.export.button.stop()
             }
+
+            function makePDFLegend(){
+
+                //combinations
+                //size and layout
+
+                //8.5 x 11
+
+                //landscape
+
+                //11 x 17
+
+                //Parcel grid
+
+            }
         },
+
         cleanup: function(){
             $('#exportImage').attr('src', '');
             $('.export-title').remove();
@@ -793,7 +849,7 @@ app.export= {
             }
             context.fillText(line, x, y);
 
-            return y
+            return y+3
         },
 
         renderCanvasLegend: function(name, legend){
@@ -802,7 +858,7 @@ app.export= {
 
             var ctx  = canvas.getContext('2d');
 
-            var titleHeightLines = app.export.calcTextHeight(ctx, name, 121, 18);
+            var titleHeightLines = app.export.calcTextHeight(ctx, name, 121, 19);
 
             var increment = legend[0].height*.75;
 
@@ -810,7 +866,7 @@ app.export= {
 
             var offset=titleHeightLines
 
-            var fullHeight =titleHeightLines * 19;
+            var fullHeight =titleHeightLines * 18;
 
             legend.forEach(function(symbol){
                 var linesHigh = app.export.calcTextHeight(ctx, symbol.label, 140-41, 19)
@@ -821,15 +877,10 @@ app.export= {
 
             canvas.width = 180;
 
-            // ctx.beginPath();
-            // ctx.rect(0,0,canvas.width, canvas.height);
-            // ctx.fillStyle = '#fff';
-            // ctx.fill();
-
             app.export.wrapCanvasText(ctx, name, 5, 14, 150, increment);
 
             //we really have no clue how tall to make the canvas...
-            var offset=titleHeightLines*increment;
+            var offset=titleHeightLines*increment+4;
 
             legend.forEach(function (symbol) {
                 var im = new Image();
@@ -837,7 +888,7 @@ app.export= {
                 ctx.drawImage(im, 10, offset, im.height, im.width);
                 ctx.fillStyle = '#111111';
                 ctx.font = "10px 'Arial'";
-                offset = app.export.wrapCanvasText(ctx, symbol.label, 41, offset+19, 140, 19)
+                offset = app.export.wrapCanvasText(ctx, symbol.label, 41, offset+19-3, 140, 19)
             });
 
             return canvas;
