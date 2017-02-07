@@ -16,11 +16,16 @@ app.textSymbols = [];
      var lastPoint;
 
     measurement.on('tool-change', function(a){
+
         if (app.textSymbols.length > 0) {
             app.textSymbols.forEach(function(g) {
                 app.map.graphics.remove(g);
             })
             app.textSymbols = [];
+        }
+
+        if(!a.toolName){
+
         }
     })
 
@@ -266,9 +271,11 @@ app.textSymbols = [];
      $("#measureLink").click(function() {
 
          if ($('#measurementDiv').is(':visible')) {
-
+            app.deactivateMeasurement();
             
-
+            mapClickEvent = on(app.map, "click", function(evt) {
+                app.showLocation(evt);
+            });
          } else {
              
              mapClickEvent.remove();
@@ -302,6 +309,7 @@ app.textSymbols = [];
         if(measurement.getTool()){                
             measurement.setTool(measurement.getTool().toolName, false)
         }
+
          $('#measurementDiv').hide("fast", "swing");
 
          if (app.textSymbols.length > 0) {

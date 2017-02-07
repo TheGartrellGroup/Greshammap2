@@ -592,10 +592,11 @@ require(["esri/map",
 
             refreshLegend();
 
-            $('div.panel-body input[type="checkbox"]').removeAttr("checked");
-            if ($("div.ui-checkbox label.ui-btn-icon-left").hasClass("ui-checkbox-on")) {
-                $("div.ui-checkbox label.ui-btn-icon-left").removeClass("ui-checkbox-on");
-                $("div.ui-checkbox label.ui-btn-icon-left").addClass("ui-checkbox-off");
+            $('.toc_item').removeAttr("checked");
+
+            if ($(".beforecheck").hasClass("ui-checkbox-on")) {
+                $(".beforecheck").removeClass("ui-checkbox-on");
+                $(".beforecheck").addClass("ui-checkbox-off");
             }
 
             $("#slider-1,#slider-2,#slider-3,#slider-4,#slider-5,#slider-6,#slider-7,#slider-8").val(0.5);

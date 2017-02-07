@@ -106,7 +106,7 @@ app.initializeSelection= (function(){
                     var layer = $(layers[i]).attr('id');
                     var service =  $(layers[i]).attr('data-service')
                     var layerNumber =  $(layers[i]).attr('data-layer-id');
-	debugger
+	
                     var url = window['layer'+service].url;
 
                     //need to check if it's a group layer first...
@@ -166,6 +166,10 @@ app.initializeSelection= (function(){
                                 html+='<th>'+field + '</th>';
                             })
 
+                            if(r=="Public_Lines" || r=="Water Mains" || r=="Mains"){
+                              html += '<th>Link</th>';
+                            }
+
                             html+= "</tr></thead><tbody>"
 
                             results.features.forEach(function(feat, i){
@@ -176,17 +180,29 @@ app.initializeSelection= (function(){
                                 fieldNames.forEach(function(field){
                                   
                                   if(typeof(feat.attributes[field]) == 'string'){
-                                    if(feat.attributes[field].toUpperCase().indexOf('HTTP://')> -1 || feat.attributes[field].toUpperCase().indexOf('FILE://') > -1){
+                                    if(feat.attributes[field].toUpperCase().indexOf('HTTP://')> -1 ||
+                                     feat.attributes[field].toUpperCase().indexOf('FILE://') > -1){
 
                                       html+='<td><a href="'+feat.attributes[field]+'" target="blank">'+feat.attributes[field]+'</a></td>';
+                                    } else if (feat.attributes[field].toUpperCase().substring(0,2)==='\\\\') {
+                                      html+='<td><a href="file:///'+feat.attributes[field]+'" target="blank">'+feat.attributes[field]+'</a></td>';
                                     } else {
-                                       html+='<td>'+feat.attributes[field]+'</td>';
+                                      html+='<td>'+feat.attributes[field]+'</td>';
                                     }
                                   } else {
 
                                     html+='<td>'+feat.attributes[field]+'</td>';
                                   }
+
                                 })
+
+                                  if(r=="Public_Lines"){
+                                    html += "<td style='padding:6px;'><a href='http://leia/utilitiesreport/stormreport.html?ID=" + feat.attributes['MAIN_ID'] + "' target='_blank'>StormWater Report</a></td>";
+                                  } else if(r=="Mains"){
+                                    html += "<td style='padding:6px;'><a href='http://leia/utilitiesreport/sewerreport.html?ID=" + feat.attributes['MAIN_ID'] + "' target='_blank'>WasteWater Report</a></td>";
+                                  } else if(r=="Water Mains"){
+                                    html += "<td style='padding:6px;'><a href='http://leia/utilitiesreport/waterreport.html?ID=" + feat.attributes['MAIN_ID'] + "' target='_blank'>Water Report</a></td>";
+                                  }
 
                                 html+='</tr>';
 

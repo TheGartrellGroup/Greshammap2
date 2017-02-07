@@ -699,13 +699,19 @@ app.export= {
                           row.height = 20;
                         },
                         drawRow: function(row, data) {
-                            row.height=14;
+                            
+                            //could add some more logic here to actually test the 
+                            // length of the string or whatevetr..
+                            if(row.raw[0] !== 'Legal' && row.raw[0] !== 'Owner'){
+                                row.height=14;
+                            }
+
                           if (row.index === 0) return false;
                         },
                         margin: 27,
                         tableWidth:300,
                         styles: {
-                          overflow: 'hidden',
+                          overflow: 'linebreak',
                           cellPadding: 2,
                           fontSize: 10,
                           tableWidth: 'auto',
