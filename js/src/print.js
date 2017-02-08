@@ -116,7 +116,9 @@ app.export= {
                                 $($('[name="grpFormat"]')[0]).attr('checked', true);
                                 $($('[name="grpFormat"]')[1]).removeAttr('checked');
                             } else {
-                                 $($('#grpFormat').children()[1]).removeAttr('disabled')
+                                console.log('testing')
+                                 $($('#grpFormat').children()[1]).removeAttr('disabled');
+                                 $($('#grpLayout').children()[1]).removeAttr('disabled');
                             }
 
                         }
@@ -298,39 +300,41 @@ app.export= {
 
                     var mapHeightOffset = 0, margin = 0;
 
-                    var maxLegendHeightSpace, maxLegendXCoord;
+                    var maxLegendHeightSpace, maxLegendXCoord, maxLegendYCoord, minLegendXCoord, maxLegendYCoord;
 
                     if(layout =='portrait'){
                         if(size =='small'){
-                            maxLegendHeightSpace = (parcel) ? 300 : 140;
-                            maxLegendXCoord = (parcel) ? 570 : 360;
+                            minLegendYCoord = (parcel) ? 600 : 880;
+                            minLegendXCoord = (parcel) ? 570 : 15;
                         } else {
-                            maxLegendHeightSpace = (parcel) ? 500 : 222;
-                            maxLegendXCoord = (parcel) ? 800 : 660;
+                            minLegendYCoord = (parcel) ? 1180 : 1380;
+                            minLegendXCoord = (parcel) ? 500 : 15;
                         }
                     } else if(layout=='landscape') {
                         if (size =='small'){
-                             maxLegendHeightSpace = 130;
-                             maxLegendXCoord = 660;
+                            minLegendXCoord = 15;
+                            minLegendYCoord = 650;
                         } else {
-                             maxLegendHeightSpace = 200;
-                             maxLegendXCoord = 880;
+                            minLegendXCoord = 15;
+                            minLegendYCoord = 830
                         }
                     }
 
+                    console.info('Min legend Y coord is '+minLegendYCoord)
+
                     if(!addTitle){
-                        maxLegendHeightSpace += 30;
+                        minLegendYCoord -= 30;
                     } else{
                         mapHeightOffset += 39;
                     }
 
                     if(!addSubtitle){
-                        maxLegendHeightSpace += 24
+                        minLegendYCoord -= 24
                     } else {
                         mapHeightOffset += 30;
                     }
 
-                    console.info('Legend height space is '+maxLegendHeightSpace)
+                    console.info('Min legend Y coord is '+minLegendYCoord)
 
                     if(mode !== 'image'){
 
@@ -341,6 +345,8 @@ app.export= {
                                     case 'small':
                                         mainCanvas.width  = 768;
                                         mainCanvas.height = 1008;
+                                        maxLegendYCoord = (parcel) ? 908 : 1008+50
+                                        maxLegendXCoord = (parcel) ? 708 : 525;
                                         ctx = mainCanvas.getContext('2d');
                                         if(parcel){
                                             ctx.drawImage(im, 0, mapHeightOffset, 768, 480);
@@ -351,7 +357,9 @@ app.export= {
                                     case 'large':
                                         mainCanvas.width  = 1008;
                                         // mainCanvas.height = 1584;
-                                        mainCanvas.height = 1600;
+                                        mainCanvas.height = 1650;
+                                        maxLegendYCoord = (parcel) ? 1500: 1600+50;
+                                        maxLegendXCoord = (parcel) ? 870 : 541;
                                         ctx = mainCanvas.getContext('2d');
 
                                         if(parcel){
@@ -369,12 +377,16 @@ app.export= {
                                     case 'small':
                                         mainCanvas.width  = 1008;
                                         mainCanvas.height = 768;
+                                        maxLegendYCoord = 750;
+                                        maxLegendXCoord = 708;
                                         ctx = mainCanvas.getContext('2d');
                                         ctx.drawImage(im, 0, mapHeightOffset, 1008, 538);
                                         break
                                     case 'large':
                                         mainCanvas.width  = 1584;
-                                        mainCanvas.height = 1008;
+                                        mainCanvas.height = 1048;
+                                        maxLegendYCoord = 1008;
+                                        maxLegendXCoord = 1380;
                                         ctx = mainCanvas.getContext('2d');
                                         ctx.drawImage(im, 0, mapHeightOffset, 1584, 700);
                                         break
@@ -393,7 +405,7 @@ app.export= {
                         ctx.fillRect(0,0,mainCanvas.width, mainCanvas.height);
                         ctx.drawImage(im, 20, mapHeightOffset, mapCanvas.width, mapCanvas.height);
                         margin = 20;
-                        keepOnSinglePage = false;
+                        // keepOnSinglePage = false;
                     }
 
                     var mapComponents = [];
@@ -429,14 +441,16 @@ app.export= {
                              //basemap
                                 l.visibleLayers.forEach(function(val) {
                                     
+                                    if(val != -1){
+                                    var name = l.layerInfos[parseInt(val)].name;
+
                                     var fullHeight = 0;
                                     hasLegend = true;
 
-
-                                    if(l.legendResponse){
+                                   // if(l.legendResponse){
 
                                         var lg;
-                                        
+
                                         for(var i=0;i<l.legendResponse.layers.length;i++){
                                             if(l.legendResponse.layers[i].layerId==val){
                                                 lg = l.legendResponse.layers[i]; 
@@ -444,7 +458,8 @@ app.export= {
                                             }
                                         }
 
-                                        if(lg) {
+                                        if(lg && lg.legend.length) {
+
 
                                             lg.legend.forEach(function(symbol){
                                                 var linesHigh = app.export.calcTextHeight(ctx, symbol.label, 140-41, 19)
@@ -452,16 +467,6 @@ app.export= {
                                             })
 
                                             console.info('legend is: '+(fullHeight) + ' high');
-                                            
-                                            runningHeight += fullHeight;
-
-                                            if (fullHeight > maxLegendHeightSpace){
-                                                //need another page...
-                                                console.log('Height of legend ('+fullHeight+') is more than maxLegendHeightSpace ('+maxLegendHeightSpace)
-                                                keepOnSinglePage = false;
-                                            }
-
-                                            var name = l.layerInfos[parseInt(val)].name;
 
                                             if(!legendItemCollection.hasOwnProperty(fullHeight)){
                                                 legendItemCollection[fullHeight] = [];
@@ -469,6 +474,7 @@ app.export= {
                                              
                                             legendItemCollection[fullHeight].push([name, lg.legend])
                                         }
+                                   // }
                                     }
                                 })
                             }
@@ -488,23 +494,11 @@ app.export= {
                             })
                         })
 
-                        console.info('runningHeight is: '+runningHeight)
-
-                        if(parcel && runningHeight > maxLegendHeightSpace){
-                            keepOnSinglePage = false;
-                        }
-
-                        console.info('keepOnSinglePage: '+keepOnSinglePage)
-
-                        if(!keepOnSinglePage){
-                            lctx = app.export.createLegendCanvas(Math.max(runningHeight, maxLegendHeightSpace));
-                        }
-
                         // Legend title
                         if(hasLegend){
                             if(keepOnSinglePage){
-                                var legendTitleY =  (parcel) ? ((size==="small") ? 585 : 1100) : mainCanvas.height -maxLegendHeightSpace-10;
-                                var legendTitleX = (parcel) ? ((size==="small") ? 580 : 780) : 0;
+                                var legendTitleY =  minLegendYCoord-24;
+                                var legendTitleX = minLegendXCoord;
                                 ctx.fillStyle = '#111111';
                                 ctx.font = "20px 'Arial'";
                                 ctx.fillText('Legend', legendTitleX, legendTitleY);
@@ -548,8 +542,8 @@ app.export= {
 
                         var elements = [];
                         var parcel = $("#chk-parcel-data").is(':checked');
-                        var movingLegendOriginX = (parcel && keepOnSinglePage) ? ((size==='small') ? 570 : 800): 0;
-                        var movingLegendOriginY = (keepOnSinglePage===true) ? (parcel) ? ((size==="small") ? 600 : 1110) : mainCanvas.height-maxLegendHeightSpace : 50;
+                        var movingLegendOriginX = minLegendXCoord;
+                        var movingLegendOriginY = minLegendYCoord;
 
                         function processor(i){
                        
@@ -575,7 +569,8 @@ app.export= {
                                 case 'scale':
 
                                     im.onload = function(){
-                                        ctx.drawImage(im, mainCanvas.width-190,mainCanvas.height-(scaleHeight+20), scaleWidth,  scaleHeight);
+                                        var modifier = (size=='small') ? 20 : 60;
+                                        ctx.drawImage(im, mainCanvas.width-190,mainCanvas.height-(scaleHeight+modifier), scaleWidth,  scaleHeight);
                                         processor(i);
                                     };
 
@@ -583,27 +578,42 @@ app.export= {
                                     break;
                                 case 'legend':
                                     im.onload = function(){
-                                        //console.log(im.height)
-                                        //console.log('image taller than what\s left: '+(im.height > mainCanvas.height-movingLegendOriginY))
+                                        
+                                        
 
-                                        if(!keepOnSinglePage){
-                                             if(im.height > app.export.legendCanvas.height-movingLegendOriginY){
-                                                 movingLegendOriginX+= 175;
-                                                 movingLegendOriginY= 50
-                                             }
-                                        } else {
-                                            if(im.height > mainCanvas.height-movingLegendOriginY){
+                                        if(im.height > maxLegendYCoord - minLegendYCoord){
+                                            //this legend won't fit anywhere on the first page and if legends are ordered,
+                                            //it means no legends following will fit anywhere on the first page.
+                                            keepOnSinglePage = false
+                                            lctx = app.export.createLegendCanvas();
+                                            console.error('Moving to next page')
+                                            minLegendYCoord =       50;
+                                            minLegendXCoord =       20;
+                                            maxLegendXCoord =       mainCanvas.width;
+                                            maxLegendYCoord =       mainCanvas.height;
+                                            movingLegendOriginY=    50;
+                                            movingLegendOriginX=    20;
+
+                                        } else if(im.height > maxLegendYCoord-movingLegendOriginY){ 
+                                            //it will fit on the first page but not in this column 
+                                            //we can attempt to put in the next column over
                                            movingLegendOriginX+= 175;
-                                           movingLegendOriginY = mainCanvas.height-maxLegendHeightSpace;
-                                            }
+                                           movingLegendOriginY = minLegendYCoord;
                                         }
 
-                                        if(movingLegendOriginX > maxLegendXCoord && lctx == undefined){ //we have to overflow
-                                            console.warn('keepOnSinglePage: '+keepOnSinglePage);
+                                        if(movingLegendOriginX > maxLegendXCoord && lctx == undefined){ 
+
+                                            //we have to overflow
+                                            
                                             lctx = app.export.createLegendCanvas();
                                             keepOnSinglePage = false;
-                                            movingLegendOriginY=50;
-                                            movingLegendOriginX=20;
+                                            console.error('Moving to next page')
+                                            minLegendYCoord =       50;
+                                            minLegendXCoord =       20;
+                                            maxLegendXCoord =       mainCanvas.width;
+                                            maxLegendYCoord =       mainCanvas.height;
+                                            movingLegendOriginY=    50;
+                                            movingLegendOriginX=    20;
                                         }
 
                                         if(keepOnSinglePage){
@@ -622,7 +632,8 @@ app.export= {
                                     break;
 
                                 case 'north_arrow':
-                                    ctx.drawImage(element.canvas, mainCanvas.width-75, mainCanvas.height-115, 60, 60);
+                                    var modifier = (size=='small') ? 100 : 155;
+                                    ctx.drawImage(element.canvas, mainCanvas.width-75, mainCanvas.height-modifier, 60, 60);
                                     processor(i);
                                     break;
 
@@ -827,7 +838,7 @@ app.export= {
                 app.export.legendCanvas.height = height;
             }
 
-            lctx = app.export.legendCanvas.getContext('2d')
+            lctx = app.export.legendCanvas.getContext('2d');
 
             return lctx;
 
@@ -879,7 +890,7 @@ app.export= {
         },
 
         renderCanvasLegend: function(name, legend){
-            
+
             var canvas= document.createElement('canvas');
 
             var ctx  = canvas.getContext('2d');

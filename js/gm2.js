@@ -830,7 +830,7 @@ function getMapState() {
     urlAdd += "&c=" + mapCenter.x + "," + mapCenter.y;
  
     urlAdd += "&layerBaseData=" + uBase + uOpBase + "&layerBoundaries=" + uBoundary + uOpBoundary + "&layerPlace=" + uPlace + uOpPlace +"&layerEnvironmental=" + uEnv + uOpEnv + "&layerStormwater=" + uStWa + uOpStWa + "&layerTransportation=" + uTran + uOpTran + "&layerWastewater=" + uWaWa + uOpWaWa + "&layerWater=" + uWater + uOpWater;
-    console.log(urlAdd);
+    console.log(urlAdd)
 }
 
 
