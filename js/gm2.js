@@ -801,25 +801,25 @@ function getMapState() {
  
     var uStWa = "";
     for (var i = 0; i <= $(".list_item5").last().val(); i++) {
-        if ($('#stormWater' + i + 'CheckBox').prop('checked')) uInct += i + ",";
+        if ($('#stormWater' + i + 'CheckBox').prop('checked')) uStWa += i + ",";
     }
     var uOpStWa = $("#slider-5").val();
  
     var uTran = "";
     for (var i = 0; i <= $(".list_item6").last().val(); i++) {
-        if ($('#transportation' + i + 'CheckBox').prop('checked')) uInct += i + ",";
+        if ($('#transportation' + i + 'CheckBox').prop('checked')) uTran += i + ",";
     }
     var uOpTran = $("#slider-6").val();
  
     var uWaWa = "";
     for (var i = 0; i <= $(".list_item7").last().val(); i++) {
-        if ($('#wasteWater' + i + 'CheckBox').prop('checked')) uInct += i + ",";
+        if ($('#wasteWater' + i + 'CheckBox').prop('checked')) uWaWa += i + ",";
     }
     var uOpWaWa = $("#slider-7").val();
  
     var uWater = "";
     for (var i = 0; i <= $(".list_item8").last().val(); i++) {
-        if ($('#water' + i + 'CheckBox').prop('checked')) uInct += i + ",";
+        if ($('#water' + i + 'CheckBox').prop('checked')) uWater += i + ",";
     }
     var uOpWater = $("#slider-8").val();
  

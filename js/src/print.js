@@ -420,6 +420,8 @@ app.export= {
                         // at this point we need to know if we need another page
                         // to accommodate the legend. If any legend is going to exceed the height of the allotted space, then we'll need another page.
 
+                        var legendItemCollection={};
+
                         app.map.layerIds.forEach(function(layer) {
                             var l = app.map.getLayer(layer);
                             
@@ -430,42 +432,60 @@ app.export= {
                                     var fullHeight = 0;
                                     hasLegend = true;
 
-                                    var lg;
-                                    for(var i=0;i<l.legendResponse.layers.length;i++){
-                                        if(l.legendResponse.layers[i].layerId==val){
-                                            lg = l.legendResponse.layers[i]; 
-                                            break;
-                                        }
-                                    }
 
-                                    if(lg) {
+                                    if(l.legendResponse){
 
-                                        lg.legend.forEach(function(symbol){
-                                            var linesHigh = app.export.calcTextHeight(ctx, symbol.label, 140-41, 19)
-                                            fullHeight += 19 * linesHigh;
-                                        })
-
-                                        console.info('legend is: '+(fullHeight) + ' high');
-
-                                        runningHeight += fullHeight;
-
-                                        if (fullHeight > maxLegendHeightSpace){
-                                            //need another page...
-                                            console.log('Height of legend ('+fullHeight+') is more than maxLegendHeightSpace ('+maxLegendHeightSpace)
-                                            keepOnSinglePage = false;
+                                        var lg;
+                                        
+                                        for(var i=0;i<l.legendResponse.layers.length;i++){
+                                            if(l.legendResponse.layers[i].layerId==val){
+                                                lg = l.legendResponse.layers[i]; 
+                                                break;
+                                            }
                                         }
 
-                                        var name = l.layerInfos[parseInt(val)].name;
+                                        if(lg) {
 
-                                        mapComponents.push(new Promise(function(resolve, reject) {
-                                            resolve({
-                                                object: 'legend',
-                                                canvas: app.export.renderCanvasLegend(name, lg.legend)
+                                            lg.legend.forEach(function(symbol){
+                                                var linesHigh = app.export.calcTextHeight(ctx, symbol.label, 140-41, 19)
+                                                fullHeight += 19 * linesHigh;
                                             })
-                                        }))
+
+                                            console.info('legend is: '+(fullHeight) + ' high');
+                                            
+                                            runningHeight += fullHeight;
+
+                                            if (fullHeight > maxLegendHeightSpace){
+                                                //need another page...
+                                                console.log('Height of legend ('+fullHeight+') is more than maxLegendHeightSpace ('+maxLegendHeightSpace)
+                                                keepOnSinglePage = false;
+                                            }
+
+                                            var name = l.layerInfos[parseInt(val)].name;
+
+                                            if(!legendItemCollection.hasOwnProperty(fullHeight)){
+                                                legendItemCollection[fullHeight] = [];
+                                            }
+                                             
+                                            legendItemCollection[fullHeight].push([name, lg.legend])
+                                        }
                                     }
                                 })
                             }
+                        })
+
+                        console.log(legendItemCollection)
+
+                        Object.keys(legendItemCollection).forEach(function(height){
+
+                            legendItemCollection[height].forEach(function(nameAndLegend){
+                                mapComponents.push(new Promise(function(resolve, reject) {
+                                    resolve({
+                                        object: 'legend',
+                                        canvas: app.export.renderCanvasLegend(nameAndLegend[0], nameAndLegend[1])
+                                    })
+                                }))
+                            })
                         })
 
                         console.info('runningHeight is: '+runningHeight)
