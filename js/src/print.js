@@ -345,7 +345,7 @@ app.export= {
                                     case 'small':
                                         mainCanvas.width  = 768;
                                         mainCanvas.height = 1008;
-                                        maxLegendYCoord = (parcel) ? 908 : 1008+50
+                                        maxLegendYCoord = (parcel) ? 908 : 1008;
                                         maxLegendXCoord = (parcel) ? 708 : 525;
                                         ctx = mainCanvas.getContext('2d');
                                         if(parcel){
@@ -458,8 +458,10 @@ app.export= {
                                             }
                                         }
 
-                                        if(lg && lg.legend.length) {
 
+                                          ctx.fillStyle = '#111111';
+            ctx.font = "11px 'Arial'";  
+                                        if(lg && lg.legend.length) {
 
                                             lg.legend.forEach(function(symbol){
                                                 var linesHigh = app.export.calcTextHeight(ctx, symbol.label, 140-41, 19)
@@ -480,19 +482,42 @@ app.export= {
                             }
                         })
 
-                        console.log(legendItemCollection)
-
                         Object.keys(legendItemCollection).forEach(function(height){
 
                             legendItemCollection[height].forEach(function(nameAndLegend){
-                                mapComponents.push(new Promise(function(resolve, reject) {
-                                    resolve({
-                                        object: 'legend',
-                                        canvas: app.export.renderCanvasLegend(nameAndLegend[0], nameAndLegend[1])
-                                    })
-                                }))
+
+                                if(height > mainCanvas.height){
+
+                                    var _height = height, partCount = 1;
+
+                                    while (_height>0){
+                                        console.log('pushed a legend item for '+nameAndLegend[0]);
+                                        mapComponents.push(new Promise(function(resolve, reject) {
+                                            resolve({
+                                                object: 'legend',
+                                                canvas: app.export.renderCanvasLegend(nameAndLegend[0], nameAndLegend[1], mainCanvas.height, partCount)
+                                            })
+                                        }))
+
+                                        _height -= mainCanvas.height;
+                                        partCount ++;
+                                    }
+                               
+                                //problem.
+                                    
+                                } else {
+
+                                    mapComponents.push(new Promise(function(resolve, reject) {
+                                        resolve({
+                                            object: 'legend',
+                                            canvas: app.export.renderCanvasLegend(nameAndLegend[0], nameAndLegend[1])
+                                        })
+                                    }))
+                                }
+
                             })
                         })
+
 
                         // Legend title
                         if(hasLegend){
@@ -579,8 +604,6 @@ app.export= {
                                 case 'legend':
                                     im.onload = function(){
                                         
-                                        
-
                                         if(im.height > maxLegendYCoord - minLegendYCoord){
                                             //this legend won't fit anywhere on the first page and if legends are ordered,
                                             //it means no legends following will fit anywhere on the first page.
@@ -845,6 +868,8 @@ app.export= {
         },
 
         calcTextHeight: function(ctx, text, maxWidth, lineHeight){
+            // ctx.fillStyle = '#111111';
+            // ctx.font = "13px 'Arial'";
             var words = text.split(' ');
             var lines = 1, line = '';
             for(var n = 0; n < words.length; n++) {
@@ -889,7 +914,7 @@ app.export= {
             return y+3
         },
 
-        renderCanvasLegend: function(name, legend){
+        renderCanvasLegend: function(name, legend, maxHeight, part){
 
             var canvas= document.createElement('canvas');
 
@@ -900,35 +925,91 @@ app.export= {
             var increment = legend[0].height*.75;
 
             //how tall are each of the labels.
-
-            var offset=titleHeightLines
+            var offset=titleHeightLines;
 
             var fullHeight =titleHeightLines * 18;
 
-            legend.forEach(function(symbol){
-                var linesHigh = app.export.calcTextHeight(ctx, symbol.label, 140-41, 19)
-                fullHeight += 19 * linesHigh;
-            })
+            var parts = {};
+            var partCount = 1;
+            var itemsCount = 0, allitemsCount = 0;
+                var i = 0;
 
-            canvas.height = fullHeight+5;
+            if(maxHeight){
+
+                for(i = 0;i < legend.length;i++) {
+
+                    var linesHigh = app.export.calcTextHeight(ctx, legend[i].label, 140-41, 19)
+                    fullHeight += 19 * linesHigh;
+                    itemsCount ++;
+                    if(maxHeight && fullHeight > maxHeight){ //
+                        parts[partCount] = {height:fullHeight -= 19 * linesHigh, items:itemsCount-1, offset:allitemsCount};
+                        fullHeight=titleHeightLines * 18;
+                        partCount++;
+                        allitemsCount += itemsCount-1;
+                        itemsCount = 0;
+                        i-=1;
+                    }
+                }
+
+                if(itemsCount > 0 ){
+                     parts[partCount] = {height:fullHeight, items:itemsCount, offset:i-itemsCount};
+                    fullHeight=titleHeightLines * 18;
+                    partCount++;
+                    itemsCount = 0;
+                }
+
+
+                canvas.height = maxHeight-50;
+            }
+            else  {
+
+                legend.forEach(function(symbol){
+                    var linesHigh = app.export.calcTextHeight(ctx, symbol.label, 140-41, 19);
+                    fullHeight += 19 * linesHigh;
+                })
+
+                canvas.height = fullHeight+5;
+            }
 
             canvas.width = 180;
 
             app.export.wrapCanvasText(ctx, name, 5, 14, 150, increment);
 
-            //we really have no clue how tall to make the canvas...
             var offset=titleHeightLines*increment+4;
 
-            legend.forEach(function (symbol) {
-                var im = new Image();
-                im.src = 'data:image/png;base64,'+symbol.imageData;
-                ctx.drawImage(im, 10, offset, im.height, im.width);
-                ctx.fillStyle = '#111111';
-                ctx.font = "10px 'Arial'";
-                offset = app.export.wrapCanvasText(ctx, symbol.label, 41, offset+19-3, 140, 19)
-            });
+            if(maxHeight){
 
-            return canvas;
+                var index = parts[part];
+                for(var i=index.offset;i<index.offset+index.items;i++){
+                    var im = new Image();
+                    im.src = 'data:image/png;base64,'+legend[i].imageData;
+                    ctx.drawImage(im, 10, offset, im.height, im.width);
+                    ctx.fillStyle = '#111111';
+                    ctx.font = "10px 'Arial'";
+                    offset = app.export.wrapCanvasText(ctx, legend[i].label, 41, offset+19-3, 140, 19)
+                }
+
+                console.image(canvas.toDataURL('image/png'));
+
+                return canvas;
+
+            } else {
+
+                legend.forEach(function (symbol) {
+                    var im = new Image();
+                    im.src = 'data:image/png;base64,'+symbol.imageData;
+                    ctx.drawImage(im, 10, offset, im.height, im.width);
+                    ctx.fillStyle = '#111111';
+                    ctx.font = "10px 'Arial'";
+                    offset = app.export.wrapCanvasText(ctx, symbol.label, 41, offset+19-3, 140, 19)
+                });
+                
+                console.image(canvas.toDataURL('image/png'));
+                console.info('height of '+name+': '+ canvas.height);
+
+                return canvas;
+            }
+
 
         }
     }

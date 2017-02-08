@@ -222,7 +222,9 @@ app.initializeSelection= (function(){
                                      feat.attributes[field].toUpperCase().indexOf('FILE://') > -1){
 
                                       html+='<td><a href="'+feat.attributes[field]+'" target="blank">'+feat.attributes[field]+'</a></td>';
-                                    } else if (feat.attributes[field].toUpperCase().substring(0,2)==='\\\\') {
+                                    } else if (feat.attributes[field].toUpperCase().substring(0,2)==='\\\\' || 
+                                                feat.attributes[field].toUpperCase().substring(0,2)==='C:' || 
+                                                feat.attributes[field].toUpperCase().substring(0,2)==='L:') {
                                       html+='<td><a href="file:///'+feat.attributes[field]+'" target="blank">'+feat.attributes[field]+'</a></td>';
                                     } else {
 
