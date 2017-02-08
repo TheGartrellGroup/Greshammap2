@@ -110,11 +110,9 @@ app.initializeSelection= (function(){
                     var url = window['layer'+service].url;
 
                     //need to check if it's a group layer first...
-
                     var subLayers = window['layer'+service].layerInfos[layerNumber].subLayerIds;
 
                     if(subLayers){
-                        
                         subLayers.forEach(function(idx){
                             var query = new esri.tasks.Query();
                             query.geometry = geometry;
@@ -127,10 +125,22 @@ app.initializeSelection= (function(){
                             var obj = {};
                             var layerName = window['layer'+service].layerInfos[idx].name;
                             tasks[layerName] = qr;
+
+                            //get domain values
+                            
+                            var reqHandle = esri.request({
+                              "url":url+'/'+layerNumber,
+                              "content":{
+                                "f":"json"
+                              },
+                              "callbackParamName": "callback"
+                            })
+
+                            tasks[layerName+'Domains'] = reqHandle
+
                         })
 
                     } else {
-
                         var query = new esri.tasks.Query();
                         query.geometry = geometry;
                         var querytask = new esri.tasks.QueryTask(url+'/'+layerNumber);
@@ -141,18 +151,37 @@ app.initializeSelection= (function(){
                         var qr =querytask.execute(query);
                         var layerName = window['layer'+service].layerInfos[layerNumber].name;
                         tasks[layerName]=qr;
+
+                        //get domain values
+                            debugger
+                            var reqHandle = esri.request({
+                              "url":url+'/'+layerNumber,
+                              "content":{
+                                "f":"json"
+                              },
+                              "callbackParamName": "callback"
+                            })
+
+                            tasks[layerName+'Domains'] = reqHandle
                     }
-                }
+                } 
 
                 all(tasks).then(function(queries){
 
                     var html = '<html><head><link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" /></head><body style="padding:10px;">';
 
+                    Object.keys(queries).forEach(function(q){
+                      if(!queries[q].features){
+                        queries[q.replace('Domains','')].fields = queries[q].fields;
+                        delete queries[q];
+                      }
+                    })
+
                     for(var r in queries){
 
                         var title= r;
                         var results = queries[r];
-
+                        
                         if(results.features.length > 0 ){
 
                             html += '<h3>'+r+'</h3><hr/>';
@@ -163,7 +192,8 @@ app.initializeSelection= (function(){
                              html+='<th>id</th>';
 
                             fieldNames.forEach(function(field){
-                                html+='<th>'+field + '</th>';
+                              var alias = results.fields.filter(function(el){return el.name==field})[0].alias
+                                html+='<th>'+alias + '</th>';
                             })
 
                             if(r=="Public_Lines" || r=="Water Mains" || r=="Mains"){
@@ -176,8 +206,16 @@ app.initializeSelection= (function(){
                                 html+= "<tr>";
 
                                 html += '<td>'+i+'</td>';
-                               
+
                                 fieldNames.forEach(function(field){
+                                  
+                                  var domains = results.fields.filter(function(el){ return el.name==field})[0];
+
+                                  if(domains.domain){
+                                    domains = domains.domain.codedValues;
+                                  } else {
+                                    domains = null;
+                                  }
                                   
                                   if(typeof(feat.attributes[field]) == 'string'){
                                     if(feat.attributes[field].toUpperCase().indexOf('HTTP://')> -1 ||
@@ -187,11 +225,32 @@ app.initializeSelection= (function(){
                                     } else if (feat.attributes[field].toUpperCase().substring(0,2)==='\\\\') {
                                       html+='<td><a href="file:///'+feat.attributes[field]+'" target="blank">'+feat.attributes[field]+'</a></td>';
                                     } else {
-                                      html+='<td>'+feat.attributes[field]+'</td>';
+
+                                      var value = feat.attributes[field];
+
+                                      try{
+                                      if(domains){
+                                        value = domains.filter(function(el){return el.code===value})[0].name;
+                                      }
+                                    }catch(ex){
+                                      value = feat.attributes[field];
+                                    }
+
+                                      html+='<td>'+value+'</td>';
                                     }
                                   } else {
 
-                                    html+='<td>'+feat.attributes[field]+'</td>';
+                                    var value = feat.attributes[field];
+                                    
+                                    try{
+                                      if(domains){
+                                        value = domains.filter(function(el){return el.code===value})[0].name;
+                                      }
+                                    }catch(ex){
+                                      value = feat.attributes[field]
+                                    }
+
+                                    html+='<td>'+value+'</td>';
                                   }
 
                                 })

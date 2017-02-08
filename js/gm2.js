@@ -591,7 +591,7 @@ require(["esri/map",
             layerWater.setVisibleLayers([]);
 
             refreshLegend();
-
+ 
             $('.toc_item').removeAttr("checked");
 
             if ($(".beforecheck").hasClass("ui-checkbox-on")) {
