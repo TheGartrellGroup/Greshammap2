@@ -989,8 +989,6 @@ app.export= {
                     offset = app.export.wrapCanvasText(ctx, legend[i].label, 41, offset+19-3, 140, 19)
                 }
 
-                console.image(canvas.toDataURL('image/png'));
-
                 return canvas;
 
             } else {
@@ -1004,7 +1002,6 @@ app.export= {
                     offset = app.export.wrapCanvasText(ctx, symbol.label, 41, offset+19-3, 140, 19)
                 });
                 
-                console.image(canvas.toDataURL('image/png'));
                 console.info('height of '+name+': '+ canvas.height);
 
                 return canvas;
