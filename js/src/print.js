@@ -116,7 +116,7 @@ app.export= {
                                 $($('[name="grpFormat"]')[0]).attr('checked', true);
                                 $($('[name="grpFormat"]')[1]).removeAttr('checked');
                             } else {
-                                console.log('testing')
+                                
                                  $($('#grpFormat').children()[1]).removeAttr('disabled');
                                  $($('#grpLayout').children()[1]).removeAttr('disabled');
                             }
@@ -491,7 +491,6 @@ app.export= {
                                     var _height = height, partCount = 1;
 
                                     while (_height>0){
-                                        console.log('pushed a legend item for '+nameAndLegend[0]);
                                         mapComponents.push(new Promise(function(resolve, reject) {
                                             resolve({
                                                 object: 'legend',
@@ -744,7 +743,7 @@ app.export= {
                 if($('#chk-parcel-data').is(':checked')){
 
                     var res=doc.autoTableHtmlToJson(document.getElementById('pi'))
-
+					
                     doc.autoTable(res.columns, res.data, {
 
                         startY: (size==="small") ? 425 : 790,
@@ -756,6 +755,7 @@ app.export= {
                             
                             //could add some more logic here to actually test the 
                             // length of the string or whatevetr..
+							console.log(row.raw[0])
                             if(row.raw[0] !== 'Legal' && row.raw[0] !== 'Owner'){
                                 row.height=14;
                             }
