@@ -196,7 +196,7 @@ app.export= {
                 var printTask = new PrintTask();
 
                 var Web_Map_as_JSON = printTask._getPrintDefinition(app.map,  esri.tasks.PrintParameters);
-
+				
                 var $map = $('#map')
                 Web_Map_as_JSON.exportOptions  = {'outputSize':[window.innerWidth, window.innerHeight],"dpi": 96}
                
@@ -320,7 +320,7 @@ app.export= {
                         }
                     }
 
-                    console.info('Min legend Y coord is '+minLegendYCoord)
+                    //console.info('Min legend Y coord is '+minLegendYCoord)
 
                     if(!addTitle){
                         minLegendYCoord -= 30;
@@ -458,9 +458,8 @@ app.export= {
                                             }
                                         }
 
-
-                                          ctx.fillStyle = '#111111';
-            ctx.font = "11px 'Arial'";  
+                                        ctx.fillStyle = '#111111';
+										ctx.font = "11px 'Arial'";  
                                         if(lg && lg.legend.length) {
 
                                             lg.legend.forEach(function(symbol){

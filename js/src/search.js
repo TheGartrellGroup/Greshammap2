@@ -236,7 +236,7 @@ app.initializeSearch = function(){
         function showQueryResults(results) {
             //set search results polygon symbol
   
-            var symbolQuery = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_NULL, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SHORTDASH, new dojo.Color([255, 0, 0]), 3), new dojo.Color([255, 255, 0]));
+            var symbolQuery = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_NULL, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_DASH, new dojo.Color([255, 0, 0]), 3), new dojo.Color([255, 255, 0]));
  
             app.map.graphics.clear();
             var infoContent = "";
@@ -632,7 +632,7 @@ app.initializeSearch = function(){
         } // end of Manhole search
 
         function showQueryResultsSD(results) {
-                var symbolQuerySD = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_NULL, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SHORTDASH, new dojo.Color([255, 0, 0]), 3), new dojo.Color([255, 255, 0]));
+                var symbolQuerySD = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_NULL, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_DASH, new dojo.Color([255, 0, 0]), 3), new dojo.Color([255, 255, 0]));
 
                 app.map.graphics.clear();
                 var infoContent = "";
@@ -727,7 +727,6 @@ app.initializeSearch = function(){
             } else {
                 dojo.byId("featureCount").innerHTML = "";
                 var graphic = results.features[0];
-				debugger
                 graphic.setSymbol(symbolPts);
                 var attr = graphic.attributes;
                 var addressStreetaddr = attr.FULLADDR;

@@ -917,7 +917,7 @@ function showQueryResultsBu1(results, k) {
     //Census info
     var point = selectedParcelGeometry;
     var censusTractNo;
-    queryTaskC = new esri.tasks.QueryTask("http://leia/arcgis/rest/services/Parcel/Census/MapServer/0");
+    queryTaskC = new esri.tasks.QueryTask("http://maps.greshamoregon.gov/arcgis/rest/services/Parcel/Census/MapServer/0");
     queryC = new esri.tasks.Query();
     queryC.returnGeometry = true;
     queryC.outFields = ["*"];
@@ -949,7 +949,7 @@ function findParcel(fullAddr, rno, rno6, stateId, city, zip, censusTractNo, addr
     var dirty = (new Date()).getTime();
 
     queryPa.where = "RNO like '" + rno + "%'" + " AND " + dirty + "=" + dirty;
-	debugger
+	
     queryTaskPa.execute(queryPa, function(resultsP) {
         if (resultsP.features.length < 1) {
             var newRNO = rno.replace("R", "");
@@ -1039,7 +1039,7 @@ function findSD(k) {
 }
 
 function showQueryResultsSD1(resultsSD, k) {
-    var symbolQuerySD = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_NULL, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SHORTDASH, new dojo.Color([255, 0, 0]), 3), new dojo.Color([255, 255, 0]));
+    var symbolQuerySD = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_NULL, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_DASH, new dojo.Color([255, 0, 0]), 3), new dojo.Color([255, 255, 0]));
 
     app.map.graphics.clear();
     var infoContent = "";
@@ -1075,7 +1075,7 @@ function showQueryResultsSD1(resultsSD, k) {
 
 function showQueryResults1(results, k) {
     var content = "";
-    var symbolResults1 = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_NULL, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SHORTDASH, new dojo.Color([255, 0, 0]), 3), new dojo.Color([255, 255, 0]));
+    var symbolResults1 = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_NULL, new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_DASH, new dojo.Color([255, 0, 0]), 3), new dojo.Color([255, 255, 0]));
     app.map.graphics.clear();
     var addrContent = "";
     var graphicResults1 = results.features[k];
@@ -1084,7 +1084,7 @@ function showQueryResults1(results, k) {
     //Census info
     var point = graphicResults1.geometry;
     var censusTractNo;
-    queryTaskC = new esri.tasks.QueryTask("http://leia/arcgis/rest/services/Parcel/Census/MapServer/0");
+    queryTaskC = new esri.tasks.QueryTask("http://maps.greshamoregon.gov/arcgis/rest/services/Parcel/Census/MapServer/0");
     queryC = new esri.tasks.Query();
     queryC.returnGeometry = true;
     queryC.outFields = ["*"];
@@ -1158,7 +1158,7 @@ function showQueryResults2(results, k) {
     //Census info
     var point = selectedParcelGeometry;
     var censusTractNo;
-    queryTaskC = new esri.tasks.QueryTask("http:/leia/arcgis/rest/services/Parcel/Census/MapServer/0");
+    queryTaskC = new esri.tasks.QueryTask("http://maps.greshamoregon.gov/arcgis/rest/services/Parcel/Census/MapServer/0");
     queryC = new esri.tasks.Query();
     queryC.returnGeometry = true;
     queryC.outFields = ["*"];
@@ -1232,7 +1232,7 @@ function showQueryResultsA2(results) {
             //Census info
         var point = graphic.geometry;
         var censusTractNo;
-        queryTaskC = new esri.tasks.QueryTask("http://leia/arcgis/rest/services/Parcel/Census/MapServer/0");
+        queryTaskC = new esri.tasks.QueryTask("http://maps.greshamoregon.gov/arcgis/rest/services/Parcel/Census/MapServer/0");
         queryC = new esri.tasks.Query();
         queryC.returnGeometry = true;
         queryC.outFields = ["*"];
