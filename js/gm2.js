@@ -53,7 +53,7 @@ var app = {};
 var selectionToolbar;
 var streetMap, parcelLines, cityStreetParcel, aerialMap2015, aerialMap2014, aerialMap2013, aerialMap2012, aerialMap2007, aerialMap2002, aerialMap;
 var layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater;
-var opacityA;
+var opacityA
 
 function isInt(value) {
     return !isNaN(value) && (function(x) {
@@ -411,12 +411,16 @@ require(["esri/map",
         });
 
         //Define Queries
-        queryTaskPa = new esri.tasks.QueryTask("http:/leia/arcgis/rest/services/Parcel/EastCountyParcels/MapServer/0");
-        queryPa = new esri.tasks.Query({returnGeometry:true, outFields:['*']});
-
+        queryTaskPa = new esri.tasks.QueryTask("http://leia/arcgis/rest/services/Parcel/EastCountyParcels/MapServer/0");
+        queryPa = new esri.tasks.Query();
+		queryPa.returnGeometry=true;
+		queryPa.outFields = ["*"];
+		
         // //define queries
         queryTaskA = new esri.tasks.QueryTask("http://leia/arcgis/rest/services/Parcel/AddressPts/MapServer/1");
-        queryA = new esri.tasks.Query({returnGeometry:true, outFields:['*']});
+        queryA = new esri.tasks.Query();
+		queryA.returnGeometry=true;
+		queryA.outFields = ["*"];
 
         //End of Define Queries
 
@@ -890,120 +894,6 @@ function findRNO1(k) {
 
 }
 
-function findRNO2(k) {
-    var dirty = (new Date()).getTime();
-    selectedParcelGeometry = "";
-
-    //Search by RNO from address
-    if (searchCategorySelected == "Search by RNO") {
-        if (searchInput.substring(0, 1).toUpperCase() === "R") {
-            queryA.where = "RNO like '" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-            queryTaskA.execute(queryA, function(resultsA) {
-                showQueryResults2(resultsA, k);
-            });
-        } else {
-            queryA.where = "RNO like 'R" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-            queryTaskA.execute(queryA, function(resultsA) {
-                showQueryResults2(resultsA, k);
-            });
-        }
-    }
-    //search by RNO6 from address
-    else if (searchCategorySelected == "Search by RNO6") {
-        if (searchInput.substring(0, 1).toUpperCase() === "R") {
-            queryA.where = "RNO6 like '" + searchInput.toUpperCase().substr(1, 6) + "%'" + " AND " + dirty + "=" + dirty;
-            queryTaskA.execute(queryA, function(resultsA) {
-                showQueryResults2(resultsA, k);
-            });
-        } else {
-            queryA.where = "RNO6 like '" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-            queryTaskA.execute(queryA, function(resultsA) {
-                showQueryResults2(resultsA, k);
-            });
-        }
-    }
-    //address search
-    else {
-        if (searchInput.indexOf(",") > -1) {
-            var newSearchInput = searchInput.split(",");
-            queryA.where = "STREET_NUM like '" + newSearchInput[0] + "%'" + " AND " + "STREET_NAME like '" + newSearchInput[1].trim().toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-            queryTaskA.execute(queryA, function(results) {
-                showQueryResults2(results, k);
-            });
-        }
-        //search for intersection query
-        else if (searchInput.indexOf("&") > -1) {} else {
-            //search only for street name
-            var newSearchInput = searchInput.split(" ");
-            if (isInt(newSearchInput[0])) {
-
-                if (newSearchInput[1]) var fInput = newSearchInput[1].toUpperCase();
-                else var fInput = "nothing";
-                //check if address input has direction with address number
-                if (fInput === "E" || fInput === "N" || fInput === "NE" || fInput === "NW" || fInput === "S" || fInput === "SE" || fInput === "SW" || fInput === "W" || fInput === "nothing") {
-                    queryA.where = "FULLADDR like '" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                    queryTaskA.execute(queryA, function(results) {
-                        showQueryResults2(results, k);
-                    });
-                }
-                //when address input does not have a direction
-                else {
-                    if (newSearchInput[2]) var streetTypeInout = newSearchInput[2];
-                    else var streetTypeInout = "";
-                    queryA.where = "STREET_NUM like '" + newSearchInput[0].trim() + "'" + " AND " + "STREET_NAME like '" + fInput.trim().toUpperCase() + "%'" + " AND STREET_TYPE like '" + streetTypeInout.trim().toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                    queryTaskA.execute(queryA, function(results) {
-                        showQueryResults2(results, k);
-                    });
-                }
-            }
-
-            //first entry is not a number
-            else {
-                var fInput = newSearchInput[0].toUpperCase();
-                if (fInput === "E" || fInput === "N" || fInput === "NE" || fInput === "NW" || fInput === "S" || fInput === "SE" || fInput === "SW" || fInput === "W") {
-                    if (newSearchInput[2]) var streetTypeInout = newSearchInput[2];
-                    else var streetTypeInout = "";
-                    queryA.where = "STREET_DIR like '" + fInput + "'" + " AND " + "STREET_NAME like '" + newSearchInput[1].trim().toUpperCase() + "%'" + " AND STREET_TYPE like '" + streetTypeInout.trim().toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                    queryTaskA.execute(queryA, function(results) {
-                        showQueryResults2(results, k);
-                    });
-                } else {
-                    if (newSearchInput[1]) var streetTypeInout = newSearchInput[1];
-                    else var streetTypeInout = "";
-                    queryA.where = "STREET_NAME like '" + newSearchInput[0].trim().toUpperCase() + "%'" + " AND STREET_TYPE like '" + streetTypeInout.trim().toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-                    queryTaskA.execute(queryA, function(results) {
-                        showQueryResults2(results, k);
-                    });
-                }
-            }
-        }
-    }
-}
-
-function findRNO3(n) {
-    //tenant search
-    var queryTaskTe = new esri.tasks.QueryTask("http://leia/arcgis/rest/services/Parcel/AddressPts/MapServer/2");
-    var queryTe = new esri.tasks.Query();
-    queryTe.returnGeometry = false;
-    queryTe.outFields = ["*"];
-
-    var dirty = (new Date()).getTime();
-    queryTe.where = "AGAETX like '" + searchInput.toUpperCase() + "%'" + " AND " + dirty + "=" + dirty;
-
-    queryTaskTe.execute(queryTe, function(resultsTe2) {
-        queryA.where = "LOCID = " + resultsTe2.features[n].attributes.AHAUCD + " AND " + dirty + "=" + dirty;
-        queryTaskA.execute(queryA, function(resultsTeA) {
-            if (resultsTeA.features.length == 1) {
-                showQueryResultsA2(resultsTeA);
-            } else {
-                $("#featureCount").html("");
-                $("#leftPane").html("<b>No matching current address or parcel record for this tenant was found.</b>");
-                openRightPanelSTab();
-            }
-        });
-    });
-}
-
 function showQueryResultsBu1(results, k) {
     var symbolPts = new esri.symbol.SimpleMarkerSymbol(esri.symbol.SimpleMarkerSymbol.STYLE_CIRCLE, 12,
         new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID,
@@ -1059,6 +949,7 @@ function findParcel(fullAddr, rno, rno6, stateId, city, zip, censusTractNo, addr
     var dirty = (new Date()).getTime();
 
     queryPa.where = "RNO like '" + rno + "%'" + " AND " + dirty + "=" + dirty;
+	debugger
     queryTaskPa.execute(queryPa, function(resultsP) {
         if (resultsP.features.length < 1) {
             var newRNO = rno.replace("R", "");
