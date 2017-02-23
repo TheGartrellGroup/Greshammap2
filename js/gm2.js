@@ -1027,7 +1027,7 @@ function showQueryResultsBu1(results, k) {
     //Census info
     var point = selectedParcelGeometry;
     var censusTractNo;
-    queryTaskC = new esri.tasks.QueryTask("http://maps.greshamoregon.gov/arcgis/rest/services/Parcel/Census/MapServer/0");
+    queryTaskC = new esri.tasks.QueryTask("http://leia/arcgis/rest/services/Parcel/Census/MapServer/0");
     queryC = new esri.tasks.Query();
     queryC.returnGeometry = true;
     queryC.outFields = ["*"];
