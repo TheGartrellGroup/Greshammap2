@@ -153,7 +153,6 @@ app.initializeSelection= (function(){
                         tasks[layerName]=qr;
 
                         //get domain values
-                            debugger
                             var reqHandle = esri.request({
                               "url":url+'/'+layerNumber,
                               "content":{
