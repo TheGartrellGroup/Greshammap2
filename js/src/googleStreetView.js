@@ -10,7 +10,7 @@ app.initializeStreetView = function() {
                     mapClickEvent.remove();
                     dojo.disconnect(mapClickEvent);
                     mapClickEvent = on(app.map, "click", function(evt) {
-                        showLocation(evt);
+                        app.showLocation(evt);
                     });
                     dojo.disconnect(gsvClick);
                 } else {
@@ -65,7 +65,7 @@ app.initializeStreetView = function() {
                     mapClickEvent.remove();
                     dojo.disconnect(mapClickEvent);
                     mapClickEvent = on(app.map, "click", function(evt) {
-                        showLocation(evt);
+                        app.showLocation(evt);
                     });
                 } else {
                     $('#btnGoogle').show("fast", "swing");
