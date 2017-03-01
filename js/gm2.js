@@ -304,8 +304,8 @@ require(["esri/map",
             var selectedRadioID = "#" + "aerialR" + options.aerial[0];
             $(selectedRadioID).prop("checked", true);
             var aerialOpacity = options.aerial[1];
-            // app.map.addLayers([streetMap, aerialYear, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
-            app.map.addLayers([streetMap]);
+            app.map.addLayers([streetMap, aerialYear, parcelLines, layerBaseData, layerBoundaries, layerEnvironmental, layerPlace, layerStormwater, layerTransportation, layerWastewater, layerWater]);
+            //app.map.addLayers([streetMap]);
             aerialYear.setOpacity(aerialOpacity);
             $('#slider-aerial').val(aerialOpacity).slider("refresh");
         } else {
@@ -471,12 +471,13 @@ require(["esri/map",
         //layer opacity handler
         $(".layer-slider").on("change", function() {
             
+			console.log($(this).val())
             var opacity = $(this).val();
 
             switch($(this).attr('id')) {
 
                 case 'slider-1':
-                    layerTransportation.setOpacity(opacity);
+                    layerBaseData.setOpacity(opacity);
                     break;
                 case 'slider-2':
                     layerBoundaries.setOpacity(opacity);
