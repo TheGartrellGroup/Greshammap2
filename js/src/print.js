@@ -249,9 +249,17 @@ app.export= {
                         });
                     }
                 } else {
-                    canvas.toBlob(function(blob) {
-                        saveAs(blob, "export.png");
-                    });
+
+
+                    if(canvas.msToBlob){
+                        var b = canvas.msToBlob();
+                        saveAs(b, "export.png");
+                        
+                    } else{                 
+                        canvas.toBlob(function(blob) {
+                            saveAs(blob, "export.png");
+                        });
+                    }
                 }
 
                 app.export.button.stop()
