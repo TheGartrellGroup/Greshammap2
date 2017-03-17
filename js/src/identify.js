@@ -1,6 +1,6 @@
 app.initializeIdentify = function(){
 
-	require(["dojo/on","esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol", "esri/Color", "esri/graphic", "dojo/dom"], function(on, SimpleFillSymbol, SimpleLineSymbol, Color, Graphic, dom){
+	require(["dojo/on","esri/SpatialReference", "esri/symbols/SimpleFillSymbol", "esri/symbols/SimpleLineSymbol", "esri/Color", "esri/graphic", "dojo/dom"], function(on,SpatialReference, SimpleFillSymbol, SimpleLineSymbol, Color, Graphic, dom){
 
 	var target = dojo.byId("btnIdentify");
         on(target, "click", function(evt) {
@@ -220,6 +220,7 @@ app.initializeIdentify = function(){
             queryC.returnGeometry = true;
             queryC.outFields = ["*"];
             queryC.geometry = point;
+			queryC.outSpatialReference = new SpatialReference({wkid:2913})
             queryC.spatialRelationship = esri.tasks.Query.SPATIAL_REL_INTERSECTS;
             queryTaskC.execute(queryC, function(resultsC) {
                 if (resultsC.features.length === 1) {
