@@ -299,7 +299,7 @@ app.initializeSelection= (function(){
                     // var win = window.open(url, '_blank');
                     // win.focus();
 
-                    var wnd = window.open("about:blank", "blank", "scrollbars=yes");
+                    var wnd = window.open("about:blank", "blank", "scrollbars=yes,resizable=yes");
                     wnd.document.write(html);
 
                     esri.hide(dom.byId("loadingImg"))
